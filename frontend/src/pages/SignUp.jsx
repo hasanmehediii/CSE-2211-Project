@@ -1,19 +1,10 @@
-// src/pages/Login.jsx
+// src/pages/Signup.jsx
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import carImage from '../assets/car2.jpg'; // Ensure image path is valid
+import carImage from '../assets/car2.jpg';
 
-const Login = () => {
-  const navigate = useNavigate(); // 1. Hook for navigation
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // You can add actual login logic here (API call, validation, etc.)
-    navigate('/welcome'); // 2. Redirect to Welcome page
-  };
-
+const Signup = () => {
   const pageStyle = {
     backgroundImage: `url(${carImage})`,
     backgroundSize: 'cover',
@@ -58,24 +49,18 @@ const Login = () => {
     <>
       <Navbar />
       <div style={pageStyle}>
-        <form style={cardStyle} onSubmit={handleLogin}>
-          <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Login</h2>
+        <form style={cardStyle}>
+          <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Sign Up</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <input type="email" placeholder="Email" style={inputStyle} required />
-            <input type="password" placeholder="Password" style={inputStyle} required />
-            <button type="submit" style={buttonStyle}>Login</button>
+            <input type="text" placeholder="Full Name" style={inputStyle} />
+            <input type="email" placeholder="Email" style={inputStyle} />
+            <input type="password" placeholder="Password" style={inputStyle} />
+            <input type="password" placeholder="Confirm Password" style={inputStyle} />
+            <button type="submit" style={buttonStyle}>Create Account</button>
             <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem' }}>
-              Don&apos;t have an account?
-              <a
-                href="/signup"
-                style={{
-                  color: '#00ffff',
-                  fontWeight: 'bold',
-                  marginLeft: '0.5rem',
-                  textDecoration: 'underline',
-                }}
-              >
-                Sign up now →
+              Already have an account?
+              <a href="/login" style={{ color: '#00ffff', fontWeight: 'bold', marginLeft: '0.5rem', textDecoration: 'underline' }}>
+                Login →
               </a>
             </p>
           </div>
@@ -86,4 +71,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
