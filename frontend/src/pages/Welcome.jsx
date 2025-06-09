@@ -1,5 +1,6 @@
 import React from 'react';
 import './Welcome.css';
+import { FaFacebookF, FaTwitter, FaInstagram, FaEnvelope, FaPhone } from 'react-icons/fa';
 
 const carData = [
   {
@@ -34,7 +35,20 @@ const carData = [
 const Welcome = () => {
   return (
     <div className="welcome-container">
-      <h1 className="welcome-title">Welcome to CarZone</h1>
+      <header className="header">
+  <div className="logo">
+  <img src="/images/repair-shop.png" alt="CarZone Logo" className="logo-img" />
+  <span>CarZone</span>
+</div>
+  <nav className="nav-links">
+    <a href="#">Home</a>
+    <a href="#">Explore</a>
+    <a href="#">Offers</a>
+    <a href="#">Contact</a>
+  </nav>
+  <p className="tagline">Drive your dream today — Top cars, best deals.</p>
+</header>
+
       {carData.map((section, idx) => (
         <div key={idx} className="section">
           <h2 className="section-title">{section.category}</h2>
@@ -54,6 +68,22 @@ const Welcome = () => {
           </div>
         </div>
       ))}
+      <footer className="footer">
+        <div className="footer-links">
+          <a href="#">About Us</a>
+          <a href="#">Help</a>
+          <a href="#">FAQ</a>
+          <a href="#">Contact</a>
+        </div>
+        <div className="footer-socials">
+          <a href="#"><FaFacebookF /></a>
+          <a href="#"><FaTwitter /></a>
+          <a href="#"><FaInstagram /></a>
+          <a href="#"><FaEnvelope /></a>
+          <a href="#"><FaPhone /></a>
+        </div>
+        <p className="footer-copy">&copy; 2025 CarZone. All rights reserved.</p>
+      </footer>
     </div>
   );
 };
