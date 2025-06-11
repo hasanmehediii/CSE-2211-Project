@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Welcome.css';
-import { FaFacebookF, FaTwitter, FaInstagram, FaEnvelope, FaPhone } from 'react-icons/fa';
+import FAQ from './FAQ';
+import { FaFacebookF, FaTwitter, FaInstagram, FaEnvelope, FaPhone, FaBars, FaSearch, FaRegUser, FaSignOutAlt, FaTags, FaCogs, FaQuestionCircle, FaThList, FaNewspaper } from 'react-icons/fa';
 
 const carData = [
   {
@@ -33,21 +35,53 @@ const carData = [
 ];
 
 const Welcome = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
     <div className="welcome-container">
       <header className="header">
-  <div className="logo">
-  <img src="/images/repair-shop.png" alt="CarZone Logo" className="logo-img" />
-  <span>CarZone</span>
-</div>
-  <nav className="nav-links">
-    <a href="#">Home</a>
-    <a href="#">Explore</a>
-    <a href="#">Offers</a>
-    <a href="#">Contact</a>
-  </nav>
-  <p className="tagline">Drive your dream today — Top cars, best deals.</p>
-</header>
+        <div className="logo">
+          <img src="/images/repair-shop.png" alt="CarZone Logo" className="logo-img" />
+          <span>CarZone</span>
+        </div>
+        <button className="menu-toggle-btn" onClick={toggleMenu}>
+          <FaBars />
+        </button>
+        <p className="tagline">Drive your dream today — Top cars, best deals.</p>
+      </header>
+
+      <div className={`side-menu ${menuOpen ? 'open' : ''}`}>
+        <button className="close-btn" onClick={toggleMenu}>X</button>
+        <div className="side-menu-header">
+          <img src="/images/repair-shop.png" alt="Logo" className="side-menu-logo" />
+          <span>CarZone</span>
+        </div>
+
+        <div className="search-box">
+          <input type="text" placeholder="Search..." />
+          <FaSearch />
+        </div>
+
+        <div className="side-menu-links-container">
+          <ul className="side-menu-links">
+            <li><a href="#"><FaTags /> Discount Cards</a></li>
+            <li><a href="#"><FaThList /> Categories</a></li>
+            <li><a href="#"><FaNewspaper /> Popular</a></li>
+            <li><a href="#"><FaNewspaper /> New Released</a></li>
+            <li><a href="#"><FaCogs /> Settings</a></li>
+          </ul>
+
+          <div className="side-menu-footer">
+            <li><a href="#"><FaRegUser /> Profile</a></li>
+            <li><a href="#"><FaSignOutAlt /> Logout</a></li>
+          </div>
+        </div>
+      </div>
 
       {carData.map((section, idx) => (
         <div key={idx} className="section">
@@ -68,11 +102,12 @@ const Welcome = () => {
           </div>
         </div>
       ))}
+
       <footer className="footer">
         <div className="footer-links">
           <a href="#">About Us</a>
           <a href="#">Help</a>
-          <a href="#">FAQ</a>
+          <a onClick={() => navigate('/faq')} style={{ cursor: 'pointer' }}>FAQ</a>
           <a href="#">Contact</a>
         </div>
         <div className="footer-socials">

@@ -1,3 +1,4 @@
+/* General styles for the welcome container */
 .welcome-container {
   background: linear-gradient(to bottom right, #001f3f, #000000);
   color: #fff;
@@ -9,18 +10,218 @@
   justify-content: space-between;
 }
 
-.welcome-title {
+/* Header styles */
+.header {
+  background: linear-gradient(to right, #00ffff44, #001f3f);
+  padding: 2rem 1rem;
+  border-radius: 12px;
   text-align: center;
-  font-size: 3rem;
   margin-bottom: 3rem;
-  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 255, 255, 0.3);
+  position: relative;
 }
 
-.highlight {
-  color: #00ffff;
+.logo {
+  font-size: 2.5rem;
   font-weight: bold;
+  color: #00ffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
 }
 
+.logo span {
+  color: #fff;
+}
+
+.nav-links {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.nav-links a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #ffffffcc;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #00ffff;
+}
+
+.tagline {
+  color: #ccc;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.logo-img {
+  height: 40px;
+  margin-right: 0.5rem;
+}
+
+/* Side menu styles */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100%;
+  background-color: rgba(0, 31, 63, 0.9);
+  color: #fff;
+  transition: transform 0.3s ease-in-out;
+  padding-top: 2rem;
+  padding-left: 2rem;
+  z-index: 999;
+  box-shadow: 4px 0 8px rgba(0, 0, 0, 0.5);
+  transform: translateX(-100%); /* Initially hide the menu off-screen */
+}
+
+.side-menu.open {
+  transform: translateX(0); /* Move the menu into view */
+}
+
+.side-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.side-menu-logo {
+  height: 40px; /* Make the logo a bit larger */
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  backdrop-filter: blur(5px); /* Blurry effect */
+}
+
+.search-box input {
+  background: none;
+  border: none;
+  color: #fff;
+  width: 100%;
+  padding: 5px;
+  font-size: 1rem;
+}
+
+.search-box input::placeholder {
+  color: #bbb;
+}
+
+.search-box svg {
+  color: #00ffff;
+  font-size: 1.5rem;
+}
+
+.side-menu.open .search-box {
+  display: flex; /* Show search box when menu is open */
+}
+
+.side-menu-links-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-bottom: auto; /* Push Profile and Logout to the bottom */
+}
+
+.side-menu-links {
+  list-style: none;
+  padding: 0;
+}
+
+.side-menu-links li {
+  margin: 1rem 0;
+  text-align: left;
+  font-size: 1.1rem;
+}
+
+.side-menu-links a {
+  color: #00ffff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 8px 0;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.side-menu-links a:hover {
+  background-color: rgba(0, 255, 255, 0.2);
+}
+
+.side-menu-footer {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+}
+
+.side-menu-footer li {
+  margin: 0; /* Remove margin between profile and logout */
+}
+
+.side-menu-footer a {
+  color: #00ffff;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 8px 0;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.side-menu-footer a:hover {
+  background-color: rgba(0, 255, 255, 0.2);
+}
+
+/* Logout button specific style */
+.side-menu-footer a.logout-btn {
+  border: 2px solid red; /* Red border for logout button */
+  color: red; /* Change color of the text to red */
+}
+
+.menu-toggle-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  cursor: pointer;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  cursor: pointer;
+}
+
+/* General car listing and footer styles */
 .section {
   margin-bottom: 3rem;
 }
@@ -122,57 +323,4 @@
   margin-top: 1rem;
   font-size: 0.9rem;
   color: #aaa;
-}
-
-.header {
-  background: linear-gradient(to right, #00ffff44, #001f3f);
-  padding: 2rem 1rem;
-  border-radius: 12px;
-  text-align: center;
-  margin-bottom: 3rem;
-  box-shadow: 0 4px 20px rgba(0, 255, 255, 0.3);
-  position: relative;
-}
-
-.logo {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #00ffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.logo span {
-  color: #fff;
-}
-
-.nav-links {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.nav-links a {
-  margin: 0 1rem;
-  text-decoration: none;
-  color: #ffffffcc;
-  font-weight: 500;
-  transition: color 0.3s;
-}
-
-.nav-links a:hover {
-  color: #00ffff;
-}
-
-.tagline {
-  color: #ccc;
-  font-size: 1rem;
-  margin-top: 0.5rem;
-  font-style: italic;
-}
-
-.logo-img {
-  height: 40px;
-  margin-right: 0.5rem;
 }
