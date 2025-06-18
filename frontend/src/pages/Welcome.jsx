@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; // Import the useNavigate hook
 import './Welcome.css';
 import FAQ from './FAQ';
 import { FaFacebookF, FaTwitter, FaInstagram, FaEnvelope, FaPhone, FaBars, FaSearch, FaRegUser, FaSignOutAlt, FaTags, FaCogs, FaQuestionCircle, FaThList, FaNewspaper } from 'react-icons/fa';
@@ -36,10 +36,15 @@ const carData = [
 
 const Welcome = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Create navigate function
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  // Function to navigate to the car detail page
+  const goToCarDetail = (car) => {
+    navigate('/car-detail', { state: car }); // Pass the car data to the car detail page
   };
 
   return (
@@ -88,7 +93,7 @@ const Welcome = () => {
           <h2 className="section-title">{section.category}</h2>
           <div className="card-row">
             {section.cars.map((car, index) => (
-              <div key={index} className="car-card">
+              <div key={index} className="car-card" onClick={() => goToCarDetail(car)}> {/* Added click handler */}
                 <img src={car.image} alt={car.name} className="car-image" />
                 <div className="car-details">
                   <h3 className="car-name">{car.name}</h3>
