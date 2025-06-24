@@ -1,9 +1,11 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const CarDetail = () => {
   const location = useLocation();
-  const car = location.state; // Get the car data passed from Welcome page
+  const car = location.state; // Get the car data passed from the Home page
 
   // Static details for all cars
   const commonDetails = {
@@ -15,64 +17,86 @@ const CarDetail = () => {
   };
 
   const pageStyle = {
-    background: '#f5f5f5',
+    background: 'linear-gradient(to right, rgb(1, 26, 35), rgb(18, 1, 43))', // Gradient matching Navbar
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     padding: '2rem',
+    color: '#fff',
+    fontFamily: "'Roboto', sans-serif", // Apply a clean and modern font
   };
 
   const carDetailCardStyle = {
-    backgroundColor: '#fff',
-    borderRadius: '12px',
-    padding: '2rem',
-    width: '80%',
-    maxWidth: '800px',
-    boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#1e1e1e', // Dark background for the car detail card
+    borderRadius: '20px',
+    padding: '3rem',
+    width: '90%',
+    maxWidth: '900px',
+    boxShadow: '0 12px 40px rgba(0, 0, 0, 0.2)',
     textAlign: 'center',
+    transition: 'transform 0.3s',
   };
 
   const carImageStyle = {
     width: '100%',
-    maxHeight: '400px',
+    height: '450px',
     objectFit: 'cover',
-    borderRadius: '10px',
+    borderRadius: '20px',
+    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.3)',
+    transition: 'transform 0.3s',
   };
 
   const detailStyle = {
-    marginTop: '1.5rem',
+    marginTop: '2rem',
     textAlign: 'left',
+    color: '#ddd',
   };
 
   const sectionTitleStyle = {
-    fontSize: '1.5rem',
-    marginBottom: '0.8rem',
-    color: '#333',
+    fontSize: '1.8rem',
+    marginBottom: '1rem',
+    color: '#ff6347', // Light red to match the theme
+    fontWeight: 'bold',
   };
 
   const listStyle = {
     listStyleType: 'none',
-    padding: 0,
+    padding: '0',
+    marginLeft: '20px',
+    fontSize: '1.1rem',
+    color: '#ccc',
+  };
+
+  const reviewStyle = {
+    color: '#fff',
+    fontStyle: 'italic',
+    margin: '10px 0',
   };
 
   const footerStyle = {
-    marginTop: '3rem',
+    marginTop: '4rem',
     textAlign: 'center',
     fontSize: '0.9rem',
-    color: '#888',
+    color: '#aaa',
+    borderTop: '1px solid #444',
+    paddingTop: '10px',
+    width: '100%',
   };
 
   return (
     <div style={pageStyle}>
+      <Navbar />
       <div style={carDetailCardStyle}>
-        <h1>{car.name}</h1>
+        <h1 style={{ fontSize: '2.5rem', color: '#fff', fontWeight: 'bold', letterSpacing: '2px' }}>
+          {car.name}
+        </h1>
         <img src={car.image} alt={car.name} style={carImageStyle} />
         
         <div style={detailStyle}>
           <h2 style={sectionTitleStyle}>Description</h2>
-          <p>{commonDetails.description}</p>
+          <p style={{ color: '#e0e0e0', fontSize: '1.2rem', lineHeight: '1.6' }}>{commonDetails.description}</p>
           
           <h2 style={sectionTitleStyle}>Additional Information</h2>
           <ul style={listStyle}>
@@ -83,14 +107,12 @@ const CarDetail = () => {
           
           <h2 style={sectionTitleStyle}>User Reviews</h2>
           {commonDetails.reviews.map((review, idx) => (
-            <p key={idx}>"{review}"</p>
+            <p key={idx} style={reviewStyle}>"{review}"</p>
           ))}
         </div>
       </div>
 
-      <footer style={footerStyle}>
-        <p>&copy; 2025 CarZone. All rights reserved.</p>
-      </footer>
+      <Footer/>
     </div>
   );
 };

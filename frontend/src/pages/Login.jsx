@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -26,44 +25,80 @@ const Login = () => {
   };
 
   const cardStyle = {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: '10px',
-    padding: '2rem',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Slightly dark background for readability
+    backdropFilter: 'blur(12px)',
+    borderRadius: '15px',
+    padding: '2.5rem 2rem',
     width: '100%',
-    maxWidth: '400px',
+    maxWidth: '420px',
     color: '#fff',
-    boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
+    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+    transition: 'box-shadow 0.3s ease',
   };
 
   const inputStyle = {
-    padding: '0.8rem',
+    padding: '0.8rem 1rem',
     fontSize: '1rem',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '10px',
     outline: 'none',
+    marginBottom: '1.2rem',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)', // Light background for input fields
+    color: '#fff',
+    transition: 'background-color 0.3s ease',
+  };
+
+  const inputFocusStyle = {
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
   };
 
   const buttonStyle = {
-    padding: '0.75rem',
-    fontSize: '1rem',
-    backgroundColor: '#000',
+    padding: '1rem 2.5rem', // Larger padding for a bigger button
+    fontSize: '1.4rem', // Larger font size
+    background: 'linear-gradient(45deg, #ff6347, #ff1a1a)', // Gradient background for button
     color: '#fff',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '50px', // Elliptical shape for the button
     cursor: 'pointer',
+    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
+    width: '100%', // Make the button fill the width of the card
+  };
+
+  const buttonHoverStyle = {
+    background: 'linear-gradient(45deg, #ff1a1a, #e60000)',
+    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
   };
 
   return (
     <>
       <Navbar />
       <div style={pageStyle}>
-        <form style={cardStyle} onSubmit={handleLogin}>
-          <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Login</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <input type="email" placeholder="Email" style={inputStyle} required />
-            <input type="password" placeholder="Password" style={inputStyle} required />
-            <button type="submit" style={buttonStyle}>Login</button>
+        <form
+          style={cardStyle}
+          onSubmit={handleLogin}
+          onFocus={(e) => e.target.style.backgroundColor = inputFocusStyle.backgroundColor}
+          onBlur={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+        >
+          <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', fontFamily: "'Poppins', sans-serif" }}>Login</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+            <input
+              type="email"
+              placeholder="Email"
+              style={inputStyle}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              style={inputStyle}
+              required
+            />
+            <button
+              type="submit"
+              style={buttonStyle}
+            >
+              Login
+            </button>
             <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem' }}>
               Don&apos;t have an account?
               <a

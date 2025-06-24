@@ -1,71 +1,28 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';  // Import Footer component
+import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa'; // Import Font Awesome icons
 
 const FAQ = () => {
   const navigate = useNavigate();
   const [openIndex, setOpenIndex] = useState(null);
 
   const faqData = [
-    {
-      question: 'What types of cars do you sell?',
-      answer: 'We sell luxury, sports, budget-friendly, and electric cars from top brands like Tesla, BMW, Audi, Ford, and more.',
-    },
-    {
-      question: 'Do you offer financing options?',
-      answer: 'Yes, we partner with multiple financial institutions to offer flexible car loan and EMI options.',
-    },
-    {
-      question: 'Can I trade in my current car?',
-      answer: 'Absolutely! You can get an instant trade-in estimate and use it toward your next purchase.',
-    },
-    {
-      question: 'Do the cars come with warranties?',
-      answer: 'Yes, all our cars come with at least a 1-year limited warranty. Extended warranties are also available.',
-    },
-    {
-      question: 'Can I test drive before buying?',
-      answer: 'Yes, we encourage test drives. You can book one online or visit any of our showrooms.',
-    },
-    {
-      question: 'What documents do I need to purchase a car?',
-      answer: 'You need a valid driving license, proof of identity, and financial documents for loan processing (if applicable).',
-    },
-    {
-      question: 'Do you deliver cars to other cities?',
-      answer: 'Yes, we offer doorstep delivery across the country with tracking and insurance included.',
-    },
-    {
-      question: 'How do I know the car is in good condition?',
-      answer: 'Every car goes through a 200-point inspection by our certified mechanics before being listed.',
-    },
-    {
-      question: 'What if I face an issue after buying?',
-      answer: 'We have a 7-day return policy and dedicated after-sales support for your convenience.',
-    },
-    {
-      question: 'How can I contact support?',
-      answer: 'You can contact us through the Contact section, call our hotline, or email us at support@carzone.com.',
-    },
-    {
-      question: 'Is there a return policy?',
-      answer: 'Yes, you can return the car within 7 days if you face any critical issues covered under policy.',
-    },
-    {
-      question: 'Do you charge delivery fees?',
-      answer: 'For long-distance deliveries, a nominal fee is charged which includes insurance and handling.',
-    },
-    {
-      question: 'Are the cars brand new?',
-      answer: 'We sell both new and certified pre-owned cars. All are listed with full condition reports.',
-    },
-    {
-      question: 'How long does delivery take?',
-      answer: 'Typically 2-7 business days depending on your location and selected car.',
-    },
-    {
-      question: 'Can I cancel my booking?',
-      answer: 'Yes, you can cancel within 24 hours of booking. After that, cancellation fees may apply.',
-    },
+    { question: 'What types of cars do you sell?', answer: 'We sell luxury, sports, budget-friendly, and electric cars from top brands like Tesla, BMW, Audi, Ford, and more.' },
+    { question: 'Do you offer financing options?', answer: 'Yes, we partner with multiple financial institutions to offer flexible car loan and EMI options.' },
+    { question: 'Can I trade in my current car?', answer: 'Absolutely! You can get an instant trade-in estimate and use it toward your next purchase.' },
+    { question: 'Do the cars come with warranties?', answer: 'Yes, all our cars come with at least a 1-year limited warranty. Extended warranties are also available.' },
+    { question: 'Can I test drive before buying?', answer: 'Yes, we encourage test drives. You can book one online or visit any of our showrooms.' },
+    { question: 'What documents do I need to purchase a car?', answer: 'You need a valid driving license, proof of identity, and financial documents for loan processing (if applicable).' },
+    { question: 'Do you deliver cars to other cities?', answer: 'Yes, we offer doorstep delivery across the country with tracking and insurance included.' },
+    { question: 'How do I know the car is in good condition?', answer: 'Every car goes through a 200-point inspection by our certified mechanics before being listed.' },
+    { question: 'What if I face an issue after buying?', answer: 'We have a 7-day return policy and dedicated after-sales support for your convenience.' },
+    { question: 'How can I contact support?', answer: 'You can contact us through the Contact section, call our hotline, or email us at support@carzone.com.' },
+    { question: 'Is there a return policy?', answer: 'Yes, you can return the car within 7 days if you face any critical issues covered under policy.' },
+    { question: 'Do you charge delivery fees?', answer: 'For long-distance deliveries, a nominal fee is charged which includes insurance and handling.' },
+    { question: 'Are the cars brand new?', answer: 'We sell both new and certified pre-owned cars. All are listed with full condition reports.' },
+    { question: 'How long does delivery take?', answer: 'Typically 2-7 business days depending on your location and selected car.' },
+    { question: 'Can I cancel my booking?', answer: 'Yes, you can cancel within 24 hours of booking. After that, cancellation fees may apply.' },
   ];
 
   const toggleAccordion = (index) => {
@@ -74,7 +31,7 @@ const FAQ = () => {
 
   return (
     <div className="faq-container">
-      <button className="back-button" onClick={() => navigate('/welcome')}>← Back to Home</button>
+      <button className="back-button" onClick={() => navigate('/')}>← Back to Home</button>
       <h1 className="faq-title">Frequently Asked Questions</h1>
       <div className="faq-list">
         {faqData.map((item, index) => (
@@ -90,6 +47,9 @@ const FAQ = () => {
           </div>
         ))}
       </div>
+
+      {/* Footer Component */}
+      <Footer /> {/* Adding Footer */}
 
       {/* Embedded CSS */}
       <style>{`
