@@ -1,0 +1,73 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, Boolean
+from sqlalchemy.orm import Session , declarative_base
+from pydantic import BaseModel
+from typing import List, Optional
+from app.database import get_db
+from datetime import datetime
+
+Base = declarative_base()
+
+class Review(Base):
+    __tablename__ = "reviews"
+    
+    review_id = Column(Integer, primary_key=True, index=True)
+    purchase_id = Column(Integer, ForeignKey("purchase.purchase_id"), nullable=False)
+    car_id = Column(Integer, ForeignKey("cars.car_id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    rating = Column(Integer, nullable=False)
+    review_text = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    is_visible = Column(Boolean, default=True)
+    helpful_count = Column(Integer, default=0)
+    employee_feedback = Column(Text)
+
+class ReviewBase(BaseModel):
+    purchase_id: int
+    car_id: int
+    user_id: int
+    rating: int
+    review_text: Optional[str] = None
+    created_at: datetime
+    is_visible: bool = True
+    helpful_count: int = 0
+    employee_feedback: Optional[str] = None
+
+class ReviewCreate(ReviewBase):
+    pass
+
+class Review(ReviewBase):
+    review_id: int
+
+    class Config:
+        orm_mode = True
+
+router = APIRouter(prefix="/reviews", tags=["reviews"])
+
+def get_review(db: Session, review_id: int):
+    return db.query(Review).filter(Review.review_id == review_id).first()
+
+def get_reviews(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Review).offset(skip).limit(limit).all()
+
+def create_review(db: Session, review: ReviewCreate):
+    db_review = Review(**review.dict())
+    db.add(db_review)
+    db.commit()
+    db.refresh(db_review)
+    return db_review
+
+@router.post("/", response_model=Review)
+def create_review_endpoint(review: ReviewCreate, db: Session = Depends(get_db)):
+    return create_review(db, review)
+
+@router.get("/", response_model=List[Review])
+def read_reviews(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return get_reviews(db, skip, limit)
+
+@router.get("/{review_id}", response_model=Review)
+def read_review(review_id: int, db: Session = Depends(get_db)):
+    db_review = get_review(db, review_id)
+    if db_review is None:
+        raise HTTPException(status_code=404, detail="Review not found")
+    return db_review
