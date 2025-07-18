@@ -29,7 +29,7 @@ const Navbar = () => {
           position: fixed;
           top: 0;
           width: 100%;
-          background: rgba(1, 22, 12, 0.7); /* Semi-transparent for stronger blur effect */
+          background: rgba(0, 12, 6, 0.7); /* Semi-transparent for stronger blur effect */
           color: #ffffff;
           padding: 1rem 2rem;
           display: flex;

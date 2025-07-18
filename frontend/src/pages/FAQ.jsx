@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar'; // Import Navbar component
 import Footer from '../components/Footer';  // Import Footer component
 import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa'; // Import Font Awesome icons
 
@@ -30,95 +31,98 @@ const FAQ = () => {
   };
 
   return (
-    <div className="faq-container">
-      <button className="back-button" onClick={() => navigate('/')}>← Back to Home</button>
-      <h1 className="faq-title">Frequently Asked Questions</h1>
-      <div className="faq-list">
-        {faqData.map((item, index) => (
-          <div
-            key={index}
-            className={`faq-card ${openIndex === index ? 'open' : ''}`}
-            onClick={() => toggleAccordion(index)}
-          >
-            <div className="faq-question">{item.question}</div>
-            {openIndex === index && (
-              <div className="faq-answer">{item.answer}</div>
-            )}
-          </div>
-        ))}
+    <>
+      <Navbar/>
+      <div className="faq-container">
+        <button className="back-button" onClick={() => navigate('/')}>← Back to Home</button>
+        <h1 className="faq-title">Frequently Asked Questions</h1>
+        <div className="faq-list">
+          {faqData.map((item, index) => (
+            <div
+              key={index}
+              className={`faq-card ${openIndex === index ? 'open' : ''}`}
+              onClick={() => toggleAccordion(index)}
+            >
+              <div className="faq-question">{item.question}</div>
+              {openIndex === index && (
+                <div className="faq-answer">{item.answer}</div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Footer Component */}
+        <Footer /> {/* Adding Footer */}
+
+        {/* Embedded CSS */}
+        <style>{`
+          .faq-container {
+            background: linear-gradient(to bottom right, #00140aff, #000000);
+            color: #fff;
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          }
+
+          .back-button {
+            background-color: transparent;
+            color: #00ffff;
+            font-size: 1rem;
+            border: 1px solid #00ffff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+          }
+
+          .back-button:hover {
+            background-color: rgba(0, 255, 255, 0.1);
+          }
+
+          .faq-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: #00ffff;
+            border-bottom: 2px solid #00ffff66;
+            padding-bottom: 1rem;
+          }
+
+          .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+          }
+
+          .faq-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 255, 255, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+          }
+
+          .faq-card.open {
+            background-color: rgba(0, 255, 255, 0.07);
+            box-shadow: 0 8px 24px rgba(0, 255, 255, 0.3);
+          }
+
+          .faq-question {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00ffff;
+          }
+
+          .faq-answer {
+            margin-top: 0.75rem;
+            font-size: 1rem;
+            color: #ccc;
+            line-height: 1.5;
+          }
+        `}</style>
       </div>
-
-      {/* Footer Component */}
-      <Footer /> {/* Adding Footer */}
-
-      {/* Embedded CSS */}
-      <style>{`
-        .faq-container {
-          background: linear-gradient(to bottom right, #001f3f, #000000);
-          color: #fff;
-          min-height: 100vh;
-          padding: 2rem 1.5rem;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .back-button {
-          background-color: transparent;
-          color: #00ffff;
-          font-size: 1rem;
-          border: 1px solid #00ffff;
-          padding: 8px 16px;
-          border-radius: 6px;
-          cursor: pointer;
-          margin-bottom: 1.5rem;
-        }
-
-        .back-button:hover {
-          background-color: rgba(0, 255, 255, 0.1);
-        }
-
-        .faq-title {
-          text-align: center;
-          font-size: 2.5rem;
-          margin-bottom: 2rem;
-          color: #00ffff;
-          border-bottom: 2px solid #00ffff66;
-          padding-bottom: 1rem;
-        }
-
-        .faq-list {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .faq-card {
-          background-color: rgba(255, 255, 255, 0.05);
-          padding: 1.2rem 1.5rem;
-          margin-bottom: 1.2rem;
-          border-radius: 10px;
-          box-shadow: 0 4px 12px rgba(0, 255, 255, 0.15);
-          transition: all 0.3s ease;
-          cursor: pointer;
-        }
-
-        .faq-card.open {
-          background-color: rgba(0, 255, 255, 0.07);
-          box-shadow: 0 8px 24px rgba(0, 255, 255, 0.3);
-        }
-
-        .faq-question {
-          font-size: 1.2rem;
-          font-weight: bold;
-          color: #00ffff;
-        }
-
-        .faq-answer {
-          margin-top: 0.75rem;
-          font-size: 1rem;
-          color: #ccc;
-          line-height: 1.5;
-        }
-      `}</style>
-    </div>
+    </>
   );
 };
 
