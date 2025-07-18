@@ -57,7 +57,7 @@ const FAQ = () => {
         {/* Embedded CSS */}
         <style>{`
           .faq-container {
-            background: linear-gradient(to bottom right, #00140aff, #000000);
+            background: linear-gradient(to bottom right, #00140aff, #051509ff);
             color: #fff;
             min-height: 100vh;
             padding: 2rem 1.5rem;
