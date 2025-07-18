@@ -12,7 +12,7 @@
 
 /* Header styles */
 .header {
-  background: linear-gradient(to right, #00ffff44, #001f3f);
+  background: linear-gradient(to right, #012b0a44, #08200f);
   padding: 2rem 1rem;
   border-radius: 12px;
   text-align: center;
@@ -71,7 +71,7 @@
   left: 0;
   width: 280px;
   height: 100%;
-  background-color: rgba(0, 31, 63, 0.9);
+  background-color: rgba(0, 25, 8, 0.9);
   color: #fff;
   transition: transform 0.3s ease-in-out;
   padding-top: 2rem;

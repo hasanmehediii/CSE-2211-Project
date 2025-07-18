@@ -1,14 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, Boolean
-from sqlalchemy.orm import Session , declarative_base
+from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
-from app.database import get_db
+from app.database import get_db, Base  # Import Base from database
 from datetime import datetime
 
-Base = declarative_base()
-
-class Review(Base):
+class ReviewModel(Base):
     __tablename__ = "reviews"
     
     review_id = Column(Integer, primary_key=True, index=True)
@@ -22,13 +20,17 @@ class Review(Base):
     helpful_count = Column(Integer, default=0)
     employee_feedback = Column(Text)
 
+    # Relationships
+    purchase = relationship("PurchaseModel", back_populates="reviews")
+    car = relationship("CarModel", back_populates="reviews")
+    user = relationship("UserModel", back_populates="reviews")
+
 class ReviewBase(BaseModel):
     purchase_id: int
     car_id: int
     user_id: int
     rating: int
     review_text: Optional[str] = None
-    created_at: datetime
     is_visible: bool = True
     helpful_count: int = 0
     employee_feedback: Optional[str] = None
@@ -36,13 +38,16 @@ class ReviewBase(BaseModel):
 class ReviewCreate(ReviewBase):
     pass
 
-class Review(ReviewBase):
+class ReviewResponse(ReviewBase):
     review_id: int
+    created_at: datetime
 
     class Config:
         orm_mode = True
 
 router = APIRouter(prefix="/reviews", tags=["reviews"])
+
+# ... rest of your router functions ...
 
 def get_review(db: Session, review_id: int):
     return db.query(Review).filter(Review.review_id == review_id).first()
