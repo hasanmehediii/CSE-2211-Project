@@ -1,31 +1,31 @@
+# app/models/employee.py
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import Column, Integer, String, Numeric, Date, Text
-from sqlalchemy.orm import Session, declarative_base
+from sqlalchemy import Column, Integer, String, Date, Numeric
+from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
-from app.database import get_db
+from app.database import get_db, Base
 from datetime import date
-
-Base = declarative_base()
 
 class Employee(Base):
     __tablename__ = "employees"
     
     emp_id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100))
-    email = Column(String(100), unique=True)
+    name = Column(String(100), nullable=False)
+    email = Column(String(100), unique=True, nullable=False)
     phone = Column(String(20))
     dob = Column(Date)
-    address = Column(Text)
+    address = Column(String(255))
     hire_date = Column(Date)
     salary = Column(Numeric(10, 2))
     position = Column(String(50))
     department = Column(String(50))
-    status = Column(String(20), default="active")
+    
+    shippings = relationship("Shipping", back_populates="employee")
 
 class EmployeeBase(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
+    name: str
+    email: str
     phone: Optional[str] = None
     dob: Optional[date] = None
     address: Optional[str] = None
@@ -33,17 +33,17 @@ class EmployeeBase(BaseModel):
     salary: Optional[float] = None
     position: Optional[str] = None
     department: Optional[str] = None
-    status: str = "active"
 
 class EmployeeCreate(EmployeeBase):
     pass
 
-class Employee(EmployeeBase):
+class EmployeeResponse(EmployeeBase):
     emp_id: int
 
     class Config:
         orm_mode = True
 
+# Define the router
 router = APIRouter(prefix="/employees", tags=["employees"])
 
 def get_employee(db: Session, emp_id: int):
@@ -59,15 +59,15 @@ def create_employee(db: Session, employee: EmployeeCreate):
     db.refresh(db_employee)
     return db_employee
 
-@router.post("/", response_model=Employee)
+@router.post("/", response_model=EmployeeResponse)
 def create_employee_endpoint(employee: EmployeeCreate, db: Session = Depends(get_db)):
     return create_employee(db, employee)
 
-@router.get("/", response_model=List[Employee])
+@router.get("/", response_model=List[EmployeeResponse])
 def read_employees(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return get_employees(db, skip, limit)
 
-@router.get("/{emp_id}", response_model=Employee)
+@router.get("/{emp_id}", response_model=EmployeeResponse)
 def read_employee(emp_id: int, db: Session = Depends(get_db)):
     db_employee = get_employee(db, emp_id)
     if db_employee is None:

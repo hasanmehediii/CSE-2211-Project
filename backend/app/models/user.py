@@ -1,30 +1,32 @@
+# app/models/user.py
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import Column, Integer, String, Text, Date
-from sqlalchemy.orm import Session, declarative_base
+from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
-from app.database import get_db
-from datetime import date
-
-Base = declarative_base()
+from app.database import get_db, Base
+from datetime import date  # Fix: Import date
 
 class User(Base):
     __tablename__ = "users"
     
     user_id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(100), unique=True)
-    username = Column(String(50), unique=True)
-    password = Column(String(100))
-    address = Column(Text)
+    email = Column(String(100), unique=True, nullable=False)
+    username = Column(String(50), unique=True, nullable=False)
+    password = Column(String(255), nullable=False)
+    address = Column(String(255))
     phone = Column(String(20))
     dob = Column(Date)
-    card_num = Column(String(30))
-    bank_acc = Column(String(50))
+    card_num = Column(String(20))
+    bank_acc = Column(String(20))
+    
+    reviews = relationship("ReviewModel", back_populates="user")
+    purchases = relationship("PurchaseModel", back_populates="user")  # Added for consistency
 
 class UserBase(BaseModel):
-    email: Optional[str] = None
-    username: Optional[str] = None
-    password: Optional[str] = None
+    email: str
+    username: str
+    password: str
     address: Optional[str] = None
     phone: Optional[str] = None
     dob: Optional[date] = None
@@ -34,7 +36,7 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     pass
 
-class User(UserBase):
+class UserResponse(UserBase):
     user_id: int
 
     class Config:
@@ -55,15 +57,15 @@ def create_user(db: Session, user: UserCreate):
     db.refresh(db_user)
     return db_user
 
-@router.post("/", response_model=User)
+@router.post("/", response_model=UserResponse)
 def create_user_endpoint(user: UserCreate, db: Session = Depends(get_db)):
     return create_user(db, user)
 
-@router.get("/", response_model=List[User])
+@router.get("/", response_model=List[UserResponse])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return get_users(db, skip, limit)
 
-@router.get("/{user_id}", response_model=User)
+@router.get("/{user_id}", response_model=UserResponse)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = get_user(db, user_id)
     if db_user is None:

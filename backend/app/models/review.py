@@ -1,9 +1,10 @@
+# app/models/review.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
-from app.database import get_db, Base  # Import Base from database
+from app.database import get_db, Base
 from datetime import datetime
 
 class ReviewModel(Base):
@@ -20,10 +21,9 @@ class ReviewModel(Base):
     helpful_count = Column(Integer, default=0)
     employee_feedback = Column(Text)
 
-    # Relationships
     purchase = relationship("PurchaseModel", back_populates="reviews")
-    car = relationship("CarModel", back_populates="reviews")
-    user = relationship("UserModel", back_populates="reviews")
+    car = relationship("Car", back_populates="reviews")
+    user = relationship("User", back_populates="reviews")
 
 class ReviewBase(BaseModel):
     purchase_id: int
@@ -47,30 +47,28 @@ class ReviewResponse(ReviewBase):
 
 router = APIRouter(prefix="/reviews", tags=["reviews"])
 
-# ... rest of your router functions ...
-
 def get_review(db: Session, review_id: int):
-    return db.query(Review).filter(Review.review_id == review_id).first()
+    return db.query(ReviewModel).filter(ReviewModel.review_id == review_id).first()
 
 def get_reviews(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Review).offset(skip).limit(limit).all()
+    return db.query(ReviewModel).offset(skip).limit(limit).all()
 
 def create_review(db: Session, review: ReviewCreate):
-    db_review = Review(**review.dict())
+    db_review = ReviewModel(**review.dict())
     db.add(db_review)
     db.commit()
     db.refresh(db_review)
     return db_review
 
-@router.post("/", response_model=Review)
+@router.post("/", response_model=ReviewResponse)
 def create_review_endpoint(review: ReviewCreate, db: Session = Depends(get_db)):
     return create_review(db, review)
 
-@router.get("/", response_model=List[Review])
+@router.get("/", response_model=List[ReviewResponse])
 def read_reviews(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return get_reviews(db, skip, limit)
 
-@router.get("/{review_id}", response_model=Review)
+@router.get("/{review_id}", response_model=ReviewResponse)
 def read_review(review_id: int, db: Session = Depends(get_db)):
     db_review = get_review(db, review_id)
     if db_review is None:

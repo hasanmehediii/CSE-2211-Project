@@ -1,52 +1,47 @@
+# app/models/shipping.py
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, Text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
+from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
-from app.database import get_db
-from datetime import date
-
-Base = declarative_base()
+from app.database import get_db, Base
+from datetime import date  # Fix: Import date
 
 class Shipping(Base):
-    __tablename__ = "shipping"
+    __tablename__ = "shippings"
     
-    ship_id = Column(Integer, primary_key=True, index=True)
-    emp_id = Column(Integer, ForeignKey("employees.emp_id"), nullable=False)
+    shipping_id = Column(Integer, primary_key=True, index=True)
     order_id = Column(Integer, ForeignKey("orders.order_id"), nullable=False)
-    shipping_provider = Column(String(100))
-    tracking_number = Column(String(100))
-    status = Column(String(30), default="pending")
+    emp_id = Column(Integer, ForeignKey("employees.emp_id"), nullable=False)
     shipped_date = Column(Date)
     delivery_date = Column(Date)
-    delivery_address = Column(Text)
-    remarks = Column(Text)
+    shipping_address = Column(String(255))
+    tracking_number = Column(String(50))
+    
+    order = relationship("Order", back_populates="shipping")
+    employee = relationship("Employee", back_populates="shippings")
 
 class ShippingBase(BaseModel):
-    emp_id: int
     order_id: int
-    shipping_provider: Optional[str] = None
-    tracking_number: Optional[str] = None
-    status: str = "pending"
+    emp_id: int
     shipped_date: Optional[date] = None
     delivery_date: Optional[date] = None
-    delivery_address: Optional[str] = None
-    remarks: Optional[str] = None
+    shipping_address: Optional[str] = None
+    tracking_number: Optional[str] = None
 
 class ShippingCreate(ShippingBase):
     pass
 
-class Shipping(ShippingBase):
-    ship_id: int
+class ShippingResponse(ShippingBase):
+    shipping_id: int
 
     class Config:
         orm_mode = True
 
-router = APIRouter(prefix="/shipping", tags=["shipping"])
+router = APIRouter(prefix="/shippings", tags=["shippings"])
 
-def get_shipping(db: Session, ship_id: int):
-    return db.query(Shipping).filter(Shipping.ship_id == ship_id).first()
+def get_shipping(db: Session, shipping_id: int):
+    return db.query(Shipping).filter(Shipping.shipping_id == shipping_id).first()
 
 def get_shippings(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Shipping).offset(skip).limit(limit).all()
@@ -58,17 +53,17 @@ def create_shipping(db: Session, shipping: ShippingCreate):
     db.refresh(db_shipping)
     return db_shipping
 
-@router.post("/", response_model=Shipping)
+@router.post("/", response_model=ShippingResponse)
 def create_shipping_endpoint(shipping: ShippingCreate, db: Session = Depends(get_db)):
     return create_shipping(db, shipping)
 
-@router.get("/", response_model=List[Shipping])
+@router.get("/", response_model=List[ShippingResponse])
 def read_shippings(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return get_shippings(db, skip, limit)
 
-@router.get("/{ship_id}", response_model=Shipping)
-def read_shipping(ship_id: int, db: Session = Depends(get_db)):
-    db_shipping = get_shipping(db, ship_id)
+@router.get("/{shipping_id}", response_model=ShippingResponse)
+def read_shipping(shipping_id: int, db: Session = Depends(get_db)):
+    db_shipping = get_shipping(db, shipping_id)
     if db_shipping is None:
         raise HTTPException(status_code=404, detail="Shipping not found")
     return db_shipping

@@ -1,12 +1,10 @@
+# app/models/order_item.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import Column, Integer, Numeric, ForeignKey
-from sqlalchemy.orm import Session , declarative_base
-from sqlalchemy.dialects.postgresql import NUMERIC
+from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
-from app.database import get_db
-
-Base = declarative_base()
+from app.database import get_db, Base
 
 class OrderItem(Base):
     __tablename__ = "order_item"
@@ -16,19 +14,20 @@ class OrderItem(Base):
     car_id = Column(Integer, ForeignKey("cars.car_id"), nullable=False)
     quantity = Column(Integer, nullable=False)
     price_at_order = Column(Numeric(10, 2))
-    discount = Column(Numeric(5, 2), default=0.00)
+    
+    order = relationship("Order", back_populates="order_items")
+    car = relationship("Car")
 
 class OrderItemBase(BaseModel):
     order_id: int
     car_id: int
     quantity: int
     price_at_order: Optional[float] = None
-    discount: float = 0.00
 
 class OrderItemCreate(OrderItemBase):
     pass
 
-class OrderItem(OrderItemBase):
+class OrderItemResponse(OrderItemBase):
     order_item_id: int
 
     class Config:
@@ -49,15 +48,15 @@ def create_order_item(db: Session, order_item: OrderItemCreate):
     db.refresh(db_order_item)
     return db_order_item
 
-@router.post("/", response_model=OrderItem)
+@router.post("/", response_model=OrderItemResponse)
 def create_order_item_endpoint(order_item: OrderItemCreate, db: Session = Depends(get_db)):
     return create_order_item(db, order_item)
 
-@router.get("/", response_model=List[OrderItem])
+@router.get("/", response_model=List[OrderItemResponse])
 def read_order_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return get_order_items(db, skip, limit)
 
-@router.get("/{order_item_id}", response_model=OrderItem)
+@router.get("/{order_item_id}", response_model=OrderItemResponse)
 def read_order_item(order_item_id: int, db: Session = Depends(get_db)):
     db_order_item = get_order_item(db, order_item_id)
     if db_order_item is None:

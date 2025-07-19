@@ -1,6 +1,7 @@
+# app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import engine
+from app.database import engine, Base
 from app.models import category, car, user, employee, car_inventory, car_inventory_log, purchase, order, order_item, shipping, review
 
 app = FastAPI(title="Car Purchase API")
@@ -8,24 +9,14 @@ app = FastAPI(title="Car Purchase API")
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173"],  # React app URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Create database tables
-category.Base.metadata.create_all(bind=engine)
-car.Base.metadata.create_all(bind=engine)
-user.Base.metadata.create_all(bind=engine)
-employee.Base.metadata.create_all(bind=engine)
-car_inventory.Base.metadata.create_all(bind=engine)
-car_inventory_log.Base.metadata.create_all(bind=engine)
-purchase.Base.metadata.create_all(bind=engine)
-order.Base.metadata.create_all(bind=engine)
-order_item.Base.metadata.create_all(bind=engine)
-shipping.Base.metadata.create_all(bind=engine)
-review.Base.metadata.create_all(bind=engine)
+# Create all database tables
+Base.metadata.create_all(bind=engine)
 
 # Include routers
 app.include_router(category.router)

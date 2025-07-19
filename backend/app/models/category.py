@@ -1,33 +1,28 @@
+# app/models/category.py
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import Column, Integer, String, Text, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
-from app.database import get_db
-from datetime import datetime
-
-Base = declarative_base()
+from app.database import get_db, Base
 
 class Category(Base):
     __tablename__ = "categories"
     
     category_id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False)
-    description = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
+    name = Column(String(50), nullable=False)
+    description = Column(String(255))
+    
+    cars = relationship("Car", back_populates="category")
 
 class CategoryBase(BaseModel):
     name: str
     description: Optional[str] = None
-    created_at: datetime
-    updated_at: datetime
 
 class CategoryCreate(CategoryBase):
     pass
 
-class Category(CategoryBase):
+class CategoryResponse(CategoryBase):
     category_id: int
 
     class Config:
@@ -48,15 +43,15 @@ def create_category(db: Session, category: CategoryCreate):
     db.refresh(db_category)
     return db_category
 
-@router.post("/", response_model=Category)
+@router.post("/", response_model=CategoryResponse)
 def create_category_endpoint(category: CategoryCreate, db: Session = Depends(get_db)):
     return create_category(db, category)
 
-@router.get("/", response_model=List[Category])
+@router.get("/", response_model=List[CategoryResponse])
 def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return get_categories(db, skip, limit)
 
-@router.get("/{category_id}", response_model=Category)
+@router.get("/{category_id}", response_model=CategoryResponse)
 def read_category(category_id: int, db: Session = Depends(get_db)):
     db_category = get_category(db, category_id)
     if db_category is None:

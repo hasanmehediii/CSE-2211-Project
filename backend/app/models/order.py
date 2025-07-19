@@ -1,36 +1,37 @@
+# app/models/order.py
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import Column, Integer, Date, String, ForeignKey, Text
-from sqlalchemy.orm import Session , declarative_base
+from sqlalchemy import Column, Integer, String, Date, ForeignKey
+from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
-from app.database import get_db
-import datetime
-
-Base = declarative_base()
+from app.database import get_db, Base
+from datetime import date  # Fix: Import date
 
 class Order(Base):
     __tablename__ = "orders"
     
     order_id = Column(Integer, primary_key=True, index=True)
     purchase_id = Column(Integer, ForeignKey("purchase.purchase_id"), nullable=False)
-    date = Column(Date, default=datetime.date.today)
-    status = Column(String(30), default="processing")
-    shipping_address = Column(Text)
-    tracking_number = Column(String(100))
+    status = Column(String(50))
+    shipping_address = Column(String(255))
+    tracking_number = Column(String(50))
     expected_delivery = Column(Date)
+    
+    purchase = relationship("PurchaseModel", back_populates="orders")
+    order_items = relationship("OrderItem", back_populates="order")
+    shipping = relationship("Shipping", back_populates="order")
 
 class OrderBase(BaseModel):
     purchase_id: int
-    date: datetime.date
-    status: str = "processing"
+    status: Optional[str] = None
     shipping_address: Optional[str] = None
     tracking_number: Optional[str] = None
-    expected_delivery: Optional[datetime.date] = None
+    expected_delivery: Optional[date] = None
 
 class OrderCreate(OrderBase):
     pass
 
-class Order(OrderBase):
+class OrderResponse(OrderBase):
     order_id: int
 
     class Config:
@@ -51,15 +52,15 @@ def create_order(db: Session, order: OrderCreate):
     db.refresh(db_order)
     return db_order
 
-@router.post("/", response_model=Order)
+@router.post("/", response_model=OrderResponse)
 def create_order_endpoint(order: OrderCreate, db: Session = Depends(get_db)):
     return create_order(db, order)
 
-@router.get("/", response_model=List[Order])
+@router.get("/", response_model=List[OrderResponse])
 def read_orders(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return get_orders(db, skip, limit)
 
-@router.get("/{order_id}", response_model=Order)
+@router.get("/{order_id}", response_model=OrderResponse)
 def read_order(order_id: int, db: Session = Depends(get_db)):
     db_order = get_order(db, order_id)
     if db_order is None:

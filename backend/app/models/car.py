@@ -1,19 +1,13 @@
+# app/models/car.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import Column, Integer, String, Numeric, Boolean, Date, ForeignKey, func
-from sqlalchemy.orm import Session, relationship, declarative_base
+from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
-from app.database import get_db
-from datetime import date
-
-# Correct import order:
-# Import all dependent ORM models first.
-# This ensures that when SQLAlchemy processes the relationships,
-# the referenced classes (Category and Review) are already defined.
+from app.database import get_db, Base
+from datetime import date  # Fix: Import date
 from app.models.category import Category
-from app.models.review import Review
-
-Base = declarative_base()
+from app.models.review import ReviewModel
 
 class Car(Base):
     __tablename__ = "cars"
@@ -35,11 +29,10 @@ class Car(Base):
     added_date = Column(Date, default=date.today)
     image_link = Column(String(255))
     
-    # Define relationship to Category
     category = relationship("Category", back_populates="cars")
-
-# Note: The `Category.cars` relationship definition should be in the `Category` model file
-# to prevent circular dependencies. I've removed it from here.
+    reviews = relationship("ReviewModel", back_populates="car")
+    inventories = relationship("CarInventory", back_populates="car")  # Added for consistency
+    order_items = relationship("OrderItem", back_populates="car")  # Added for consistency
 
 class CarBase(BaseModel):
     category_id: int
@@ -80,16 +73,15 @@ def create_car(db: Session, car: CarCreate):
     db.refresh(db_car)
     return db_car
 
-# New function to get top-rated cars (by average rating)
 def get_top_rated_cars(db: Session, limit: int = 4):
     result = (
         db.query(
             Car,
-            func.avg(Review.rating).label("rating"),
+            func.avg(ReviewModel.rating).label("rating"),
         )
-        .join(Review, Car.car_id == Review.car_id, isouter=True) # Use a left join to include cars without reviews
+        .join(ReviewModel, Car.car_id == ReviewModel.car_id, isouter=True)
         .group_by(Car.car_id)
-        .order_by(func.avg(Review.rating).desc())
+        .order_by(func.avg(ReviewModel.rating).desc())
         .limit(limit)
         .all()
     )
@@ -100,17 +92,12 @@ def get_top_rated_cars(db: Session, limit: int = 4):
         cars_with_ratings.append(CarWithRating.parse_obj(car_dict))
     return cars_with_ratings
 
-# New function to get new arrivals (by added_date)
 def get_new_arrivals(db: Session, limit: int = 4):
-    # This query only involves the Car model, so it should work fine
     return db.query(Car).order_by(Car.added_date.desc()).limit(limit).all()
 
-# New function to get budget-friendly cars (by price)
 def get_budget_friendly_cars(db: Session, limit: int = 4):
-    # This query also only involves the Car model
     return db.query(Car).order_by(Car.price.asc()).limit(limit).all()
 
-# Updated and new endpoints
 @router.get("/", response_model=List[CarBase])
 def read_cars(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return db.query(Car).offset(skip).limit(limit).all()
