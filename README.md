@@ -1,23 +1,25 @@
 # Goriber Gari
 - A trusted place to order and buy imported cars.
 
-## Frontend Run (in frontend directory)
+## Frontend Run
 ``` bash
+cd frontend
 npm run dev
 ```
 
-## Backend Run (in backend directory)
+## Backend Run
 1. Create Virtual environment:
 ``` bash
+cd backend
 python -m venv venv
 ```
 2. Activate Virtual environment:
 ``` bash
 venv\Scripts\activate
 ```
-3. Run Django Server:
+3. Run FastAPI Server:
 ``` bash
-python manage.py runserver
+uvicorn app.main:app --reload
 ```
 4. Deactivate Virtual environment
 ``` bash
