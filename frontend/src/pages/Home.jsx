@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '../components/Navbar.jsx';
+import Footer from '../components/Footer.jsx';
 import carImage from '../assets/car2.jpg';
 import axios from 'axios';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -20,6 +20,10 @@ const Home = () => {
           axios.get("http://localhost:8000/cars/new-arrivals"),
           axios.get("http://localhost:8000/cars/budget-friendly"),
         ]);
+
+        console.log('Top Rated:', topRated.data); // Debug log
+        console.log('New Arrivals:', newArrivals.data); // Debug log
+        console.log('Budget Friendly:', budgetFriendly.data); // Debug log
 
         const formattedData = [
           {
@@ -66,11 +70,12 @@ const Home = () => {
   }, []);
 
   const handleCardClick = (car) => {
+    console.log('Navigating to car detail with car:', car); // Debug log
     navigate('/car-detail', { state: car });
   };
 
   const handleImageError = (e) => {
-    e.target.src = carImage; // Fallback to default image on error
+    e.target.src = carImage;
   };
 
   const scrollLeft = (index) => {
@@ -162,40 +167,42 @@ const Home = () => {
         .page {
           background: linear-gradient(135deg, #010715ff, #010a04ff);
           color: #ffffff;
-          min-height: 100vh;
           display: flex;
           flex-direction: column;
           font-family: 'Inter', sans-serif;
+          margin: 0;
+          padding-top: 60px;
         }
         .hero {
           background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url(${carImage});
           background-size: cover;
           background-position: center;
-          height: 100vh;
+          height: calc(100vh - 60px);
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: flex-start;
-          padding: 0 3rem;
+          padding: 0 1.5rem;
           position: relative;
+          width: 100%;
         }
         .hero-title {
-          font-size: 4rem;
+          font-size: 3rem;
           font-weight: 800;
           letter-spacing: 0.02em;
-          margin-bottom: 1rem;
+          margin-bottom: 0.75rem;
           text-transform: uppercase;
           text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         .hero-subtitle {
-          font-size: 1.5rem;
+          font-size: 1.1rem;
           color: #d1d5db;
-          margin-bottom: 2rem;
-          max-width: 600px;
+          margin-bottom: 1.2rem;
+          max-width: 500px;
         }
         .hero-button {
-          padding: 0.75rem 2rem;
-          font-size: 1.25rem;
+          padding: 0.5rem 1.2rem;
+          font-size: 1rem;
           background: linear-gradient(to right, #ec4899, #f43f5e);
           color: #ffffff;
           border: none;
@@ -209,52 +216,55 @@ const Home = () => {
           box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
         .discover {
-          padding: 3rem 2rem;
+          padding: 1.5rem;
           text-align: center;
           background: linear-gradient(135deg, #000000ff, #010401ff);
+          width: 100%;
         }
         .discover-title {
-          font-size: 2.5rem;
+          font-size: 1.75rem;
           font-weight: 700;
-          margin-bottom: 1rem;
+          margin-bottom: 0.5rem;
         }
         .discover-text {
-          font-size: 1.25rem;
+          font-size: 1rem;
           color: #d1d5db;
-          max-width: 800px;
+          max-width: 700px;
           margin: 0 auto;
         }
         .categories {
-          padding: 3rem 2rem;
+          padding: 1.5rem;
           background: linear-gradient(135deg, #000000ff, #010401ff);
+          width: 100%;
         }
         .loading {
           text-align: center;
-          font-size: 2rem;
+          font-size: 1.2rem;
           color: #d1d5db;
         }
         .category-section {
-          margin-bottom: 3rem;
+          margin-bottom: 1.5rem;
           position: relative;
         }
         .category-title {
-          font-size: 2rem;
+          font-size: 1.5rem;
           font-weight: 700;
-          margin-bottom: 1.5rem;
+          margin-bottom: 0.75rem;
           color: #ffffff;
           border-left: 5px solid #ec4899;
-          padding-left: 1rem;
+          padding-left: 0.5rem;
         }
         .car-row-container {
           position: relative;
           display: flex;
           align-items: center;
+          width: 100%;
         }
         .car-row {
           display: flex;
           overflow-x: auto;
-          gap: 1.5rem;
-          padding-bottom: 1rem;
+          gap: 1rem;
+          padding-bottom: 0.5rem;
           scrollbar-width: none;
           -ms-overflow-style: none;
         }
@@ -262,8 +272,8 @@ const Home = () => {
           display: none;
         }
         .car-card {
-          min-width: 280px;
-          max-width: 300px;
+          min-width: 240px;
+          max-width: 260px;
           background: rgba(15, 23, 42, 0.95);
           border-radius: 1rem;
           box-shadow: 0 8px 16px rgba(3, 132, 98, 0.48);
@@ -277,41 +287,41 @@ const Home = () => {
         }
         .car-image {
           width: 100%;
-          height: 200px;
+          height: 160px;
           object-fit: cover;
           border-top-left-radius: 1rem;
           border-top-right-radius: 1rem;
         }
         .car-details {
-          padding: 1rem;
+          padding: 0.5rem;
           text-align: center;
         }
         .car-name {
-          font-size: 1.4rem;
+          font-size: 1.1rem;
           font-weight: 600;
-          margin: 0.5rem 0;
+          margin: 0.3rem 0;
           color: #ffffff;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
         }
         .car-price {
-          font-size: 1.2rem;
+          font-size: 1rem;
           color: #22d3ee;
-          margin: 0.3rem 0;
+          margin: 0.2rem 0;
         }
         .car-rating {
           color: #facc15;
-          font-size: 1.1rem;
-          margin: 0.3rem 0;
+          font-size: 0.9rem;
+          margin: 0.2rem 0;
         }
         .scroll-button {
           background: rgba(15, 23, 42, 0.7);
           color: #ffffff;
           border: none;
           border-radius: 50%;
-          width: 40px;
-          height: 40px;
+          width: 32px;
+          height: 32px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -324,44 +334,97 @@ const Home = () => {
           background: rgba(5, 23, 0, 1);
         }
         .scroll-button.left {
-          left: -20px;
+          left: -16px;
         }
         .scroll-button.right {
-          right: -20px;
+          right: -16px;
         }
         @media (max-width: 768px) {
-          .hero-title {
-            font-size: 2.5rem;
+          .page {
+            padding-top: 50px;
           }
-          .hero-subtitle {
-            font-size: 1.2rem;
-          }
-          .car-card {
-            min-width: 240px;
-          }
-          .car-image {
-            height: 160px;
-          }
-          .scroll-button {
-            width: 32px;
-            height: 32px;
-          }
-        }
-        @media (max-width: 480px) {
           .hero {
-            padding: 0 1.5rem;
+            height: calc(100vh - 50px);
+            padding: 0 1rem;
           }
           .hero-title {
             font-size: 2rem;
           }
           .hero-subtitle {
-            font-size: 1rem;
+            font-size: 0.9rem;
+          }
+          .hero-button {
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+          }
+          .discover {
+            padding: 1rem;
+          }
+          .discover-title {
+            font-size: 1.5rem;
+          }
+          .discover-text {
+            font-size: 0.9rem;
+          }
+          .categories {
+            padding: 1rem;
+          }
+          .category-title {
+            font-size: 1.3rem;
           }
           .car-card {
             min-width: 200px;
           }
           .car-image {
             height: 140px;
+          }
+          .scroll-button {
+            width: 28px;
+            height: 28px;
+          }
+        }
+        @media (max-width: 480px) {
+          .page {
+            padding-top: 48px;
+          }
+          .hero {
+            height: calc(100vh - 48px);
+            padding: 0 0.75rem;
+          }
+          .hero-title {
+            font-size: 1.6rem;
+          }
+          .hero-subtitle {
+            font-size: 0.8rem;
+          }
+          .hero-button {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+          }
+          .discover {
+            padding: 0.75rem;
+          }
+          .discover-title {
+            font-size: 1.3rem;
+          }
+          .discover-text {
+            font-size: 0.8rem;
+          }
+          .categories {
+            padding: 0.75rem;
+          }
+          .category-title {
+            font-size: 1.2rem;
+          }
+          .car-card {
+            min-width: 180px;
+          }
+          .car-image {
+            height: 120px;
+          }
+          .scroll-button {
+            width: 24px;
+            height: 24px;
           }
         }
       `}</style>

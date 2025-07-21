@@ -1,11 +1,10 @@
-# app/models/car_inventory_log.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import Column, Integer, Numeric, String, Date, ForeignKey
 from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
 from app.database import get_db, Base
-from datetime import date  # Fix: Import date
+from datetime import date
 
 class CarInventoryLog(Base):
     __tablename__ = "car_inventory_log"

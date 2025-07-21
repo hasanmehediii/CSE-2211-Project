@@ -1,4 +1,3 @@
-# app/models/review.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import Session, relationship
@@ -41,6 +40,7 @@ class ReviewCreate(ReviewBase):
 class ReviewResponse(ReviewBase):
     review_id: int
     created_at: datetime
+    username: Optional[str] = None  # Include username for CarDetail.jsx
 
     class Config:
         orm_mode = True
@@ -52,6 +52,16 @@ def get_review(db: Session, review_id: int):
 
 def get_reviews(db: Session, skip: int = 0, limit: int = 100):
     return db.query(ReviewModel).offset(skip).limit(limit).all()
+
+def get_reviews_by_car_id(db: Session, car_id: int, skip: int = 0, limit: int = 100):
+    return (
+        db.query(ReviewModel)
+        .join(User, ReviewModel.user_id == User.user_id)
+        .filter(ReviewModel.car_id == car_id, ReviewModel.is_visible == True)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 def create_review(db: Session, review: ReviewCreate):
     db_review = ReviewModel(**review.dict())
@@ -74,3 +84,10 @@ def read_review(review_id: int, db: Session = Depends(get_db)):
     if db_review is None:
         raise HTTPException(status_code=404, detail="Review not found")
     return db_review
+
+@router.get("/cars/{car_id}/reviews", response_model=List[ReviewResponse])
+def read_reviews_by_car_id(car_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    reviews = get_reviews_by_car_id(db, car_id, skip, limit)
+    if not reviews:
+        raise HTTPException(status_code=404, detail="No reviews found for this car")
+    return reviews

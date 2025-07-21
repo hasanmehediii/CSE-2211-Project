@@ -34,7 +34,6 @@ const FAQ = () => {
     <>
       <Navbar/>
       <div className="faq-container">
-        <button className="back-button" onClick={() => navigate('/')}>← Back to Home</button>
         <h1 className="faq-title">Frequently Asked Questions</h1>
         <div className="faq-list">
           {faqData.map((item, index) => (

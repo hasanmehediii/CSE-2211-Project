@@ -1,4 +1,3 @@
-# app/models/car_inventory.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import Session, relationship
@@ -41,6 +40,9 @@ def get_car_inventory(db: Session, inventory_id: int):
 def get_car_inventories(db: Session, skip: int = 0, limit: int = 100):
     return db.query(CarInventory).offset(skip).limit(limit).all()
 
+def get_car_inventory_by_car_id(db: Session, car_id: int):
+    return db.query(CarInventory).filter(CarInventory.car_id == car_id).first()
+
 def create_car_inventory(db: Session, car_inventory: CarInventoryCreate):
     db_inventory = CarInventory(**car_inventory.dict())
     db.add(db_inventory)
@@ -61,4 +63,11 @@ def read_car_inventory(inventory_id: int, db: Session = Depends(get_db)):
     db_inventory = get_car_inventory(db, inventory_id)
     if db_inventory is None:
         raise HTTPException(status_code=404, detail="Car inventory not found")
+    return db_inventory
+
+@router.get("/cars/{car_id}/inventory", response_model=CarInventoryResponse)
+def read_car_inventory_by_car_id(car_id: int, db: Session = Depends(get_db)):
+    db_inventory = get_car_inventory_by_car_id(db, car_id)
+    if db_inventory is None:
+        raise HTTPException(status_code=404, detail="Inventory for car not found")
     return db_inventory

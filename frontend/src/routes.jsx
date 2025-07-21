@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import Signup from './pages/SignUp';
 import Welcome from './pages/Welcome';
 import FAQ from './pages/FAQ';
-import CarDetail from './pages/CarDetails';
+import CarDetail from './pages/CarDetail';
 
 const AppRoutes = () => {
   return (
