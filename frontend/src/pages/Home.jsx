@@ -10,6 +10,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [carData, setCarData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const scrollRefs = useRef([]);
 
   useEffect(() => {
@@ -21,39 +22,42 @@ const Home = () => {
           axios.get("http://localhost:8000/cars/budget-friendly"),
         ]);
 
-        console.log('Top Rated:', topRated.data); // Debug log
-        console.log('New Arrivals:', newArrivals.data); // Debug log
-        console.log('Budget Friendly:', budgetFriendly.data); // Debug log
+        console.log('Top Rated:', topRated.data);
+        console.log('New Arrivals:', newArrivals.data);
+        console.log('Budget Friendly:', budgetFriendly.data);
 
         const formattedData = [
           {
             category: 'Top Class',
             cars: topRated.data.map(car => ({
               ...car,
-              name: car.model_name || car.modelnum,
+              name: car.model_name || car.modelnum || 'Unknown Model',
               price: car.price ? `$${car.price.toFixed(2)}` : 'Price not listed',
               image: car.image_link || carImage,
               rating: car.rating ? Math.round(car.rating) : 0,
+              description: car.description || 'No description available.',
             })),
           },
           {
             category: 'New Arrivals',
             cars: newArrivals.data.map(car => ({
               ...car,
-              name: car.model_name || car.modelnum,
+              name: car.model_name || car.modelnum || 'Unknown Model',
               price: car.price ? `$${car.price.toFixed(2)}` : 'Price not listed',
               image: car.image_link || carImage,
               rating: 0,
+              description: car.description || 'No description available.',
             })),
           },
           {
             category: 'Budget Friendly',
             cars: budgetFriendly.data.map(car => ({
               ...car,
-              name: car.model_name || car.modelnum,
+              name: car.model_name || car.modelnum || 'Unknown Model',
               price: car.price ? `$${car.price.toFixed(2)}` : 'Price not listed',
               image: car.image_link || carImage,
               rating: 0,
+              description: car.description || 'No description available.',
             })),
           },
         ];
@@ -61,6 +65,7 @@ const Home = () => {
         setCarData(formattedData);
       } catch (error) {
         console.error("Failed to fetch car data:", error);
+        setError('Failed to load cars. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -69,20 +74,15 @@ const Home = () => {
     fetchCars();
   }, []);
 
-  // const handleCardClick = (car) => {
-  //   console.log('Navigating to car detail with car:', car); // Debug log
-  //   navigate('/car-detail', { state: car });
-  // };
-
   const handleCardClick = (car) => {
-  if (car && car.car_id) {
-    console.log('Navigating to car detail with car:', car);
-    navigate(`/car-detail/${car.car_id}`);  // Make sure to pass the car_id directly in the URL
-  } else {
-    console.error('Car ID is not available');
-  }
-};
-
+    if (car && car.car_id) {
+      console.log('Navigating to car detail with car:', car);
+      navigate(`/car-detail/${car.car_id}`);
+    } else {
+      console.error('Car ID is not available:', car);
+      setError('Cannot navigate to car details: Missing car ID.');
+    }
+  };
 
   const handleImageError = (e) => {
     e.target.src = carImage;
@@ -125,8 +125,11 @@ const Home = () => {
         </section>
 
         <div id="car-categories" className="categories">
+          {error && <div className="error-message">{error}</div>}
           {loading ? (
             <div className="loading">Loading cars...</div>
+          ) : carData.length === 0 ? (
+            <div className="no-data">No cars available.</div>
           ) : (
             carData.map((section, idx) => (
               <div key={idx} className="category-section">
@@ -141,7 +144,7 @@ const Home = () => {
                   >
                     {section.cars.map((car, index) => (
                       <div
-                        key={index}
+                        key={`${section.category}-${car.car_id}-${index}`}
                         className="car-card"
                         onClick={() => handleCardClick(car)}
                       >
@@ -154,6 +157,7 @@ const Home = () => {
                         <div className="car-details">
                           <h3 className="car-name">{car.name}</h3>
                           <p className="car-price">{car.price}</p>
+                          <p className="car-description">{car.description}</p>
                           {car.rating > 0 && (
                             <p className="car-rating">
                               {'★'.repeat(car.rating)}{'☆'.repeat(5 - car.rating)}
@@ -182,6 +186,7 @@ const Home = () => {
           font-family: 'Inter', sans-serif;
           margin: 0;
           padding-top: 60px;
+          min-height: 100vh;
         }
         .hero {
           background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url(${carImage});
@@ -247,10 +252,14 @@ const Home = () => {
           background: linear-gradient(135deg, #000000ff, #010401ff);
           width: 100%;
         }
-        .loading {
+        .loading, .error-message, .no-data {
           text-align: center;
           font-size: 1.2rem;
           color: #d1d5db;
+          padding: 1rem;
+        }
+        .error-message {
+          color: #f43f5e;
         }
         .category-section {
           margin-bottom: 1.5rem;
@@ -319,6 +328,16 @@ const Home = () => {
           font-size: 1rem;
           color: #22d3ee;
           margin: 0.2rem 0;
+        }
+        .car-description {
+          font-size: 0.9rem;
+          color: #d1d5db;
+          margin: 0.2rem 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
         }
         .car-rating {
           color: #facc15;

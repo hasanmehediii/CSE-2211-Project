@@ -186,3 +186,61 @@ def get_car_details(car_id: int, db: Session = Depends(get_db)):
     }
 
     return car_details
+
+class CarResponse(CarBase):
+    car_id: int
+    quantity: Optional[int] = None
+    rating: Optional[float] = None
+    description: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+@router.get("/{car_id}/details", response_model=CarResponse)
+def read_car_details(car_id: int, db: Session = Depends(get_db)):
+    db_car = get_car_details(db, car_id)
+    if db_car is None:
+        raise HTTPException(status_code=404, detail="Car not found")
+    return db_car
+
+def generate_car_description(db: Session, car: Car) -> str:
+    """Generate a description for a car based on its attributes."""
+    description_parts = []
+    if car.manufacturer:
+        description_parts.append(f"Manufacturer: {car.manufacturer}")
+    if car.model_name:
+        description_parts.append(f"Model: {car.model_name}")
+    if car.year:
+        description_parts.append(f"Year: {car.year}")
+    if car.engine_type:
+        description_parts.append(f"Engine: {car.engine_type}")
+    if car.transmission:
+        description_parts.append(f"Transmission: {car.transmission}")
+    if car.color:
+        description_parts.append(f"Color: {car.color}")
+    if car.mileage is not None:
+        description_parts.append(f"Mileage: {car.mileage} km")
+    if car.fuel_capacity is not None:
+        description_parts.append(f"Fuel Capacity: {car.fuel_capacity} L")
+    if car.seating_capacity is not None:
+        description_parts.append(f"Seating Capacity: {car.seating_capacity}")
+    if car.price is not None:
+        description_parts.append(f"Price: ${car.price}")
+    return ", ".join(description_parts) if description_parts else "No description available."
+
+def get_car_details(db: Session, car_id: int):
+    """Fetch car details with car_inventory data for a specific car_id."""
+    result = (
+        db.query(Car, CarInventory.quantity)
+        .join(CarInventory, Car.car_id == CarInventory.car_id, isouter=True)
+        .filter(Car.car_id == car_id)
+        .first()
+    )
+    if result is None:
+        return None
+    car, quantity = result
+    car_dict = car.__dict__
+    car_dict['quantity'] = quantity
+    car_dict['rating'] = db.query(func.avg(ReviewModel.rating)).filter(ReviewModel.car_id == car.car_id).scalar()
+    car_dict['description'] = generate_car_description(db, car)
+    return CarResponse.parse_obj(car_dict)

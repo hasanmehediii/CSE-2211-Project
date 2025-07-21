@@ -56,8 +56,8 @@ def get_reviews(db: Session, skip: int = 0, limit: int = 100):
 
 def get_reviews_by_car_id(db: Session, car_id: int, skip: int = 0, limit: int = 100):
     return (
-        db.query(ReviewModel)
-        .join(User, ReviewModel.user_id == User.user_id)
+        db.query(ReviewModel, User.username)
+        .outerjoin(User, ReviewModel.user_id == User.user_id)
         .filter(ReviewModel.car_id == car_id, ReviewModel.is_visible == True)
         .offset(skip)
         .limit(limit)
@@ -89,6 +89,16 @@ def read_review(review_id: int, db: Session = Depends(get_db)):
 @router.get("/cars/{car_id}/reviews", response_model=List[ReviewResponse])
 def read_reviews_by_car_id(car_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     reviews = get_reviews_by_car_id(db, car_id, skip, limit)
-    if not reviews:
-        raise HTTPException(status_code=404, detail="No reviews found for this car")
-    return reviews
+    return [ReviewResponse(
+        review_id=review.ReviewModel.review_id,
+        purchase_id=review.ReviewModel.purchase_id,
+        car_id=review.ReviewModel.car_id,
+        user_id=review.ReviewModel.user_id,
+        rating=review.ReviewModel.rating,
+        review_text=review.ReviewModel.review_text,
+        created_at=review.ReviewModel.created_at,
+        is_visible=review.ReviewModel.is_visible,
+        helpful_count=review.ReviewModel.helpful_count,
+        employee_feedback=review.ReviewModel.employee_feedback,
+        username=review.username
+    ) for review in reviews]
