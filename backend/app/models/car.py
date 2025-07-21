@@ -7,7 +7,10 @@ from app.database import get_db, Base
 from datetime import date
 from app.models.category import Category
 from app.models.review import ReviewModel
+from app.models.car_inventory import CarInventory
+from app.models.car_inventory_log import CarInventoryLog
 
+# Car model
 class Car(Base):
     __tablename__ = "cars"
     
@@ -33,6 +36,7 @@ class Car(Base):
     inventories = relationship("CarInventory", back_populates="car")
     order_items = relationship("OrderItem", back_populates="car")
 
+# Pydantic models
 class CarBase(BaseModel):
     category_id: int
     modelnum: str
@@ -51,7 +55,26 @@ class CarBase(BaseModel):
     image_link: Optional[str] = None
 
     class Config:
-        orm_mode = True  # Enable ORM mode for from_orm
+        orm_mode = True
+
+class CarCreate(BaseModel):
+    category_id: int
+    modelnum: str
+    manufacturer: Optional[str] = None
+    model_name: Optional[str] = None
+    year: Optional[int] = None
+    engine_type: Optional[str] = None
+    transmission: Optional[str] = None
+    color: Optional[str] = None
+    mileage: Optional[int] = None
+    fuel_capacity: Optional[float] = None
+    seating_capacity: Optional[int] = None
+    price: Optional[float] = None
+    available: bool = True
+    image_link: Optional[str] = None
+
+    class Config:
+        orm_mode = True
 
 class CarWithRating(CarBase):
     car_id: int
@@ -60,11 +83,16 @@ class CarWithRating(CarBase):
     class Config:
         orm_mode = True
 
-class CarCreate(CarBase):
-    pass
+# New endpoint models
+class CarDetail(CarBase):
+    inventory: List[dict]
+    inventory_logs: List[dict]
+    reviews: List[dict]
 
-router = APIRouter(prefix="/cars", tags=["cars"])
+    class Config:
+        orm_mode = True
 
+# Existing Car CRUD Operations
 def get_car(db: Session, car_id: int):
     return db.query(Car).filter(Car.car_id == car_id).first()
 
@@ -102,6 +130,9 @@ def get_budget_friendly_cars(db: Session, limit: int = 6):
     cars = db.query(Car).order_by(Car.price.asc()).limit(limit).all()
     return [CarBase.from_orm(car) for car in cars]  # Convert to CarBase
 
+# Routes (Including new route for car details)
+router = APIRouter(prefix="/cars", tags=["cars"])
+
 @router.get("/", response_model=List[CarBase])
 def read_cars(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return db.query(Car).offset(skip).limit(limit).all()
@@ -124,3 +155,34 @@ def read_car(car_id: int, db: Session = Depends(get_db)):
     if db_car is None:
         raise HTTPException(status_code=404, detail="Car not found")
     return db_car
+
+# New endpoint for car details, including inventory and reviews
+@router.get("/car-detail/{car_id}", response_model=CarDetail)
+def read_car_detail(car_id: int, db: Session = Depends(get_db)):
+    return get_car_details(db, car_id)
+
+@router.get("/cars/{car_id}/details")
+def get_car_details(car_id: int, db: Session = Depends(get_db)):
+    # Get car details
+    car = db.query(Car).filter(Car.car_id == car_id).first()
+    if not car:
+        raise HTTPException(status_code=404, detail="Car not found")
+    
+    # Get car inventory
+    inventory = db.query(CarInventory).filter(CarInventory.car_id == car_id).first()
+    
+    # Get car inventory logs
+    inventory_logs = db.query(CarInventoryLog).filter(CarInventoryLog.car_id == car_id).all()
+    
+    # Get car reviews
+    reviews = db.query(ReviewModel).filter(ReviewModel.car_id == car_id, ReviewModel.is_visible == True).all()
+    
+    # Combine the data into one response
+    car_details = {
+        "car": car,
+        "inventory": inventory,
+        "inventory_logs": inventory_logs,
+        "reviews": reviews
+    }
+
+    return car_details

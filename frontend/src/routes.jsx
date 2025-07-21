@@ -17,7 +17,8 @@ const AppRoutes = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/car-detail" element={<CarDetail />} />
+        {/* Modify this to accept carId in the URL */}
+        <Route path="/car-detail/:carId" element={<CarDetail />} />
       </Routes>
     </Router>
   );

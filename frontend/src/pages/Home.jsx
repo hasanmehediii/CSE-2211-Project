@@ -69,10 +69,20 @@ const Home = () => {
     fetchCars();
   }, []);
 
+  // const handleCardClick = (car) => {
+  //   console.log('Navigating to car detail with car:', car); // Debug log
+  //   navigate('/car-detail', { state: car });
+  // };
+
   const handleCardClick = (car) => {
-    console.log('Navigating to car detail with car:', car); // Debug log
-    navigate('/car-detail', { state: car });
-  };
+  if (car && car.car_id) {
+    console.log('Navigating to car detail with car:', car);
+    navigate(`/car-detail/${car.car_id}`);  // Make sure to pass the car_id directly in the URL
+  } else {
+    console.error('Car ID is not available');
+  }
+};
+
 
   const handleImageError = (e) => {
     e.target.src = carImage;

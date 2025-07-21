@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
 from app.database import get_db, Base
+from app.models.review import ReviewModel  # Import ReviewModel (adjust path as needed)
+from app.models.user import User  # Import User model (adjust path as needed)
 
 class CarInventory(Base):
     __tablename__ = "car_inventory"
@@ -40,8 +42,19 @@ def get_car_inventory(db: Session, inventory_id: int):
 def get_car_inventories(db: Session, skip: int = 0, limit: int = 100):
     return db.query(CarInventory).offset(skip).limit(limit).all()
 
+# Fix: Return a list of car inventories, not just one
 def get_car_inventory_by_car_id(db: Session, car_id: int):
-    return db.query(CarInventory).filter(CarInventory.car_id == car_id).first()
+    return db.query(CarInventory).filter(CarInventory.car_id == car_id).all()  # Ensure this returns all inventory items, not just one
+
+def get_reviews_by_car_id(db: Session, car_id: int, skip: int = 0, limit: int = 100):
+    return (
+        db.query(ReviewModel)
+        .join(User, ReviewModel.user_id == User.user_id)
+        .filter(ReviewModel.car_id == car_id, ReviewModel.is_visible == True)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
 def create_car_inventory(db: Session, car_inventory: CarInventoryCreate):
     db_inventory = CarInventory(**car_inventory.dict())

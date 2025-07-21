@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from typing import List, Optional
 from app.database import get_db, Base
 from datetime import datetime
+from app.models.user import User  # Import the User model
 
 class ReviewModel(Base):
     __tablename__ = "reviews"
