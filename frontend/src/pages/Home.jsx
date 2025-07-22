@@ -107,7 +107,7 @@ const Home = () => {
       <div className="page">
         <Navbar/>
         <section className="hero">
-          <h1 className="hero-title">Welcome to BMW City</h1>
+          <h1 className="hero-title">Welcome to Goriber Gari</h1>
           <p className="hero-subtitle">Experience the ride of your dreams</p>
           <button
             className="hero-button"
@@ -263,7 +263,7 @@ const Home = () => {
           color: #f43f5e;
         }
         .category-section {
-          margin-bottom: 1.5rem;
+          margin-bottom: 5rem;
           position: relative;
         }
         .category-title {

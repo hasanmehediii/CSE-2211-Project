@@ -38,7 +38,7 @@ const Footer = () => {
     <footer style={footerStyle}>
       {/* Footer Text */}
       <p style={footerTextStyle}>
-        &copy; 2025 BMW City. All rights reserved.
+        &copy; 2025 Goriber Gari for Abu sir. All rights reserved.
       </p>
       
       {/* Social Icons */}
