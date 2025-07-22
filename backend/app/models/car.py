@@ -38,6 +38,7 @@ class Car(Base):
 
 # Pydantic models
 class CarBase(BaseModel):
+    car_id: int
     category_id: int
     modelnum: str
     manufacturer: Optional[str] = None
@@ -123,12 +124,19 @@ def get_top_rated_cars(db: Session, limit: int = 6):
     return cars_with_ratings
 
 def get_new_arrivals(db: Session, limit: int = 6):
-    cars = db.query(Car).order_by(Car.added_date.desc()).limit(limit).all()
-    return [CarBase.from_orm(car) for car in cars]  # Convert to CarBase
+    cars = db.query(Car).filter(Car.added_date != None).order_by(Car.added_date.desc()).limit(limit).all()
+    if cars:
+        print("New Arrivals:", [car.car_id for car in cars])
+    
+    return [CarBase.from_orm(car) for car in cars] if cars else []
 
 def get_budget_friendly_cars(db: Session, limit: int = 6):
-    cars = db.query(Car).order_by(Car.price.asc()).limit(limit).all()
-    return [CarBase.from_orm(car) for car in cars]  # Convert to CarBase
+    cars = db.query(Car).filter(Car.price != None).order_by(Car.price.asc()).limit(limit).all()
+    if cars:
+        print("Budget Friendly Cars:", [car.car_id for car in cars])
+    
+    return [CarBase.from_orm(car) for car in cars] if cars else []
+
 
 # Routes (Including new route for car details)
 router = APIRouter(prefix="/cars", tags=["cars"])

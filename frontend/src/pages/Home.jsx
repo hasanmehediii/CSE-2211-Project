@@ -187,12 +187,13 @@ const Home = () => {
           margin: 0;
           padding-top: 60px;
           min-height: 100vh;
+          overflow-x: hidden;  /* Prevent horizontal overflow */
         }
         .hero {
           background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url(${carImage});
           background-size: cover;
           background-position: center;
-          height: calc(100vh - 60px);
+          height: 100vh;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -200,6 +201,7 @@ const Home = () => {
           padding: 0 1.5rem;
           position: relative;
           width: 100%;
+          overflow: hidden;
         }
         .hero-title {
           font-size: 3rem;
