@@ -1,4 +1,3 @@
-# app/models/category.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session, relationship

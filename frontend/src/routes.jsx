@@ -7,6 +7,7 @@ import Signup from './pages/SignUp';
 import Welcome from './pages/Welcome';
 import FAQ from './pages/FAQ';
 import CarDetail from './pages/CarDetail';
+import CarForMe from './pages/CarForMe';
 
 const AppRoutes = () => {
   return (
@@ -17,6 +18,7 @@ const AppRoutes = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/category/:categoryId" element={<CarForMe />} />
         {/* Modify this to accept carId in the URL */}
         <Route path="/car-detail/:carId" element={<CarDetail />} />
       </Routes>

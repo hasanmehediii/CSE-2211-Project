@@ -105,7 +105,7 @@ const Home = () => {
   return (
     <>
       <div className="page">
-        <Navbar />
+        <Navbar/>
         <section className="hero">
           <h1 className="hero-title">Welcome to BMW City</h1>
           <p className="hero-subtitle">Experience the ride of your dreams</p>
@@ -186,7 +186,6 @@ const Home = () => {
           font-family: 'Inter', sans-serif;
           margin: 0;
           padding-top: 60px;
-          min-height: 100vh;
           overflow-x: hidden;  /* Prevent horizontal overflow */
         }
         .hero {

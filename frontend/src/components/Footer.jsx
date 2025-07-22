@@ -3,7 +3,7 @@ import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa'; // Import F
 
 const Footer = () => {
   const footerStyle = {
-    background: 'linear-gradient(to right, #000000ff, #010401ff)', // Same as navbar color
+    background: 'linear-gradient(to right, #010402ff, #010401ff)', // Same as navbar color
     color: '#fff',
     textAlign: 'center',
     padding: '2rem 0', // Increased padding for better spacing

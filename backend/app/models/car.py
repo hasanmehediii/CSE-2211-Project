@@ -9,6 +9,7 @@ from app.models.category import Category
 from app.models.review import ReviewModel
 from app.models.car_inventory import CarInventory
 from app.models.car_inventory_log import CarInventoryLog
+from app.models.category import get_category
 
 # Car model
 class Car(Base):
@@ -210,6 +211,21 @@ def read_car_details(car_id: int, db: Session = Depends(get_db)):
     if db_car is None:
         raise HTTPException(status_code=404, detail="Car not found")
     return db_car
+
+# @router.get("/category/{category_id}", response_model=List[CarBase])
+# def read_cars_by_category(category_id: int, db: Session = Depends(get_db)):
+#     db_category = get_category(db, category_id)
+#     if db_category is None:
+#         raise HTTPException(status_code=404, detail="Category not found")
+#     return db.query(Car).filter(Car.category_id == category_id).all()
+
+@router.get("/category/{category_id}", response_model=List[CarBase])
+def read_cars_by_category(category_id: int, db: Session = Depends(get_db)):
+    db_category = get_category(db, category_id)
+    if db_category is None:
+        raise HTTPException(status_code=404, detail="Category not found")
+    cars = db.query(Car).filter(Car.category_id == category_id).all()
+    return cars
 
 def generate_car_description(db: Session, car: Car) -> str:
     """Generate a description for a car based on its attributes."""
