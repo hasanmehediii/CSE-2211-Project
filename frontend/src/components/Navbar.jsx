@@ -242,7 +242,7 @@ const Navbar = () => {
         }
         .username {
           font-size: 1rem;
-          color: #d1d5db;
+          color: #ffea00ff;
           font-weight: 500;
         }
         .login-button, .logout-button {
