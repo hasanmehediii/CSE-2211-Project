@@ -8,6 +8,8 @@ import Welcome from './pages/Welcome';
 import FAQ from './pages/FAQ';
 import CarDetail from './pages/CarDetail';
 import CarForMe from './pages/CarForMe';
+import CarPurchase from './pages/CarPurchase';
+import PurchaseAfter from './pages/PurchaseAfter';
 
 const AppRoutes = () => {
   return (
@@ -21,6 +23,9 @@ const AppRoutes = () => {
         <Route path="/category/:categoryId" element={<CarForMe />} />
         {/* Modify this to accept carId in the URL */}
         <Route path="/car-detail/:carId" element={<CarDetail />} />
+        <Route path="/car-purchase/:carId" element={<CarPurchase />} />
+        <Route path="/purchase-after/:purchaseId" element={<PurchaseAfter />} />
+        {/* Add more routes as needed */}
       </Routes>
     </Router>
   );
