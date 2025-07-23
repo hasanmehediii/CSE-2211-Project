@@ -18,7 +18,7 @@ const PurchaseAfter = () => {
         const purchaseResponse = await axios.get(`http://localhost:8000/purchases/${purchaseId}`);
         setPurchaseDetails(purchaseResponse.data);
 
-        const orderResponse = await axios.get(`http://localhost:8000/orders?purchase_id=${purchaseId}`);
+        const orderResponse = await axios.get(`http://localhost:8000/orders/?purchase_id=${purchaseId}`);
         if (orderResponse.data.length > 0) {
           setOrderDetails(orderResponse.data[0]);
         } else {
