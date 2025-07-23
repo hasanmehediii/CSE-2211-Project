@@ -85,7 +85,7 @@ def read_car_inventory_by_car_id(car_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Inventory for car not found")
     return db_inventory
 
-@router.get("car_inventory/{car_id}", response_model=List[CarInventoryResponse])
+@router.patch("car_inventory/{car_id}", response_model=List[CarInventoryResponse])
 def read_reviews_by_car_id(car_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     reviews = get_reviews_by_car_id(db, car_id, skip, limit)
     if not reviews:

@@ -36,6 +36,10 @@ class PurchaseResponse(PurchaseBase):
     class Config:
         orm_mode = True
 
+class PurchaseUpdatePayment(BaseModel):
+    amount: float
+    status: Optional[str] = None
+
 router = APIRouter(prefix="/purchases", tags=["purchases"])
 
 def get_purchase(db: Session, purchase_id: int):
@@ -58,6 +62,19 @@ def create_purchase_endpoint(purchase: PurchaseCreate, db: Session = Depends(get
 @router.get("/", response_model=List[PurchaseResponse])
 def read_purchases(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return get_purchases(db, skip, limit)
+
+@router.patch("/{purchase_id}", response_model=PurchaseResponse)
+def update_purchase_payment(purchase_id: int, payment_update: PurchaseUpdatePayment, db: Session = Depends(get_db)):
+    purchase = db.query(PurchaseModel).filter(PurchaseModel.purchase_id == purchase_id).first()
+    if not purchase:
+        raise HTTPException(status_code=404, detail="Purchase not found")
+
+    purchase.amount = payment_update.amount
+    if payment_update.status:
+        purchase.status = payment_update.status
+    db.commit()
+    db.refresh(purchase)
+    return purchase
 
 @router.get("/{purchase_id}", response_model=PurchaseResponse)
 def read_purchase(purchase_id: int, db: Session = Depends(get_db)):
