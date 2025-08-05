@@ -1,5 +1,13 @@
-# Goriber Gari
-- A trusted place to order and buy imported cars.
+# Goriber Gari (Database Management System Project)
+
+<p align="center">
+  <img src="car-dealer.png" alt="Website Logo" width="150" height="150" style="border-radius: 50%; border: 2px solid #ccc;" />
+  <br>
+  <strong>Online Car Purchase Shop</strong>
+</p>
+
+- **Goriber Gari** is a simple user friendly car purchasing e-commerce type website which deals with modern high quality cars at a cheap rate. We want to sell our cars at lower cost by which everyone can have his own car to make his dream come true. This is a fullstack e-commerce project with React JS, FastAPI and PostgreSQL.
+
 
 ## Frontend Run
 ``` bash
