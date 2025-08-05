@@ -45,6 +45,9 @@ def get_order(db: Session, order_id: int):
 def get_orders(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Order).offset(skip).limit(limit).all()
 
+def get_orders_by_purchase(db: Session, purchase_id: int):
+    return db.query(Order).filter(Order.purchase_id == purchase_id).all()
+
 def create_order(db: Session, order: OrderCreate):
     db_order = Order(**order.dict())
     db.add(db_order)
@@ -66,3 +69,7 @@ def read_order(order_id: int, db: Session = Depends(get_db)):
     if db_order is None:
         raise HTTPException(status_code=404, detail="Order not found")
     return db_order
+
+@router.get("/purchase/{purchase_id}", response_model=List[OrderResponse])
+def read_orders_by_purchase(purchase_id: int, db: Session = Depends(get_db)):
+    return get_orders_by_purchase(db, purchase_id)

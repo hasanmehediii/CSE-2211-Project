@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session, relationship
 from pydantic import BaseModel
 from typing import List, Optional
 from app.database import get_db, Base
-from datetime import date
+from datetime import date, datetime
 from passlib.context import CryptContext
 
 # Password hashing context
@@ -36,18 +36,44 @@ class UserBase(BaseModel):
     card_num: Optional[str] = None
     bank_acc: Optional[str] = None
 
-class UserCreate(UserBase):
-    pass
+class ReviewSummary(BaseModel):
+    review_id: int
+    car_id: int
+    rating: int
+    review_text: Optional[str] = None
+    created_at: datetime
 
-class UserLogin(BaseModel):
-    email: str
-    password: str
+    class Config:
+        orm_mode = True
+
+class PurchaseSummary(BaseModel):
+    purchase_id: int
+    amount: float
+    status: Optional[str] = None
+    invoice_number: Optional[str] = None
+
+    class Config:
+        orm_mode = True
 
 class UserResponse(UserBase):
     user_id: int
 
     class Config:
         orm_mode = True
+
+class UserWithActivityResponse(UserResponse):
+    reviews: List[ReviewSummary] = []
+    purchases: List[PurchaseSummary] = []
+
+    class Config:
+        orm_mode = True
+
+class UserCreate(UserBase):
+    pass
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -76,6 +102,14 @@ def create_user(db: Session, user: UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+@router.get("/{user_id}/all", response_model=UserWithActivityResponse)
+def get_user_full_info(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 
 @router.post("/", response_model=UserResponse)
 def create_user_endpoint(user: UserCreate, db: Session = Depends(get_db)):

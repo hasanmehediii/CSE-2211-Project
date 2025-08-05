@@ -11,6 +11,7 @@ import CarForMe from './pages/CarForMe';
 import CarPurchase from './pages/CarPurchase';
 import PurchaseAfter from './pages/PurchaseAfter';
 import Payment from './pages/Payment';
+import UserProfile from './pages/UserProfile';
 
 const AppRoutes = () => {
   return (
@@ -27,6 +28,7 @@ const AppRoutes = () => {
         <Route path="/car-purchase/:carId" element={<CarPurchase />} />
         <Route path="/purchase-after/:purchaseId" element={<PurchaseAfter />} />
         <Route path="/payment/:purchaseId" element={<Payment />} />
+        <Route path="/profile" element={<UserProfile />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>

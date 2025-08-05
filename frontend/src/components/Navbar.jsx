@@ -96,7 +96,7 @@ const Navbar = () => {
             <Link to="/faq" className="nav-link">FAQs</Link>
             {user ? (
               <div className="user-info">
-                <span className="username">{user.username}</span>
+                <Link to="/profile" className="username">{user.username}</Link>
                 <button onClick={handleLogout} className="logout-button">Logout</button>
               </div>
             ) : (
