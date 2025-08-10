@@ -55,13 +55,26 @@ class PurchaseSummary(BaseModel):
     class Config:
         orm_mode = True
 
+class UserPublic(BaseModel):
+    user_id: int
+    email: str
+    username: str
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    dob: Optional[date] = None
+    card_num: Optional[str] = None
+    bank_acc: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
 class UserResponse(UserBase):
     user_id: int
 
     class Config:
         orm_mode = True
 
-class UserWithActivityResponse(UserResponse):
+class UserWithActivityResponse(UserPublic):
     reviews: List[ReviewSummary] = []
     purchases: List[PurchaseSummary] = []
 
@@ -70,6 +83,17 @@ class UserWithActivityResponse(UserResponse):
 
 class UserCreate(UserBase):
     pass
+
+
+class UserUpdate(BaseModel):
+    email: Optional[str] = None
+    username: Optional[str] = None
+    address: Optional[str] = None
+    phone: Optional[str] = None
+    dob: Optional[date] = None
+    card_num: Optional[str] = None
+    bank_acc: Optional[str] = None
+
 
 class UserLogin(BaseModel):
     email: str
@@ -111,6 +135,20 @@ def get_user_full_info(user_id: int, db: Session = Depends(get_db)):
     return user
 
 
+@router.put("/{user_id}", response_model=UserPublic)
+def update_user_endpoint(user_id: int, user_update: UserUpdate, db: Session = Depends(get_db)):
+    db_user = get_user(db, user_id)
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    update_data = user_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_user, key, value)
+
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
 @router.post("/", response_model=UserResponse)
 def create_user_endpoint(user: UserCreate, db: Session = Depends(get_db)):
     db_user = get_user_by_email(db, user.email)
@@ -125,7 +163,7 @@ def create_user_endpoint(user: UserCreate, db: Session = Depends(get_db)):
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return get_users(db, skip, limit)
 
-@router.get("/{user_id}", response_model=UserResponse)
+@router.get("/{user_id}", response_model=UserPublic)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = get_user(db, user_id)
     if db_user is None:

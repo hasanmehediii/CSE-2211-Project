@@ -90,11 +90,31 @@ const UserProfile = () => {
                             <form onSubmit={handleSubmit} className="profile-form">
                                 <div className="form-group">
                                     <label htmlFor="username">Username</label>
-                                    <input id="username" type="text" name="username" value={formData.username} onChange={handleChange} />
+                                    <input id="username" type="text" name="username" value={formData.username || ''} onChange={handleChange} />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="email">Email</label>
-                                    <input id="email" type="email" name="email" value={formData.email} onChange={handleChange} />
+                                    <input id="email" type="email" name="email" value={formData.email || ''} onChange={handleChange} />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="address">Address</label>
+                                    <input id="address" type="text" name="address" value={formData.address || ''} onChange={handleChange} />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="phone">Phone</label>
+                                    <input id="phone" type="text" name="phone" value={formData.phone || ''} onChange={handleChange} />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="dob">Date of Birth</label>
+                                    <input id="dob" type="date" name="dob" value={formData.dob || ''} onChange={handleChange} />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="card_num">Card Number</label>
+                                    <input id="card_num" type="text" name="card_num" value={formData.card_num || ''} onChange={handleChange} />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="bank_acc">Bank Account</label>
+                                    <input id="bank_acc" type="text" name="bank_acc" value={formData.bank_acc || ''} onChange={handleChange} />
                                 </div>
                                 <div className="form-buttons">
                                     <button type="submit" className="btn-save">Save Changes</button>
@@ -108,6 +128,21 @@ const UserProfile = () => {
                                 </div>
                                 <div className="info-item">
                                     <strong>Email:</strong><span>{userData.email}</span>
+                                </div>
+                                <div className="info-item">
+                                    <strong>Address:</strong><span>{userData.address || 'N/A'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <strong>Phone:</strong><span>{userData.phone || 'N/A'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <strong>Date of Birth:</strong><span>{userData.dob || 'N/A'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <strong>Card Number:</strong><span>{userData.card_num || 'N/A'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <strong>Bank Account:</strong><span>{userData.bank_acc || 'N/A'}</span>
                                 </div>
                                 <button className="btn-edit" onClick={handleEdit}>Edit Profile</button>
                             </div>

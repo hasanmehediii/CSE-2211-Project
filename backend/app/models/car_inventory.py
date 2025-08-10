@@ -28,6 +28,12 @@ class CarInventoryBase(BaseModel):
 class CarInventoryCreate(CarInventoryBase):
     pass
 
+
+class CarInventoryUpdate(BaseModel):
+    quantity: Optional[int] = None
+    notes: Optional[str] = None
+
+
 class CarInventoryResponse(CarInventoryBase):
     inventory_id: int
 
@@ -85,9 +91,16 @@ def read_car_inventory_by_car_id(car_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Inventory for car not found")
     return db_inventory
 
-@router.patch("car_inventory/{car_id}", response_model=List[CarInventoryResponse])
-def read_reviews_by_car_id(car_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    reviews = get_reviews_by_car_id(db, car_id, skip, limit)
-    if not reviews:
-        raise HTTPException(status_code=404, detail="No reviews found for this car")
-    return reviews
+@router.patch("/{car_id}", response_model=CarInventoryResponse)
+def update_car_inventory_endpoint(car_id: int, inventory_update: CarInventoryUpdate, db: Session = Depends(get_db)):
+    db_inventory = db.query(CarInventory).filter(CarInventory.car_id == car_id).first()
+    if db_inventory is None:
+        raise HTTPException(status_code=404, detail="Car inventory not found")
+
+    update_data = inventory_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_inventory, key, value)
+
+    db.commit()
+    db.refresh(db_inventory)
+    return db_inventory

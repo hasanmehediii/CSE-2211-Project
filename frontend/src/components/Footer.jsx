@@ -1,71 +1,61 @@
 import React from 'react';
-import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa'; // Import Font Awesome icons
+import { Link } from 'react-router-dom';
+import './Footer.css'; // Import the CSS file
 
 const Footer = () => {
-  const footerStyle = {
-    background: 'linear-gradient(to right, #010402ff, #010401ff)', // Same as navbar color
-    color: '#fff',
-    textAlign: 'center',
-    padding: '2rem 0', // Increased padding for better spacing
-    marginTop: '2rem',
-  };
-
-  const footerTextStyle = {
-    fontSize: '1.1rem',
-    marginBottom: '1rem',
-    color: '#e0e0e0',
-  };
-
-  const socialIconsStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '1.5rem',
-    marginBottom: '1.5rem',
-  };
-
-  const socialIconStyle = {
-    fontSize: '2rem',
-    color: '#fff',
-    cursor: 'pointer',
-    transition: 'color 0.3s ease',
-  };
-
-  const socialIconHoverStyle = {
-    color: '#ff6347', // Hover color for social icons
-  };
-
-  return (
-    <footer style={footerStyle}>
-      {/* Footer Text */}
-      <p style={footerTextStyle}>
-        &copy; 2025 Goriber Gari for Abu sir. All rights reserved.
-      </p>
-      
-      {/* Social Icons */}
-      <div style={socialIconsStyle}>
-        <FaFacebook
-          style={socialIconStyle}
-          onMouseEnter={(e) => (e.target.style.color = '#ff6347')}
-          onMouseLeave={(e) => (e.target.style.color = '#fff')}
-        />
-        <FaTwitter
-          style={socialIconStyle}
-          onMouseEnter={(e) => (e.target.style.color = '#ff6347')}
-          onMouseLeave={(e) => (e.target.style.color = '#fff')}
-        />
-        <FaInstagram
-          style={socialIconStyle}
-          onMouseEnter={(e) => (e.target.style.color = '#ff6347')}
-          onMouseLeave={(e) => (e.target.style.color = '#fff')}
-        />
-      </div>
-      
-      {/* Additional Footer Text */}
-      <p style={footerTextStyle}>
-        Connect with us on social media for the latest updates and promotions!
-      </p>
-    </footer>
-  );
+    return (
+        <footer className="footer">
+            <div className="footer-container">
+                <div className="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><Link to="/about">About Us</Link></li>
+                        <li><Link to="/contact">Contact Us</Link></li>
+                        <li><Link to="/careers">Careers</Link></li>
+                    </ul>
+                </div>
+                <div className="footer-section">
+                    <h4>Customer Service</h4>
+                    <ul>
+                        <li><Link to="/faq">FAQ</Link></li>
+                        <li><Link to="/shipping">Shipping & Returns</Link></li>
+                        <li><Link to="/orders">Track Order</Link></li>
+                    </ul>
+                </div>
+                <div className="footer-section">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><Link to="/cars">All Cars</Link></li>
+                        <li><Link to="/new-arrivals">New Arrivals</Link></li>
+                        <li><Link to="/best-sellers">Best Sellers</Link></li>
+                    </ul>
+                </div>
+                <div className="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><Link to="/terms">Terms of Service</Link></li>
+                        <li><Link to="/privacy">Privacy Policy</Link></li>
+                    </ul>
+                </div>
+                <div className="footer-section">
+                    <h4>Connect With Us</h4>
+                    <div className="social-links">
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">FB</a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">TW</a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">IG</a>
+                    </div>
+                    <div className="newsletter">
+                        <h4>Subscribe to our Newsletter</h4>
+                        <input type="email" placeholder="Enter your email" />
+                        <button>Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div className="footer-bottom">
+                <p>&copy; 2025 Car Dealer, Inc. All rights reserved.</p>
+            </div>
+        </footer>
+    );
 };
 
 export default Footer;
