@@ -8,9 +8,15 @@ from app.admin import admin_router
 app = FastAPI(title="Car Purchase API")
 
 # Add CORS middleware
+origins = [
+    "http://localhost:5173",  # React app URL
+]
+if os.environ.get("VERCEL_URL"):
+    origins.append(f"https://{os.environ.get('VERCEL_URL')}")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # React app URL
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
