@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
 from app.models import category, car, user, employee, car_inventory, car_inventory_log, purchase, order, order_item, shipping, review
+from app.admin import admin_router
 
 app = FastAPI(title="Car Purchase API")
 
@@ -30,6 +31,7 @@ app.include_router(order.router)
 app.include_router(order_item.router)
 app.include_router(shipping.router)
 app.include_router(review.router)
+app.include_router(admin_router)
 
 @app.get("/")
 def read_root():

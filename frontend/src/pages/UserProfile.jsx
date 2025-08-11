@@ -158,7 +158,7 @@ const UserProfile = () => {
                                         <p><strong>ID:</strong> {p.purchase_id}</p>
                                         <p><strong>Amount:</strong> ${p.amount}</p>
                                         <p>
-                                            <strong>Status:</strong> 
+                                            <strong>Status:</strong>
                                             <span className={`status status-${p.status?.toLowerCase()}`}>
                                                 {p.status}
                                             </span>
@@ -175,7 +175,7 @@ const UserProfile = () => {
                                     <div key={o.order_id} className="history-item">
                                         <p><strong>ID:</strong> {o.order_id}</p>
                                         <p>
-                                            <strong>Status:</strong> 
+                                            <strong>Status:</strong>
                                             <span className={`status status-${o.status?.toLowerCase()}`}>
                                                 {o.status}
                                             </span>
@@ -192,7 +192,7 @@ const UserProfile = () => {
             <style jsx>{`
                 .profile-page {
                     padding: 3rem 2rem;
-                    background-color: #0f172a;
+                    background-color: #000e02ff;
                     color: #e5e7eb;
                     min-height: 100vh;
                 }
@@ -211,7 +211,7 @@ const UserProfile = () => {
                     margin: 0 auto;
                 }
                 .profile-card, .history-card {
-                    background-color: #1e293b;
+                    background-color: #090125ff;
                     border-radius: 12px;
                     padding: 2rem;
                     box-shadow: 0 8px 24px rgba(0,0,0,0.3);

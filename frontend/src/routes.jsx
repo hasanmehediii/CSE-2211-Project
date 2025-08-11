@@ -12,6 +12,11 @@ import CarPurchase from './pages/CarPurchase';
 import PurchaseAfter from './pages/PurchaseAfter';
 import Payment from './pages/Payment';
 import UserProfile from './pages/UserProfile';
+import AdminHome from './pages/AdminHome';
+import ManageUsers from './pages/admin/ManageUsers';
+import ManageCars from './pages/admin/ManageCars';
+import ManageOrders from './pages/admin/ManageOrders';
+import PurchaseHistory from './pages/admin/PurchaseHistory';
 
 const AppRoutes = () => {
   return (
@@ -29,6 +34,11 @@ const AppRoutes = () => {
         <Route path="/purchase-after/:purchaseId" element={<PurchaseAfter />} />
         <Route path="/payment/:purchaseId" element={<Payment />} />
         <Route path="/profile" element={<UserProfile />} />
+        <Route path="/admin/home" element={<AdminHome />} />
+        <Route path="/admin/manage-users" element={<ManageUsers />} />
+        <Route path="/admin/manage-cars" element={<ManageCars />} />
+        <Route path="/admin/manage-orders" element={<ManageOrders />} />
+        <Route path="/admin/purchase-history" element={<PurchaseHistory />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>
