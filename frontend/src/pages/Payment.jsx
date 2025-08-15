@@ -67,8 +67,7 @@ const Payment = () => {
     try {
       // Mock payment: just update purchase record to mark paid with amount
       await axios.patch(`http://localhost:8000/purchases/${purchaseId}`, {
-        amount: Number(amountToPay),
-        status: 'paid',
+        amount_paid: Number(amountToPay),
       });
       setSuccessMessage('Payment successful! Redirecting...');
       setTimeout(() => navigate(`/purchase-after/${purchaseId}`), 2000);

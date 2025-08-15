@@ -6,6 +6,12 @@ from typing import List, Optional
 from app.database import get_db, Base
 from datetime import date, datetime
 from passlib.context import CryptContext
+from app.models.purchase import PurchaseModel
+from app.models.order import Order
+from app.models.order_item import OrderItem
+
+class PurchaseIdResponse(BaseModel):
+    purchase_id: Optional[int] = None
 
 # Password hashing context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -169,6 +175,24 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
+
+def get_purchase_id_for_car(db: Session, user_id: int, car_id: int) -> Optional[int]:
+    """Get the purchase ID if a user has purchased a specific car."""
+    purchase = (
+        db.query(PurchaseModel.purchase_id)
+        .join(Order, PurchaseModel.purchase_id == Order.purchase_id)
+        .join(OrderItem, Order.order_id == OrderItem.order_id)
+        .filter(PurchaseModel.user_id == user_id)
+        .filter(OrderItem.car_id == car_id)
+        .filter(PurchaseModel.status == 'paid')
+        .first()
+    )
+    return purchase[0] if purchase else None
+
+@router.get("/{user_id}/purchase-for-car/{car_id}", response_model=PurchaseIdResponse)
+def get_purchase_id_for_car_endpoint(user_id: int, car_id: int, db: Session = Depends(get_db)):
+    purchase_id = get_purchase_id_for_car(db, user_id, car_id)
+    return PurchaseIdResponse(purchase_id=purchase_id)
 
 @router.post("/login")
 def login_user(user: UserLogin, db: Session = Depends(get_db)):

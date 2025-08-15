@@ -1,0 +1,158 @@
+1. Available Cars with Category (NATURAL JOIN)
+-----------------------------------------------
+SELECT c.model_name , c.manufacturer , c.year , c.price , cat.name AS category_name
+FROM cars c
+NATURAL JOIN categories cat
+WHERE c.available = TRUE;
+
+2. All Users and Their Purchases (LEFT OUTER JOIN)
+---------------------------------------------------
+SELECT u.username , p.purchase_id , p.amount , p.date
+FROM users u
+LEFT OUTER JOIN purchase p ON u.user_id = p.user_id
+WHERE p.status = 'paid' OR p.purchase_id IS NULL;
+
+3. Order Details with Car Information (USING Clause)
+-----------------------------------------------------
+SELECT o.order_id , o.date AS order_date , c.model_name
+FROM orders o
+JOIN order_item oi USING (order_id)
+JOIN cars c USING (car_id)
+WHERE o.status = 'processing';
+
+4. Users with Completed Purchases (EXISTS)
+--------------------------------------------
+SELECT u.username , u.email
+FROM users u
+WHERE EXISTS (
+    SELECT 1
+    FROM purchase p
+    WHERE p.user_id = u.user_id
+    AND p.status = 'paid'
+);
+
+5. Cars More Expensive Than All Cars in a Category (ALL)
+----------------------------------------------------------
+SELECT model_name , price
+FROM cars
+WHERE price > ALL (
+    SELECT price
+    FROM cars
+    WHERE category_id = 1
+)
+ORDER BY price DESC;
+
+6. Employees and Number of Orders Handled (Scalar Subquery)
+-------------------------------------------------------------
+SELECT e.emp_id , e.name , e.position ,
+(
+    SELECT COUNT(*)
+    FROM shipping s
+    WHERE s.emp_id = e.emp_id
+) AS total_shipments ,
+(
+    SELECT COUNT(*)
+    FROM shipping s
+    WHERE s.emp_id = e.emp_id
+    AND s.status = 'delivered'
+) AS deliveries_completed
+FROM employees e
+WHERE e.status = 'active'
+ORDER BY deliveries_completed DESC, total_shipments DESC, e.name;
+
+7. Top 5 Most Reviewed Cars (WITH/CTE)
+----------------------------------------
+WITH CarReviews AS (
+    SELECT c.model_name , c.manufacturer , COUNT(r.review_id) AS review_count
+    FROM cars c
+    LEFT JOIN reviews r ON c.car_id = r.car_id
+    GROUP BY c.model_name , c.manufacturer
+)
+SELECT model_name , manufacturer , review_count
+FROM CarReviews
+ORDER BY review_count DESC
+LIMIT 5;
+
+8. Available Cars and Inventory Quantities (INNER JOIN)
+---------------------------------------------------------
+SELECT c.model_name , c.manufacturer , ci.quantity , ci.location
+FROM cars c
+INNER JOIN car_inventory ci ON c.car_id = ci.car_id
+WHERE c.available = TRUE AND ci.quantity > 0
+ORDER BY ci.quantity DESC;
+
+9. Employees and Their Shipping Records (RIGHT OUTER JOIN)
+------------------------------------------------------------
+SELECT e.emp_id , e.name AS employee_name , e.department ,
+s.ship_id , s.shipping_provider , s.status AS shipping_status ,
+s.shipped_date , s.delivery_date
+FROM shipping s
+RIGHT OUTER JOIN employees e ON s.emp_id = e.emp_id
+WHERE e.status = ’active ’
+ORDER BY s.shipped_date DESC NULLS LAST;
+
+10. Visible Reviews with User and Car Details (Multiple JOIN)
+--------------------------------------------------------------
+SELECT r.review_id , r.rating , r.review_text , u.username , c.model_name
+FROM reviews r
+JOIN users u USING (user_id)
+JOIN cars c USING (car_id)
+WHERE r.is_visible = TRUE
+ORDER BY r.created_at DESC;
+
+11. Electric or Hybrid Cars (Pattern Matching)
+-----------------------------------------------
+SELECT model_name , manufacturer , engine_type
+FROM cars
+WHERE engine_type ~* ’^( electric|hybrid)$’
+AND available = TRUE
+ORDER BY model_name;
+
+12. Insert a New Car (INSERT with Subquery)
+--------------------------------------------
+INSERT INTO cars (
+    category_id , modelnum , manufacturer , model_name , year ,
+    engine_type , transmission , color , mileage , fuel_capacity ,
+    seating_capacity , price , available , added_date
+)
+VALUES (
+    (SELECT category_id FROM categories WHERE name = ’1’),
+    ’2’, ’3’, ’4’, ’5’, ’6’, ’7’, ’8’, ’9’, ’10’, ’11’, ’12’, TRUE ,
+    CURRENT_DATE
+)
+RETURNING car_id , model_name , price;
+
+13. Register a New User (INSERT)
+---------------------------------
+INSERT INTO users (
+    email , username , password , address , phone , dob , card_num ,
+    bank_acc
+)
+VALUES (’1’, ’2’, ’3’, ’4’, ’5’, ’2024 -01 -01 ’, ’7’, ’8’)
+RETURNING user_id , username , email;
+
+14. Update Car Price and Availability (UPDATE)
+-----------------------------------------------
+UPDATE cars
+SET price = 1,
+    available = false ,
+    added_date = CURRENT_DATE
+WHERE car_id = 3
+RETURNING car_id , model_name , price , available;
+
+15. Cars Cheaper Than Those in a Category (ANY Subquery)
+---------------------------------------------------------
+SELECT c.car_id , c.model_name , c.manufacturer , c.price
+FROM cars c
+WHERE c.price < ANY (
+    SELECT c2.price
+    FROM cars c2
+    WHERE c2.category_id = category_id
+)
+ORDER BY c.price ASC;
+
+16. Delete User by Email (DELETE)
+----------------------------------
+DELETE FROM users
+WHERE email = ’john.doe@example.com’
+RETURNING user_id , username , email;

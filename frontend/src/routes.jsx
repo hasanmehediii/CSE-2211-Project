@@ -17,6 +17,22 @@ import ManageUsers from './pages/admin/ManageUsers';
 import ManageCars from './pages/admin/ManageCars';
 import ManageOrders from './pages/admin/ManageOrders';
 import PurchaseHistory from './pages/admin/PurchaseHistory';
+import AvailableCarsWithCategory from './pages/admin/AvailableCarsWithCategory';
+import UsersAndPurchases from './pages/admin/UsersAndPurchases';
+import OrderDetailsWithCarInfo from './pages/admin/OrderDetailsWithCarInfo';
+import UsersWithCompletedPurchases from './pages/admin/UsersWithCompletedPurchases';
+import CarsMoreExpensiveThanCategory from './pages/admin/CarsMoreExpensiveThanCategory';
+import EmployeesAndOrdersHandled from './pages/admin/EmployeesAndOrdersHandled';
+import Top5MostReviewedCars from './pages/admin/Top5MostReviewedCars';
+import AvailableCarsAndInventory from './pages/admin/AvailableCarsAndInventory';
+import EmployeesAndShippingRecords from './pages/admin/EmployeesAndShippingRecords';
+import VisibleReviews from './pages/admin/VisibleReviews';
+import ElectricOrHybridCars from './pages/admin/ElectricOrHybridCars';
+import InsertNewCar from './pages/admin/InsertNewCar';
+import RegisterNewUser from './pages/admin/RegisterNewUser';
+import UpdateCarPriceAndAvailability from './pages/admin/UpdateCarPriceAndAvailability';
+import CarsCheaperThanCategory from './pages/admin/CarsCheaperThanCategory';
+import DeleteUserByEmail from './pages/admin/DeleteUserByEmail';
 
 const AppRoutes = () => {
   return (
@@ -39,6 +55,22 @@ const AppRoutes = () => {
         <Route path="/admin/manage-cars" element={<ManageCars />} />
         <Route path="/admin/manage-orders" element={<ManageOrders />} />
         <Route path="/admin/purchase-history" element={<PurchaseHistory />} />
+        <Route path="/admin/available-cars-with-category" element={<AvailableCarsWithCategory />} />
+        <Route path="/admin/users-and-purchases" element={<UsersAndPurchases />} />
+        <Route path="/admin/order-details-with-car-info" element={<OrderDetailsWithCarInfo />} />
+        <Route path="/admin/users-with-completed-purchases" element={<UsersWithCompletedPurchases />} />
+        <Route path="/admin/cars-more-expensive-than-category" element={<CarsMoreExpensiveThanCategory />} />
+        <Route path="/admin/employees-and-orders-handled" element={<EmployeesAndOrdersHandled />} />
+        <Route path="/admin/top-5-most-reviewed-cars" element={<Top5MostReviewedCars />} />
+        <Route path="/admin/available-cars-and-inventory" element={<AvailableCarsAndInventory />} />
+        <Route path="/admin/employees-and-shipping-records" element={<EmployeesAndShippingRecords />} />
+        <Route path="/admin/visible-reviews" element={<VisibleReviews />} />
+        <Route path="/admin/electric-or-hybrid-cars" element={<ElectricOrHybridCars />} />
+        <Route path="/admin/insert-new-car" element={<InsertNewCar />} />
+        <Route path="/admin/register-new-user" element={<RegisterNewUser />} />
+        <Route path="/admin/update-car-price-and-availability" element={<UpdateCarPriceAndAvailability />} />
+        <Route path="/admin/cars-cheaper-than-category" element={<CarsCheaperThanCategory />} />
+        <Route path="/admin/delete-user-by-email" element={<DeleteUserByEmail />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>

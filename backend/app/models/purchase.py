@@ -37,8 +37,7 @@ class PurchaseResponse(PurchaseBase):
         orm_mode = True
 
 class PurchaseUpdatePayment(BaseModel):
-    amount: float
-    status: Optional[str] = None
+    amount_paid: float
 
 router = APIRouter(prefix="/purchases", tags=["purchases"])
 
@@ -69,9 +68,14 @@ def update_purchase_payment(purchase_id: int, payment_update: PurchaseUpdatePaym
     if not purchase:
         raise HTTPException(status_code=404, detail="Purchase not found")
 
-    purchase.amount = payment_update.amount
-    if payment_update.status:
-        purchase.status = payment_update.status
+    if purchase.status == 'paid':
+        raise HTTPException(status_code=400, detail="This purchase has already been paid.")
+
+    if payment_update.amount_paid >= float(purchase.amount):
+        purchase.status = 'paid'
+    else:
+        purchase.amount = float(purchase.amount) - payment_update.amount_paid
+
     db.commit()
     db.refresh(purchase)
     return purchase
