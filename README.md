@@ -12,7 +12,7 @@
 
 **Goriber Gari** is a full-stack e-commerce platform designed for a seamless car purchasing experience. It allows users to browse a wide catalog of vehicles, view detailed information, and make purchases directly through the website. The project features a modern frontend built with React, a robust backend API powered by FastAPI, and a PostgreSQL database to manage all data efficiently.
 
-The primary goal is to provide a user-friendly interface where customers can find their dream car at competitive prices, while also providing administrators with the tools to manage inventory, orders, and user data.
+The primary goal is to provide a user friendly interface where customers can find their dream car at competitive prices, while also providing administrators with the tools to manage inventory, orders, and user data.
 
 ---
 
