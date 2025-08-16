@@ -169,8 +169,8 @@ Here are some screenshots of the application's user interface.
 | Page | Screenshot |
 |---|---|
 | Welcome Page | ![Welcome](./UI/welcome.png) |
-| Welcome Page 2 | ![Welcome 2](./UI/welcome2.png) |
 | Login Page | ![Login](./UI/login.png) |
+| Welcome Page 2 | ![Welcome 2](./UI/welcome2.png) |
 | Admin Home | ![Admin Home](./UI/adminhome.png) |
 | Admin Home 2 | ![Admin Home 2](./UI/adminhome2.png) |
 | Car Details | ![Car Detail](./UI/cardetail.png) |
