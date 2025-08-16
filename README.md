@@ -15,6 +15,11 @@
 The primary goal is to provide a user friendly interface where customers can find their dream car at competitive prices, while also providing administrators with the tools to manage inventory, orders, and user data.
 
 ---
+## Attachments
+
+  - [Report](CSE2211_DBMS_Project.pdf)
+
+---
 
 ## 🏛️ System Architecture
 
