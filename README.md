@@ -164,7 +164,23 @@ The application should now be running, with the frontend accessible at `http://l
 
 ## 📸 Screenshots
 
-_I will add screenshots here later._
+Here are some screenshots of the application's user interface.
+
+| Page | Screenshot |
+|---|---|
+| Welcome Page | ![Welcome](./UI/welcome.png) |
+| Welcome Page 2 | ![Welcome 2](./UI/welcome2.png) |
+| Login Page | ![Login](./UI/login.png) |
+| Admin Home | ![Admin Home](./UI/adminhome.png) |
+| Admin Home 2 | ![Admin Home 2](./UI/adminhome2.png) |
+| Car Details | ![Car Detail](./UI/cardetail.png) |
+| Category | ![Category](./UI/category.png) |
+| FAQ | ![FAQ](./UI/faq.png) |
+| Manage Car | ![Manage Car](./UI/managecar.png) |
+| Manage User | ![Manage User](./UI/manageuser.png) |
+| Profile | ![Profile](./UI/profile.png) |
+| Profile 2 | ![Profile 2](./UI/profile2.png) |
+| Review | ![Review](./UI/review.png) |
 
 ---
 
