@@ -103,6 +103,13 @@ def create_car(db: Session, car: CarCreate):
     db.add(db_car)
     db.commit()
     db.refresh(db_car)
+
+    # Create a car_inventory entry for the new car
+    db_inventory = CarInventory(car_id=db_car.car_id, quantity=10) # Default quantity 10
+    db.add(db_inventory)
+    db.commit()
+    db.refresh(db_inventory)
+
     return db_car
 
 def get_top_rated_cars(db: Session, limit: int = 6):

@@ -219,8 +219,17 @@ def create_car(car: NewCar, db: Session = Depends(get_db)):
         RETURNING car_id , model_name , price;
     """)
     result = db.execute(query, car.dict()).fetchone()
+    car_id = result[0]
+
+    # Create a car_inventory entry for the new car
+    inventory_query = text("""
+        INSERT INTO car_inventory (car_id, quantity)
+        VALUES (:car_id, 10);
+    """)
+    db.execute(inventory_query, {"car_id": car_id})
+
     db.commit()
-    return {"car_id": result[0], "model_name": result[1], "price": result[2]}
+    return {"car_id": car_id, "model_name": result[1], "price": result[2]}
 
 # 13. Register a New User (INSERT)
 @router.post("/users")

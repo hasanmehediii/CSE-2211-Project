@@ -40,9 +40,18 @@ const Footer = () => {
                 <div className="footer-section">
                     <h4>Connect With Us</h4>
                     <div className="social-links">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">FB</a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">TW</a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">IG</a>
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                            <img src="/social icons/facebook.png" alt="Facebook" />
+                        </a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                            <img src="/social icons/twitter.png" alt="Twitter" />
+                        </a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                            <img src="/social icons/instagram.png" alt="Instagram" />
+                        </a>
+                        <a href="mailto:contact@cardealer.com">
+                            <img src="/social icons/gmail.png" alt="Gmail" />
+                        </a>
                     </div>
                     <div className="newsletter">
                         <h4>Subscribe to our Newsletter</h4>

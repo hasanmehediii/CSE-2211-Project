@@ -150,11 +150,12 @@ const CarDetail = () => {
   };
 
   const handleAddToCart = () => {
+    console.log('carDetails state on Add to Cart click:', carDetails);
     if (!user) {
       navigate('/login');
       return;
     }
-    if (!carDetails.available || carDetails.quantity === 0) {
+    if (!carDetails.available) {
       setError('This car is currently unavailable or out of stock.');
       return;
     }

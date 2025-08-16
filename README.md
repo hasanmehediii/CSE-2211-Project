@@ -16,6 +16,66 @@ The primary goal is to provide a user friendly interface where customers can fin
 
 ---
 
+## 🏛️ System Architecture
+
+The project follows a classic client-server architecture:
+
+*   **Frontend (Client):** A single-page application (SPA) built with React.js that provides a dynamic and responsive user interface.
+*   **Backend (Server):** A RESTful API built with FastAPI that handles business logic, data processing, and communication with the database.
+*   **Database:** A PostgreSQL database that stores all application data, including users, cars, orders, and more.
+---
+<p align="center">
+  <img src="Architecture.png" alt="System Architecture"/>
+</p>
+
+---
+
+## 📁 Folder Structure
+
+```
+/home/mehedi/CSE-2211-Project/
+├── backend/
+│   ├── app/
+│   │   ├── models/
+│   │   ├── __pycache__/
+│   │   ├── admin.py
+│   │   ├── database.py
+│   │   ├── main.py
+│   │   └── queries.py
+│   ├── venv/
+│   ├── .env
+│   ├── database.sql
+│   ├── requirements.txt
+│   └── run.sh
+├── frontend/
+│   ├── public/
+│   │   ├── images/
+│   │   └── social icons/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── context/
+│   │   └── pages/
+│   ├── .gitignore
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── README.md
+│   └── vite.config.js
+├── .env
+├── .gitignore
+├── car-dealer.png
+├── car.png
+├── CSE2211_DBMS_Project.pdf
+├── Queries.txt
+├── query_implementation_report.md
+├── README.md
+└── vercel.json
+```
+
+---
+
 ## 🛠️ Built With
 
 This project leverages modern technologies for both the frontend and backend development.
@@ -99,6 +159,12 @@ The application should now be running, with the frontend accessible at `http://l
 *   **Checkout Process:** A streamlined process for purchasing vehicles, including payment and shipping information.
 *   **User Profiles:** View and manage personal information and order history.
 *   **Inventory Management:** Administrative capabilities to add, update, and remove car listings.
+
+---
+
+## 📸 Screenshots
+
+_I will add screenshots here later._
 
 ---
 
