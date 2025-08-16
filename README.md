@@ -1,4 +1,4 @@
-# Goriber Gari - Online Car Dealership
+# Goriber Gari - DBMS-1 Project
 
 <p align="center">
   <img src="car.png" alt="Website Logo" width="150" height="150" style="border-radius: 50%; border: 2px solid #ccc;" />
