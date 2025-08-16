@@ -192,7 +192,7 @@ const UserProfile = () => {
             <style jsx>{`
                 .profile-page {
                     padding: 3rem 2rem;
-                    background-color: #000e02ff;
+                    background-color: #000000ff;
                     color: #e5e7eb;
                     min-height: 100vh;
                 }
@@ -211,7 +211,7 @@ const UserProfile = () => {
                     margin: 0 auto;
                 }
                 .profile-card, .history-card {
-                    background-color: #090125ff;
+                    background-color: #040110ff;
                     border-radius: 12px;
                     padding: 2rem;
                     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
