@@ -67,6 +67,7 @@ const CarDetail = () => {
     mileage: 'N/A',
     fuelCapacity: 'N/A',
     seatingCapacity: 'N/A',
+    available: false,
   });
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,7 +110,7 @@ const CarDetail = () => {
         setCarDetails({
           car_id: carResponse.data.car_id,
           name: carResponse.data.model_name || carResponse.data.modelnum || 'Unknown Model',
-          price: carResponse.data.price ? `$${carResponse.data.price.toFixed(2)}` : 'Price not listed',
+          price: carResponse.data.price ? `${carResponse.data.price.toFixed(2)}` : 'Price not listed',
           image: carResponse.data.image_link || carImageResult,
           description: carResponse.data.description || 'No description available.',
           year: carResponse.data.year || 'N/A',
@@ -120,6 +121,7 @@ const CarDetail = () => {
           mileage: carResponse.data.mileage ? `${carResponse.data.mileage} km` : 'N/A',
           fuelCapacity: carResponse.data.fuel_capacity ? `${carResponse.data.fuel_capacity.toFixed(2)} L` : 'N/A',
           seatingCapacity: carResponse.data.seating_capacity || 'N/A',
+          available: carResponse.data.quantity > 0,
         });
         setReviews(
           reviewsResponse.data.map(review => ({
