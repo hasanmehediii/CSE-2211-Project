@@ -179,6 +179,8 @@ Here are some screenshots of the application's user interface.
 | Admin Home | ![Admin Home](./UI/adminhome.png) |
 | Admin Home 2 | ![Admin Home 2](./UI/adminhome2.png) |
 | Car Details | ![Car Detail](./UI/cardetail.png) |
+| Order | ![Order](./UI/payment.png) |
+| Payment | ![Payment](./UI/payment2.png) |
 | Category | ![Category](./UI/category.png) |
 | FAQ | ![FAQ](./UI/faq.png) |
 | Manage Car | ![Manage Car](./UI/managecar.png) |
