@@ -1,7 +1,7 @@
-# Goriber Gari - Online Car Dealership
+# Goriber Gari - DBMS-1 Project
 
 <p align="center">
-  <img src="car-dealer.png" alt="Website Logo" width="150" height="150" style="border-radius: 50%; border: 2px solid #ccc;" />
+  <img src="car.png" alt="Website Logo" width="150" height="150" style="border-radius: 50%; border: 2px solid #ccc;" />
   <br>
   <strong>An online platform for buying and managing high-quality vehicles.</strong>
 </p>
@@ -13,6 +13,11 @@
 **Goriber Gari** is a full-stack e-commerce platform designed for a seamless car purchasing experience. It allows users to browse a wide catalog of vehicles, view detailed information, and make purchases directly through the website. The project features a modern frontend built with React, a robust backend API powered by FastAPI, and a PostgreSQL database to manage all data efficiently.
 
 The primary goal is to provide a user friendly interface where customers can find their dream car at competitive prices, while also providing administrators with the tools to manage inventory, orders, and user data.
+
+---
+## Attachments
+
+  - [Report](CSE2211_DBMS_Project.pdf)
 
 ---
 
@@ -169,8 +174,8 @@ Here are some screenshots of the application's user interface.
 | Page | Screenshot |
 |---|---|
 | Welcome Page | ![Welcome](./UI/welcome.png) |
-| Welcome Page 2 | ![Welcome 2](./UI/welcome2.png) |
 | Login Page | ![Login](./UI/login.png) |
+| Welcome Page 2 | ![Welcome 2](./UI/welcome2.png) |
 | Admin Home | ![Admin Home](./UI/adminhome.png) |
 | Admin Home 2 | ![Admin Home 2](./UI/adminhome2.png) |
 | Car Details | ![Car Detail](./UI/cardetail.png) |
