@@ -9,6 +9,7 @@ const PurchaseAfter = () => {
   const navigate = useNavigate();
   const [purchaseDetails, setPurchaseDetails] = useState(null);
   const [orderDetails, setOrderDetails] = useState(null);
+  const [carDetails, setCarDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -18,9 +19,22 @@ const PurchaseAfter = () => {
         const purchaseResponse = await axios.get(`http://localhost:8000/purchases/${purchaseId}`);
         setPurchaseDetails(purchaseResponse.data);
 
-        const orderResponse = await axios.get(`http://localhost:8000/orders/?purchase_id=${purchaseId}`);
+        const orderResponse = await axios.get(`http://localhost:8000/orders/purchase/${purchaseId}`);
         if (orderResponse.data.length > 0) {
-          setOrderDetails(orderResponse.data[0]);
+          const order = orderResponse.data[0];
+          setOrderDetails(order);
+
+          // Fetch order items to get car_id
+          const orderItemsResponse = await axios.get(`http://localhost:8000/order_items/by_order/${order.order_id}`);
+          if (orderItemsResponse.data.length > 0) {
+            const carId = orderItemsResponse.data[0].car_id;
+            
+            // Fetch car details
+            const carResponse = await axios.get(`http://localhost:8000/cars/${carId}/details`);
+            setCarDetails(carResponse.data);
+          } else {
+            setError('No items found for this order.');
+          }
         } else {
           setError('No order found for this purchase.');
         }
@@ -67,7 +81,19 @@ const PurchaseAfter = () => {
       <Navbar />
       <div className="purchase-after-container">
         <h1>Purchase Details</h1>
+        
+        {carDetails && (
+          <div className="car-info">
+            <h2>Car Details</h2>
+            <p><strong>Model:</strong> {carDetails.model_name}</p>
+            <p><strong>Manufacturer:</strong> {carDetails.manufacturer}</p>
+            <p><strong>Year:</strong> {carDetails.year}</p>
+            <p><strong>Price:</strong> ${carDetails.price.toFixed(2)}</p>
+          </div>
+        )}
+
         <div className="purchase-info">
+          <h2>Purchase Summary</h2>
           <p><strong>Purchase ID:</strong> {purchaseDetails.purchase_id}</p>
           <p><strong>User ID:</strong> {purchaseDetails.user_id}</p>
           <p><strong>Amount:</strong> ${purchaseDetails.amount.toFixed(2)}</p>
@@ -75,6 +101,7 @@ const PurchaseAfter = () => {
           <p><strong>Status:</strong> {purchaseDetails.status}</p>
           <p><strong>Invoice Number:</strong> {purchaseDetails.invoice_number}</p>
         </div>
+
         {orderDetails && (
           <div className="order-info">
             <h2>Order Details</h2>
@@ -85,6 +112,7 @@ const PurchaseAfter = () => {
             <p><strong>Expected Delivery:</strong> {orderDetails.expected_delivery || 'N/A'}</p>
           </div>
         )}
+
         <div className="action-buttons">
           <button onClick={() => navigate(`/payment/${purchaseId}`)} className="proceed-button">
             Proceed to Payment
@@ -129,6 +157,7 @@ const PurchaseAfter = () => {
           margin-top: 2rem;
           margin-bottom: 1rem;
         }
+        .car-info,
         .purchase-info,
         .order-info {
           background: rgba(15, 23, 42, 0.95);
@@ -136,6 +165,7 @@ const PurchaseAfter = () => {
           border-radius: 0.5rem;
           margin-bottom: 2rem;
         }
+        .car-info p,
         .purchase-info p,
         .order-info p {
           font-size: 1.2rem;
@@ -190,6 +220,7 @@ const PurchaseAfter = () => {
           h2 {
             font-size: 1.5rem;
           }
+          .car-info p,
           .purchase-info p,
           .order-info p {
             font-size: 1rem;
