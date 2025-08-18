@@ -30,7 +30,7 @@ The project follows a classic client-server architecture:
 *   **Database:** A PostgreSQL database that stores all application data, including users, cars, orders, and more.
 ---
 <p align="center">
-  <img src="Architecture.png" alt="System Architecture"/>
+  <img src="arc.png" alt="System Architecture"/>
 </p>
 
 ---
