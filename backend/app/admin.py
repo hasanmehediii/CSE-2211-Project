@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from app.database import get_db
 from app.models.car import Car, CarCreate
+from app.models.car_inventory import CarInventory
 from app.models.user import User, UserUpdate
 from app.models.order import Order
 from app.models.order_item import OrderItem
@@ -26,10 +27,15 @@ class CarUpdate(BaseModel):
     available: Optional[bool] = None
     image_link: Optional[str] = None
 
+class StockUpdate(BaseModel):
+    quantity: int
+
 admin_router = APIRouter()
 
 # Helper function to convert SQLAlchemy model to dict
 def model_to_dict(obj):
+    if obj is None:
+        return None
     return {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
 
 @admin_router.post("/admin/cars", response_model=dict)
@@ -38,6 +44,10 @@ def create_car(car: CarCreate, db: Session = Depends(get_db)):
     db.add(db_car)
     db.commit()
     db.refresh(db_car)
+    # Also create an inventory entry
+    inventory = CarInventory(car_id=db_car.car_id, quantity=10) # Default quantity
+    db.add(inventory)
+    db.commit()
     return {"message": "Car created successfully", "car_id": db_car.car_id}
 
 @admin_router.put("/admin/cars/{car_id}", response_model=dict)
@@ -52,8 +62,23 @@ def update_car(car_id: int, car_update: CarUpdate, db: Session = Depends(get_db)
     db.refresh(db_car)
     return {"message": "Car updated successfully", "car_id": db_car.car_id}
 
+@admin_router.put("/admin/cars/{car_id}/stock", response_model=dict)
+def update_car_stock(car_id: int, stock_update: StockUpdate, db: Session = Depends(get_db)):
+    db_inventory = db.query(CarInventory).filter(CarInventory.car_id == car_id).first()
+    if not db_inventory:
+        # If no inventory exists, create one
+        db_inventory = CarInventory(car_id=car_id, quantity=stock_update.quantity)
+        db.add(db_inventory)
+    else:
+        db_inventory.quantity = stock_update.quantity
+    db.commit()
+    return {"message": "Car stock updated successfully", "car_id": car_id}
+
+
 @admin_router.delete("/admin/cars/{car_id}", response_model=dict)
 def delete_car(car_id: int, db: Session = Depends(get_db)):
+    # Also delete associated inventory
+    db.query(CarInventory).filter(CarInventory.car_id == car_id).delete()
     db_car = db.query(Car).filter(Car.car_id == car_id).first()
     if not db_car:
         raise HTTPException(status_code=404, detail="Car not found")
@@ -63,15 +88,23 @@ def delete_car(car_id: int, db: Session = Depends(get_db)):
 
 @admin_router.get("/admin/cars", response_model=List[dict])
 def get_all_cars(db: Session = Depends(get_db)):
-    cars = db.query(Car).all()
-    return [model_to_dict(car) for car in cars]
+    results = db.query(Car, CarInventory.quantity).outerjoin(CarInventory, Car.car_id == CarInventory.car_id).all()
+    cars_list = []
+    for car, quantity in results:
+        car_dict = model_to_dict(car)
+        car_dict['quantity'] = quantity if quantity is not None else 0
+        cars_list.append(car_dict)
+    return cars_list
 
 @admin_router.get("/admin/cars/{car_id}", response_model=dict)
 def get_car_details(car_id: int, db: Session = Depends(get_db)):
-    car = db.query(Car).filter(Car.car_id == car_id).first()
-    if not car:
+    result = db.query(Car, CarInventory.quantity).outerjoin(CarInventory, Car.car_id == CarInventory.car_id).filter(Car.car_id == car_id).first()
+    if not result:
         raise HTTPException(status_code=404, detail="Car not found")
-    return model_to_dict(car)
+    car, quantity = result
+    car_dict = model_to_dict(car)
+    car_dict['quantity'] = quantity if quantity is not None else 0
+    return car_dict
 
 @admin_router.get("/admin/users", response_model=List[dict])
 def get_all_users(db: Session = Depends(get_db)):
