@@ -14,8 +14,9 @@ from app.models.employee import Employee, EmployeeCreate
 
 class EmployeeUpdate(BaseModel):
     name: Optional[str] = None
-    role: Optional[str] = None
-    contact_info: Optional[str] = None
+    position: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
     salary: Optional[float] = None
 
 class CarUpdate(BaseModel):

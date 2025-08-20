@@ -15,8 +15,9 @@ const ManageEmployees = () => {
     const [isAdding, setIsAdding] = useState(false);
     const [newEmployee, setNewEmployee] = useState({
         name: '',
-        role: '',
-        contact_info: '',
+        position: '',
+        email: '',
+        phone: '',
         salary: ''
     });
 
@@ -38,7 +39,7 @@ const ManageEmployees = () => {
 
     const handleRowClick = (employee) => {
         setSelectedEmployee(employee);
-        setEditedEmployee(employee); 
+        setEditedEmployee(employee);
         setShowModal(true);
         setIsEditing(false);
         setIsAdding(false);
@@ -69,9 +70,9 @@ const ManageEmployees = () => {
     const handleUpdateEmployee = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`http://localhost:8000/admin/employees/${editedEmployee.employee_id}`, editedEmployee);
+            await axios.put(`http://localhost:8000/admin/employees/${editedEmployee.emp_id}`, editedEmployee);
             alert('Employee updated successfully!');
-            fetchEmployees(); 
+            fetchEmployees();
             closeModal();
         } catch (err) {
             setError(err.response?.data?.detail || 'Failed to update employee.');
@@ -84,7 +85,7 @@ const ManageEmployees = () => {
             try {
                 await axios.delete(`http://localhost:8000/admin/employees/${employeeId}`);
                 alert('Employee deleted successfully!');
-                fetchEmployees(); 
+                fetchEmployees();
                 closeModal();
             } catch (err) {
                 setError(err.response?.data?.detail || 'Failed to delete employee.');
@@ -102,8 +103,9 @@ const ManageEmployees = () => {
             closeModal();
             setNewEmployee({
                 name: '',
-                role: '',
-                contact_info: '',
+                position: '',
+                email: '',
+                phone: '',
                 salary: ''
             });
         } catch (err) {
@@ -141,20 +143,22 @@ const ManageEmployees = () => {
                         <table className="admin-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Employee ID</th>
                                     <th>Name</th>
-                                    <th>Role</th>
-                                    <th>Contact Info</th>
+                                    <th>Position</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
                                     <th>Salary</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {employees.map((employee) => (
-                                    <tr key={employee.employee_id} onClick={() => handleRowClick(employee)}>
-                                        <td>{employee.employee_id}</td>
+                                    <tr key={employee.emp_id} onClick={() => handleRowClick(employee)}>
+                                        <td>{employee.emp_id}</td>
                                         <td>{employee.name}</td>
-                                        <td>{employee.role}</td>
-                                        <td>{employee.contact_info}</td>
+                                        <td>{employee.position}</td>
+                                        <td>{employee.email}</td>
+                                        <td>{employee.phone}</td>
                                         <td>{employee.salary}</td>
                                     </tr>
                                 ))}
@@ -175,12 +179,16 @@ const ManageEmployees = () => {
                                             <input type="text" name="name" value={newEmployee.name} onChange={handleNewEmployeeInputChange} required />
                                         </div>
                                         <div className="form-group">
-                                            <label>Role:</label>
-                                            <input type="text" name="role" value={newEmployee.role} onChange={handleNewEmployeeInputChange} required />
+                                            <label>Position:</label>
+                                            <input type="text" name="position" value={newEmployee.position} onChange={handleNewEmployeeInputChange} required />
                                         </div>
                                         <div className="form-group">
-                                            <label>Contact Info:</label>
-                                            <input type="text" name="contact_info" value={newEmployee.contact_info} onChange={handleNewEmployeeInputChange} />
+                                            <label>Email:</label>
+                                            <input type="email" name="email" value={newEmployee.email} onChange={handleNewEmployeeInputChange} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Phone:</label>
+                                            <input type="text" name="phone" value={newEmployee.phone} onChange={handleNewEmployeeInputChange} />
                                         </div>
                                         <div className="form-group">
                                             <label>Salary:</label>
@@ -195,14 +203,15 @@ const ManageEmployees = () => {
                             ) : !isEditing ? (
                                 <>
                                     <h3 className="modal-title">Employee Details</h3>
-                                    <p><strong>ID:</strong> {selectedEmployee.employee_id}</p>
+                                    <p><strong>ID:</strong> {selectedEmployee.emp_id}</p>
                                     <p><strong>Name:</strong> {selectedEmployee.name}</p>
-                                    <p><strong>Role:</strong> {selectedEmployee.role}</p>
-                                    <p><strong>Contact Info:</strong> {selectedEmployee.contact_info}</p>
+                                    <p><strong>Position:</strong> {selectedEmployee.position}</p>
+                                    <p><strong>Email:</strong> {selectedEmployee.email}</p>
+                                    <p><strong>Phone:</strong> {selectedEmployee.phone}</p>
                                     <p><strong>Salary:</strong> {selectedEmployee.salary}</p>
                                     <div className="button-group">
                                         <button onClick={handleEditClick} className="edit-button">Edit</button>
-                                        <button onClick={() => handleDeleteEmployee(selectedEmployee.employee_id)} className="delete-button">Delete</button>
+                                        <button onClick={() => handleDeleteEmployee(selectedEmployee.emp_id)} className="delete-button">Delete</button>
                                         <button onClick={closeModal} className="cancel-button">Close</button>
                                     </div>
                                 </>
@@ -215,12 +224,16 @@ const ManageEmployees = () => {
                                             <input type="text" name="name" value={editedEmployee.name} onChange={handleEditedEmployeeInputChange} required />
                                         </div>
                                         <div className="form-group">
-                                            <label>Role:</label>
-                                            <input type="text" name="role" value={editedEmployee.role} onChange={handleEditedEmployeeInputChange} required />
+                                            <label>Position:</label>
+                                            <input type="text" name="position" value={editedEmployee.position} onChange={handleEditedEmployeeInputChange} required />
                                         </div>
                                         <div className="form-group">
-                                            <label>Contact Info:</label>
-                                            <input type="text" name="contact_info" value={editedEmployee.contact_info} onChange={handleEditedEmployeeInputChange} />
+                                            <label>Email:</label>
+                                            <input type="email" name="email" value={editedEmployee.email} onChange={handleEditedEmployeeInputChange} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Phone:</label>
+                                            <input type="text" name="phone" value={editedEmployee.phone} onChange={handleEditedEmployeeInputChange} />
                                         </div>
                                         <div className="form-group">
                                             <label>Salary:</label>
