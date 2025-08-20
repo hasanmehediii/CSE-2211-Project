@@ -46,6 +46,15 @@ const AdminHome = () => {
                         <h3 style={styles.cardTitle}>Purchase History</h3>
                         <p style={styles.cardDescription}>Review all past purchase records.</p>
                     </Link>
+                    <Link
+                        to="/admin/manage-employees"
+                        style={styles.card}
+                        onMouseEnter={e => e.currentTarget.style.transform = styles.cardHover.transform}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                    >
+                        <h3 style={styles.cardTitle}>Manage Employees</h3>
+                        <p style={styles.cardDescription}>Add, edit, or delete employee records.</p>
+                    </Link>
                 </div>
             </div>
             <Footer />

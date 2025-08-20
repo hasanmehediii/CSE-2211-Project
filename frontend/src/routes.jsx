@@ -33,6 +33,7 @@ import RegisterNewUser from './pages/admin/RegisterNewUser';
 import UpdateCarPriceAndAvailability from './pages/admin/UpdateCarPriceAndAvailability';
 import CarsCheaperThanCategory from './pages/admin/CarsCheaperThanCategory';
 import DeleteUserByEmail from './pages/admin/DeleteUserByEmail';
+import ManageEmployees from './pages/admin/ManageEmployees';
 
 const AppRoutes = () => {
   return (
@@ -71,6 +72,7 @@ const AppRoutes = () => {
         <Route path="/admin/update-car-price-and-availability" element={<UpdateCarPriceAndAvailability />} />
         <Route path="/admin/cars-cheaper-than-category" element={<CarsCheaperThanCategory />} />
         <Route path="/admin/delete-user-by-email" element={<DeleteUserByEmail />} />
+        <Route path="/admin/manage-employees" element={<ManageEmployees />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import autoTable from 'jspdf-autotable';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';

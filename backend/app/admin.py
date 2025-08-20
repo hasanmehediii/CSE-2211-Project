@@ -10,6 +10,13 @@ from app.models.user import User, UserUpdate
 from app.models.order import Order
 from app.models.order_item import OrderItem
 from app.models.purchase import PurchaseModel
+from app.models.employee import Employee, EmployeeCreate
+
+class EmployeeUpdate(BaseModel):
+    name: Optional[str] = None
+    role: Optional[str] = None
+    contact_info: Optional[str] = None
+    salary: Optional[float] = None
 
 class CarUpdate(BaseModel):
     category_id: Optional[int] = None
@@ -182,3 +189,37 @@ def get_purchase_details(purchase_id: int, db: Session = Depends(get_db)):
     purchase_dict["orders"] = [model_to_dict(o) for o in purchase.orders]
     purchase_dict["user"] = model_to_dict(purchase.user)
     return purchase_dict
+
+@admin_router.get("/admin/employees", response_model=List[dict])
+def get_all_employees(db: Session = Depends(get_db)):
+    employees = db.query(Employee).all()
+    return [model_to_dict(employee) for employee in employees]
+
+@admin_router.post("/admin/employees", response_model=dict)
+def create_employee(employee: EmployeeCreate, db: Session = Depends(get_db)):
+    db_employee = Employee(**employee.dict())
+    db.add(db_employee)
+    db.commit()
+    db.refresh(db_employee)
+    return {"message": "Employee created successfully", "employee_id": db_employee.emp_id}
+
+@admin_router.put("/admin/employees/{employee_id}", response_model=dict)
+def update_employee(employee_id: int, employee_update: EmployeeUpdate, db: Session = Depends(get_db)):
+    db_employee = db.query(Employee).filter(Employee.emp_id == employee_id).first()
+    if not db_employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    update_data = employee_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_employee, key, value)
+    db.commit()
+    db.refresh(db_employee)
+    return {"message": "Employee updated successfully", "employee_id": db_employee.emp_id}
+
+@admin_router.delete("/admin/employees/{employee_id}", response_model=dict)
+def delete_employee(employee_id: int, db: Session = Depends(get_db)):
+    db_employee = db.query(Employee).filter(Employee.emp_id == employee_id).first()
+    if not db_employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    db.delete(db_employee)
+    db.commit()
+    return {"message": "Employee deleted successfully", "employee_id": employee_id}
