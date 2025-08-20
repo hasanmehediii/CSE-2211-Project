@@ -19,6 +19,7 @@ The primary goal is to provide a user friendly interface where customers can fin
 
   - [Report](CSE2211_DBMS_Project.pdf)
   - [Video](https://youtu.be/nJaVLU3WCqw?si=9pdGbxrtDZ9v3xI2)
+  - [Video with Voice](https://youtu.be/7hatLweTOT8)
 
 ---
 
