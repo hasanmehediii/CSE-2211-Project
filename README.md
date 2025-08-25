@@ -1,7 +1,7 @@
 # Goriber Gari - DBMS-1 Project
 
 <p align="center">
-  <img src="car.png" alt="Website Logo" width="150" height="150" style="border-radius: 50%; border: 2px solid #ccc;" />
+  <img src="attachments/car.png" alt="Website Logo" width="150" height="150" style="border-radius: 50%; border: 2px solid #ccc;" />
   <br>
   <strong>An online platform for buying and managing high-quality vehicles.</strong>
 </p>
@@ -17,10 +17,10 @@ The primary goal is to provide a user friendly interface where customers can fin
 ---
 ## Attachments
 
-  - [Report](CSE2211_DBMS_Project.pdf)
+  - [Report](attachments/CSE2211_DBMS_Project.pdf)
   - [Video](https://youtu.be/nJaVLU3WCqw?si=9pdGbxrtDZ9v3xI2)
   - [Video with Voice](https://youtu.be/7hatLweTOT8)
-  - [Presentation Slide](DBMS.pptx)
+  - [Presentation Slide](attachments/DBMS.pptx)
 
 ---
 
@@ -33,7 +33,7 @@ The project follows a classic client-server architecture:
 *   **Database:** A PostgreSQL database that stores all application data, including users, cars, orders, and more.
 ---
 <p align="center">
-  <img src="arc.png" alt="System Architecture"/>
+  <img src="attachments/arc.png" alt="System Architecture"/>
 </p>
 
 ---
