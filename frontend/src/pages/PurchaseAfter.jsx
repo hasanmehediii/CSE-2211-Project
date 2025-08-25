@@ -7,7 +7,7 @@ import autoTable from 'jspdf-autotable';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import { AuthContext } from '../context/AuthContext.jsx';
-import carLogo from '../../../car.png';
+import carLogo from '../../../attachments/car.png';
 
 const PurchaseAfter = () => {
   const { purchaseId } = useParams();
@@ -33,7 +33,7 @@ const PurchaseAfter = () => {
           const orderItemsResponse = await axios.get(`http://localhost:8000/order_items/by_order/${order.order_id}`);
           if (orderItemsResponse.data.length > 0) {
             const carId = orderItemsResponse.data[0].car_id;
-            
+
             const carResponse = await axios.get(`http://localhost:8000/cars/${carId}/details`);
             setCarDetails(carResponse.data);
           } else {
@@ -101,45 +101,45 @@ const PurchaseAfter = () => {
 
       // Car Details Table
       autoTable(doc, {
-          startY: yPos,
-          head: [['Specification', 'Details']],
-          body: [
-              ['Model', carDetails.model_name || 'N/A'],
-              ['Manufacturer', carDetails.manufacturer || 'N/A'],
-              ['Year', carDetails.year || 'N/A'],
-              ['Color', carDetails.color || 'N/A'],
-              ['Transmission', carDetails.transmission || 'N/A'],
-          ],
-          theme: 'grid',
-          headStyles: { fillColor: [41, 128, 185] },
-          didDrawPage: (data) => { yPos = data.cursor.y; }
+        startY: yPos,
+        head: [['Specification', 'Details']],
+        body: [
+          ['Model', carDetails.model_name || 'N/A'],
+          ['Manufacturer', carDetails.manufacturer || 'N/A'],
+          ['Year', carDetails.year || 'N/A'],
+          ['Color', carDetails.color || 'N/A'],
+          ['Transmission', carDetails.transmission || 'N/A'],
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [41, 128, 185] },
+        didDrawPage: (data) => { yPos = data.cursor.y; }
       });
 
       // Purchase Summary Table
       autoTable(doc, {
-          startY: yPos + 10,
-          head: [['Purchase Summary', 'Amount']],
-          body: [
-              ['Total Price', `$${(purchaseDetails.amount || 0).toFixed(2)}`],
-              ['Payment Method', purchaseDetails.payment_method || 'N/A'],
-              ['Status', purchaseDetails.status || 'N/A'],
-          ],
-          theme: 'grid',
-          headStyles: { fillColor: [22, 160, 133] },
-          didDrawPage: (data) => { yPos = data.cursor.y; }
+        startY: yPos + 10,
+        head: [['Purchase Summary', 'Amount']],
+        body: [
+          ['Total Price', `$${(purchaseDetails.amount || 0).toFixed(2)}`],
+          ['Payment Method', purchaseDetails.payment_method || 'N/A'],
+          ['Status', purchaseDetails.status || 'N/A'],
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [22, 160, 133] },
+        didDrawPage: (data) => { yPos = data.cursor.y; }
       });
 
       // Shipping Details Table
       autoTable(doc, {
-          startY: yPos + 10,
-          head: [['Shipping Details', '']],
-          body: [
-              ['Shipping Address', orderDetails.shipping_address || 'N/A'],
-              ['Tracking Number', orderDetails.tracking_number || 'N/A'],
-          ],
-          theme: 'grid',
-          headStyles: { fillColor: [211, 84, 0] },
-          didDrawPage: (data) => { yPos = data.cursor.y; }
+        startY: yPos + 10,
+        head: [['Shipping Details', '']],
+        body: [
+          ['Shipping Address', orderDetails.shipping_address || 'N/A'],
+          ['Tracking Number', orderDetails.tracking_number || 'N/A'],
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [211, 84, 0] },
+        didDrawPage: (data) => { yPos = data.cursor.y; }
       });
 
       // Footer
@@ -159,11 +159,11 @@ const PurchaseAfter = () => {
 
   if (loading) {
     return (
-        <div className="page-loading">
-            <Navbar />
-            <div className="loader"></div>
-            <Footer />
-        </div>
+      <div className="page-loading">
+        <Navbar />
+        <div className="loader"></div>
+        <Footer />
+      </div>
     );
   }
 
@@ -187,41 +187,41 @@ const PurchaseAfter = () => {
       <Navbar />
       <div className="purchase-after-container">
         <div className="confirmation-header">
-            <h1>Thank You For Your Purchase!</h1>
-            <p>Your order has been placed successfully. Here are the details:</p>
+          <h1>Thank You For Your Purchase!</h1>
+          <p>Your order has been placed successfully. Here are the details:</p>
         </div>
 
         <div className="details-grid">
-            {carDetails && (
-                <div className="details-card">
-                    <h2>🚗 Car Details</h2>
-                    <div className="detail-item"><span>Model:</span><span>{carDetails.model_name}</span></div>
-                    <div className="detail-item"><span>Manufacturer:</span><span>{carDetails.manufacturer}</span></div>
-                    <div className="detail-item"><span>Year:</span><span>{carDetails.year}</span></div>
-                    <div className="detail-item"><span>Price:</span><span>${carDetails.price.toFixed(2)}</span></div>
-                </div>
-            )}
+          {carDetails && (
+            <div className="details-card">
+              <h2>🚗 Car Details</h2>
+              <div className="detail-item"><span>Model:</span><span>{carDetails.model_name}</span></div>
+              <div className="detail-item"><span>Manufacturer:</span><span>{carDetails.manufacturer}</span></div>
+              <div className="detail-item"><span>Year:</span><span>{carDetails.year}</span></div>
+              <div className="detail-item"><span>Price:</span><span>${carDetails.price.toFixed(2)}</span></div>
+            </div>
+          )}
 
-            {purchaseDetails && (
-                <div className="details-card">
-                    <h2>💳 Purchase Summary</h2>
-                    <div className="detail-item"><span>Purchase ID:</span><span>{purchaseDetails.purchase_id}</span></div>
-                    <div className="detail-item"><span>Amount:</span><span>${purchaseDetails.amount.toFixed(2)}</span></div>
-                    <div className="detail-item"><span>Payment Method:</span><span>{purchaseDetails.payment_method}</span></div>
-                    <div className="detail-item"><span>Status:</span><span className={`status status-${purchaseDetails.status?.toLowerCase()}`}>{purchaseDetails.status}</span></div>
-                    <div className="detail-item"><span>Invoice #:</span><span>{purchaseDetails.invoice_number}</span></div>
-                </div>
-            )}
+          {purchaseDetails && (
+            <div className="details-card">
+              <h2>💳 Purchase Summary</h2>
+              <div className="detail-item"><span>Purchase ID:</span><span>{purchaseDetails.purchase_id}</span></div>
+              <div className="detail-item"><span>Amount:</span><span>${purchaseDetails.amount.toFixed(2)}</span></div>
+              <div className="detail-item"><span>Payment Method:</span><span>{purchaseDetails.payment_method}</span></div>
+              <div className="detail-item"><span>Status:</span><span className={`status status-${purchaseDetails.status?.toLowerCase()}`}>{purchaseDetails.status}</span></div>
+              <div className="detail-item"><span>Invoice #:</span><span>{purchaseDetails.invoice_number}</span></div>
+            </div>
+          )}
 
-            {orderDetails && (
-                <div className="details-card">
-                    <h2>🚚 Order & Shipping</h2>
-                    <div className="detail-item"><span>Order ID:</span><span>{orderDetails.order_id}</span></div>
-                    <div className="detail-item"><span>Status:</span><span className={`status status-${orderDetails.status?.toLowerCase()}`}>{orderDetails.status}</span></div>
-                    <div className="detail-item"><span>Shipping Address:</span><span>{orderDetails.shipping_address}</span></div>
-                    <div className="detail-item"><span>Tracking #:</span><span>{orderDetails.tracking_number || 'N/A'}</span></div>
-                </div>
-            )}
+          {orderDetails && (
+            <div className="details-card">
+              <h2>🚚 Order & Shipping</h2>
+              <div className="detail-item"><span>Order ID:</span><span>{orderDetails.order_id}</span></div>
+              <div className="detail-item"><span>Status:</span><span className={`status status-${orderDetails.status?.toLowerCase()}`}>{orderDetails.status}</span></div>
+              <div className="detail-item"><span>Shipping Address:</span><span>{orderDetails.shipping_address}</span></div>
+              <div className="detail-item"><span>Tracking #:</span><span>{orderDetails.tracking_number || 'N/A'}</span></div>
+            </div>
+          )}
         </div>
 
         <div className="action-buttons">
