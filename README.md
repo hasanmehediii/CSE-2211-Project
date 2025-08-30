@@ -248,3 +248,12 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## 📞 Contact
 
 Project Link: [https://github.com/hasanmehediii/CSE-2211-Project](https://github.com/hasanmehediii/CSE-2211-Project)
+
+## Contributors
+1. Mehedi Hasan
+   Email : mehedi-2022415897@cs.du.ac.bd
+
+2. Ibna Afra Roza
+   Email : ibnaafra-2022015891@cs.du.ac.bd
+4. 
+
