@@ -1,7 +1,7 @@
 # Goriber Gari - DBMS-1 Project
 
 <p align="center">
-  <img src="attachments/car.png" alt="Website Logo" width="150" height="150" style="border-radius: 50%; border: 2px solid #ccc;" />
+  <img src="attachments/carshop.png" alt="Website Logo" width="150" height="150" style="border-radius: 50%; border: 2px solid #ccc;" />
   <br>
   <strong>An online platform for buying and managing high-quality vehicles.</strong>
 </p>
