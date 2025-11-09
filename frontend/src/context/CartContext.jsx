@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from './AuthContext.jsx';
+import api from '../api.jsx';
 
 export const CartContext = createContext();
 
@@ -53,7 +54,7 @@ export const CartProvider = ({ children }) => {
         (total, item) => total + item.price * item.quantity,
         0
       );
-      const purchaseResponse = await axios.post('http://localhost:8000/purchases/', {
+      const purchaseResponse = await api.post('/purchases/', {
         user_id: user.user_id,
         amount: totalAmount,
         payment_method: orderDetails.paymentMethod,

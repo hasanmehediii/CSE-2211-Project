@@ -6,6 +6,7 @@ import { CartContext } from '../context/CartContext.jsx';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import carImage from '../assets/car2.jpg';
+import api from '../api.jsx';
 
 class ErrorBoundary extends Component {
   state = { hasError: false, error: null };
@@ -88,13 +89,13 @@ const CarDetail = () => {
 
         console.log('Fetching car data for carId:', carId);
         const [carResponse, reviewsResponse] = await Promise.all([
-          axios.get(`http://localhost:8000/cars/${carId}/details`).catch(err => {
+          api.get(`/cars/${carId}/details`).catch(err => {
             if (err.response?.status === 404) {
               throw new Error('Car not found. It may have been removed or doesn’t exist.');
             }
             throw new Error(`Car API error: ${err.response?.status} ${err.response?.data?.detail || err.message}`);
           }),
-          axios.get(`http://localhost:8000/reviews/cars/${carId}/reviews`).catch(err => {
+          api.get(`/reviews/cars/${carId}/reviews`).catch(err => {
             if (err.response?.status === 404) {
               return { data: [] }; // Handle missing reviews gracefully
             }
@@ -132,7 +133,7 @@ const CarDetail = () => {
         );
 
         if (user) {
-          const purchaseResponse = await axios.get(`http://localhost:8000/users/${user.user_id}/purchase-for-car/${carId}`);
+          const purchaseResponse = await api.get(`/users/${user.user_id}/purchase-for-car/${carId}`);
           setPurchaseIdForReview(purchaseResponse.data.purchase_id);
         }
 
@@ -172,7 +173,7 @@ const CarDetail = () => {
       return;
     }
     try {
-      await axios.post('http://localhost:8000/reviews/', {
+      await api.post('/reviews/', {
         purchase_id: purchaseIdForReview,
         car_id: carId,
         user_id: user.user_id,
@@ -181,7 +182,7 @@ const CarDetail = () => {
       });
       setShowReviewForm(false);
       // Refresh reviews
-      const reviewsResponse = await axios.get(`http://localhost:8000/reviews/cars/${carId}/reviews`);
+      const reviewsResponse = await api.get(`/reviews/cars/${carId}/reviews`);
       setReviews(
         reviewsResponse.data.map((review) => ({
           username: review.username || 'Anonymous',

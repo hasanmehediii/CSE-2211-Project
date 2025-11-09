@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import carImage from '../assets/car2.jpg';
 import { AuthContext } from '../context/AuthContext.jsx';
+import api from '../api.jsx';
 
 const LoginSignup = () => {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ const LoginSignup = () => {
         navigate('/admin/home');
         return;
       }
-      const response = await axios.post('http://localhost:8000/users/login', {
+      const response = await api.post('/users/login', {
         email: formData.email,
         password: formData.password,
       });
@@ -59,7 +60,7 @@ const LoginSignup = () => {
     }
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8000/users', {
+      const response = await api.post('/users', {
         email: formData.email,
         username: formData.username,
         password: formData.password,

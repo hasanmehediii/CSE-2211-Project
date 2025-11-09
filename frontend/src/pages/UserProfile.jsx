@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext.jsx';
 import axios from 'axios';
+import api from '../api.jsx';
 
 const UserProfile = () => {
     const { user } = useContext(AuthContext);
@@ -20,7 +21,7 @@ const UserProfile = () => {
                     setError(null);
 
                     // Single unified API call fetching user info with purchases, reviews, and orders
-                    const response = await axios.get(`http://localhost:8000/users/${user.user_id}/all`);
+                    const response = await api.get(`/users/${user.user_id}/all`);
                     // The response data structure assumed:
                     // {
                     //   user info fields,
@@ -59,7 +60,7 @@ const UserProfile = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.put(`http://localhost:8000/users/${user.user_id}`, formData)
+        aapi.put(`/users/${user.user_id}`, formData)
             .then(response => {
                 setUserData(response.data);
                 setFormData(response.data);

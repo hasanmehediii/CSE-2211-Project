@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
+import api from '../api.jsx';
 
 const Payment = () => {
   const { purchaseId } = useParams();
@@ -21,7 +22,7 @@ const Payment = () => {
   useEffect(() => {
     const fetchPurchase = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/purchases/${purchaseId}`);
+        const res = await api.get(`/purchases/${purchaseId}`);
         setPurchase(res.data);
         setAmountToPay(res.data.amount || '');
       } catch (err) {
@@ -66,7 +67,7 @@ const Payment = () => {
 
     try {
       // Mock payment: just update purchase record to mark paid with amount
-      await axios.patch(`http://localhost:8000/purchases/${purchaseId}`, {
+      await api.patch(`/purchases/${purchaseId}`, {
         amount_paid: Number(amountToPay),
       });
       setSuccessMessage('Payment successful! Redirecting...');

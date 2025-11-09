@@ -4,6 +4,7 @@ import axios from 'axios';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import carImage from '../assets/car2.jpg';
+import api from '../api.jsx';
 
 const CarForMe = () => {
   const { categoryId } = useParams();
@@ -17,11 +18,11 @@ const CarForMe = () => {
     const fetchData = async () => {
       try {
         // Fetch category name
-        const categoryResponse = await axios.get(`http://localhost:8000/categories/${categoryId}`);
+        const categoryResponse = await api.get(`/categories/${categoryId}`);
         setCategoryName(categoryResponse.data.name || 'this Category');
 
         // Fetch cars
-        const carsResponse = await axios.get(`http://localhost:8000/cars/category/${categoryId}`);
+        const carsResponse = await api.get(`/cars/category/${categoryId}`);
         console.log(`API Response for category ${categoryId}:`, carsResponse.data);
         setCars(carsResponse.data);
       } catch (err) {

@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import axios from 'axios';
+import api from '../api.jsx';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
@@ -14,7 +15,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/categories/');
+        const response = await api.get('/categories/');
         console.log('Categories Response:', response.data);
         setCategories(response.data);
       } catch (error) {

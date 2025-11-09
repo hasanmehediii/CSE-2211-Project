@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import { AuthContext } from '../context/AuthContext.jsx';
 import carLogo from '../../../attachments/car.png';
+import api from '../api.jsx';
 
 const PurchaseAfter = () => {
   const { purchaseId } = useParams();
@@ -22,19 +23,19 @@ const PurchaseAfter = () => {
   useEffect(() => {
     const fetchDetails = async () => {
       try {
-        const purchaseResponse = await axios.get(`http://localhost:8000/purchases/${purchaseId}`);
+        const purchaseResponse = await api.get(`/purchases/${purchaseId}`);
         setPurchaseDetails(purchaseResponse.data);
 
-        const orderResponse = await axios.get(`http://localhost:8000/orders/purchase/${purchaseId}`);
+        const orderResponse = await api.get(`/orders/purchase/${purchaseId}`);
         if (orderResponse.data.length > 0) {
           const order = orderResponse.data[0];
           setOrderDetails(order);
 
-          const orderItemsResponse = await axios.get(`http://localhost:8000/order_items/by_order/${order.order_id}`);
+          const orderItemsResponse = await api.get(`/order_items/by_order/${order.order_id}`);
           if (orderItemsResponse.data.length > 0) {
             const carId = orderItemsResponse.data[0].car_id;
 
-            const carResponse = await axios.get(`http://localhost:8000/cars/${carId}/details`);
+            const carResponse = await api.get(`/cars/${carId}/details`);
             setCarDetails(carResponse.data);
           } else {
             setError('No items found for this order.');
