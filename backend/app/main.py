@@ -11,10 +11,18 @@ app = FastAPI(title="Car Purchase API")
 
 # Add CORS middleware
 origins = [
-    "http://localhost:5173",  # React app URL
+    "http://localhost:5173",  # Default for local development
 ]
-if os.environ.get("VERCEL_URL"):
-    origins.append(f"https://{os.environ.get('VERCEL_URL')}")
+
+# For Vercel deployment
+vercel_url = os.environ.get("VERCEL_URL")
+if vercel_url:
+    origins.append(f"https://{vercel_url}")
+
+# For Render deployment
+render_frontend_url = os.environ.get("FRONTEND_URL")
+if render_frontend_url:
+    origins.append(render_frontend_url)
 
 app.add_middleware(
     CORSMiddleware,
