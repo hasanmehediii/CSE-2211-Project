@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import carImage from '../assets/car2.jpg';
-import axios from 'axios';
+import api from '../api.jsx';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const Home = () => {
@@ -17,9 +17,9 @@ const Home = () => {
     const fetchCars = async () => {
       try {
         const [topRated, newArrivals, budgetFriendly] = await Promise.all([
-          axios.get("http://localhost:8000/cars/top-rated"),
-          axios.get("http://localhost:8000/cars/new-arrivals"),
-          axios.get("http://localhost:8000/cars/budget-friendly"),
+          api.get("/cars/top-rated"),
+          api.get("/cars/new-arrivals"),
+          api.get("/cars/budget-friendly"),
         ]);
 
         console.log('Top Rated:', topRated.data);
