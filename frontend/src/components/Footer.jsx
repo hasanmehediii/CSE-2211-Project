@@ -1,70 +1,87 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './Footer.css'; // Import the CSS file
+import './Footer.css';
 
 const Footer = () => {
-    return (
-        <footer className="footer">
-            <div className="footer-container">
-                <div className="footer-section">
-                    <h4>Company</h4>
-                    <ul>
-                        <li><Link to="/about">About Us</Link></li>
-                        <li><Link to="/contact">Contact Us</Link></li>
-                        <li><Link to="/careers">Careers</Link></li>
-                    </ul>
-                </div>
-                <div className="footer-section">
-                    <h4>Customer Service</h4>
-                    <ul>
-                        <li><Link to="/faq">FAQ</Link></li>
-                        <li><Link to="/shipping">Shipping & Returns</Link></li>
-                        <li><Link to="/orders">Track Order</Link></li>
-                    </ul>
-                </div>
-                <div className="footer-section">
-                    <h4>Shop</h4>
-                    <ul>
-                        <li><Link to="/cars">All Cars</Link></li>
-                        <li><Link to="/new-arrivals">New Arrivals</Link></li>
-                        <li><Link to="/best-sellers">Best Sellers</Link></li>
-                    </ul>
-                </div>
-                <div className="footer-section">
-                    <h4>Legal</h4>
-                    <ul>
-                        <li><Link to="/terms">Terms of Service</Link></li>
-                        <li><Link to="/privacy">Privacy Policy</Link></li>
-                    </ul>
-                </div>
-                <div className="footer-section">
-                    <h4>Connect With Us</h4>
-                    <div className="social-links">
-                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                            <img src="/social icons/facebook.png" alt="Facebook" />
-                        </a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                            <img src="/social icons/twitter.png" alt="Twitter" />
-                        </a>
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                            <img src="/social icons/instagram.png" alt="Instagram" />
-                        </a>
-                        <a href="mailto:contact@cardealer.com">
-                            <img src="/social icons/gmail.png" alt="Gmail" />
-                        </a>
-                    </div>
-                    <div className="newsletter">
-                        <h4>Subscribe to our Newsletter</h4>
-                        <input type="email" placeholder="Enter your email" />
-                        <button>Subscribe</button>
-                    </div>
-                </div>
+  return (
+    <footer className="site-footer">
+      <div className="footer-inner">
+        <div className="footer-brand">
+          <div className="footer-logo">
+            <span className="footer-logo-icon">GG</span>
+            <div className="footer-logo-text">
+              <span className="footer-title">Goriber Gari</span>
+              <span className="footer-subtitle">Drive smart. Spend less.</span>
             </div>
-            <div className="footer-bottom">
-                <p>&copy; 2025 Car Dealer, Inc. All rights reserved.</p>
+          </div>
+          <p className="footer-desc">
+            A curated experience for car lovers on a Bangladeshi budget. Compare, explore, and
+            discover rides that match your lifestyle.
+          </p>
+        </div>
+
+        <div className="footer-grid">
+          <div className="footer-section">
+            <h4>Company</h4>
+            <ul>
+              <li><Link to="/about">About us</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
+              <li><Link to="/careers">Careers</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h4>Customer</h4>
+            <ul>
+              <li><Link to="/faq">FAQs</Link></li>
+              <li><Link to="/shipping">Shipping &amp; returns</Link></li>
+              <li><Link to="/orders">Track order</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer-section">
+            <h4>Shop</h4>
+            <ul>
+              <li><Link to="/cars">All cars</Link></li>
+              <li><Link to="/new-arrivals">New arrivals</Link></li>
+              <li><Link to="/best-sellers">Best sellers</Link></li>
+            </ul>
+          </div>
+
+          <div className="footer-section footer-connect">
+            <h4>Stay in touch</h4>
+            <div className="footer-social">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                <img src="/social icons/facebook.png" alt="Facebook" />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                <img src="/social icons/twitter.png" alt="Twitter" />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                <img src="/social icons/instagram.png" alt="Instagram" />
+              </a>
+              <a href="mailto:contact@cardealer.com">
+                <img src="/social icons/gmail.png" alt="Gmail" />
+              </a>
             </div>
-        </footer>
-    );
+            <form
+              className="footer-newsletter"
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <input type="email" placeholder="Email for offers" />
+              <button type="submit">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div className="footer-bottom">
+        <p>© 2025 Goriber Gari. All rights reserved.</p>
+      </div>
+    </footer>
+  );
 };
 
 export default Footer;
