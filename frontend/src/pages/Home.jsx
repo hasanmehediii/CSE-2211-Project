@@ -463,7 +463,7 @@ const Home = () => {
 
         .discover {
           width: 100%;
-          padding: 2rem clamp(1.5rem, 6vw, 1rem) 1.5rem;
+          padding: 2rem clamp(1.5rem, 6vw, 4rem) 1.5rem;
         }
 
         .discover-inner {
