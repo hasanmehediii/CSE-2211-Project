@@ -7,6 +7,7 @@ import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import carImage from '../assets/car2.jpg';
 import api from '../api.jsx';
+import { FaStar } from 'react-icons/fa';
 
 class ErrorBoundary extends Component {
   state = { hasError: false, error: null };
@@ -200,318 +201,660 @@ const CarDetail = () => {
     <ErrorBoundary>
       <div className="page">
         <Navbar />
-        <div className="car-detail-container">
+        <section className="car-detail-section">
           {loading ? (
-            <div className="loading">Loading car details...</div>
+            <div className="message loading">Loading car details...</div>
           ) : error ? (
-            <div className="error-message">
+            <div className="message error-message">
               {error}
-              <button onClick={() => navigate('/')} className="back-button">
+              <button onClick={() => navigate('/')} className="back-button ghost">
                 Back to Home
               </button>
             </div>
           ) : (
             <>
               <div className="car-detail-content">
-                <div className="car-image-section">
+                <div className="car-image-wrapper">
                   <img
                     src={carDetails.image}
                     alt={carDetails.name}
                     className="car-image"
                     onError={handleImageError}
                   />
+                  <div className="car-glow" />
                 </div>
                 <div className="car-details-section">
-                  <h1 className="car-title">{carDetails.name}</h1>
-                  <p className="car-price">{carDetails.price}</p>
-                  <div className="car-specs">
-                    <div className="spec-item">
-                      <span className="spec-icon">⚙️</span>
-                      <span className="spec-label">Transmission:</span>
-                      <span className="spec-value">{carDetails.transmission}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-icon">🎨</span>
-                      <span className="spec-label">Color:</span>
-                      <span className="spec-value">{carDetails.color}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-icon">🛣️</span>
-                      <span className="spec-label">Mileage:</span>
-                      <span className="spec-value">{carDetails.mileage}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-icon">⛽</span>
-                      <span className="spec-label">Fuel Capacity:</span>
-                      <span className="spec-value">{carDetails.fuelCapacity}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-icon">👥</span>
-                      <span className="spec-label">Seating:</span>
-                      <span className="spec-value">{carDetails.seatingCapacity}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-icon">📅</span>
-                      <span className="spec-label">Year:</span>
-                      <span className="spec-value">{carDetails.year}</span>
-                    </div>
-                    <div className="spec-item">
-                      <span className="spec-icon">📦</span>
-                      <span className="spec-label">Stock:</span>
-                      <span className="spec-value">{carDetails.quantity !== null ? carDetails.quantity : 'N/A'}</span>
-                    </div>
-                  </div>
-                  <p className="car-description">{carDetails.description}</p>
+                  <div className="car-pill">Goriber Gari • Car Details</div>
+                  <h1 className="car-title">
+                    {carDetails.name} <span className="accent">{carDetails.year}</span>
+                  </h1>
+                  <p className="car-subtitle">
+                    {carDetails.description}
+                  </p>
+                  <p className="car-price">${carDetails.price}</p>
                   {carDetails.rating > 0 && (
                     <p className="car-rating">
                       {'★'.repeat(Math.round(carDetails.rating))}{'☆'.repeat(5 - Math.round(carDetails.rating))}
                     </p>
                   )}
-                  <button onClick={handleAddToCart} className="add-to-cart-button">
-                    Add to Cart
+                  <div className="car-specs">
+                    <div className="spec-item">
+                      <span className="spec-label">Transmission</span>
+                      <span className="spec-value">{carDetails.transmission}</span>
+                    </div>
+                    <div className="spec-item">
+                      <span className="spec-label">Color</span>
+                      <span className="spec-value">{carDetails.color}</span>
+                    </div>
+                    <div className="spec-item">
+                      <span className="spec-label">Mileage</span>
+                      <span className="spec-value">{carDetails.mileage}</span>
+                    </div>
+                    <div className="spec-item">
+                      <span className="spec-label">Fuel Capacity</span>
+                      <span className="spec-value">{carDetails.fuelCapacity}</span>
+                    </div>
+                    <div className="spec-item">
+                      <span className="spec-label">Seating</span>
+                      <span className="spec-value">{carDetails.seatingCapacity}</span>
+                    </div>
+                    <div className="spec-item">
+                      <span className="spec-label">Stock</span>
+                      <span className="spec-value">{carDetails.quantity !== null ? carDetails.quantity : 'N/A'}</span>
+                    </div>
+                  </div>
+                  <button onClick={handleAddToCart} className="add-to-cart-button primary" disabled={!carDetails.available}>
+                    {carDetails.available ? 'Add to Cart' : 'Out of Stock'}
                   </button>
                 </div>
               </div>
               <div className="reviews-section">
-                <h2>Customer Reviews</h2>
+                <h2 className="reviews-title">Customer Reviews</h2>
                 {reviews.length === 0 ? (
-                  <p>No reviews available for this car.</p>
+                  <div className="message no-data">No reviews available for this car yet.</div>
                 ) : (
                   reviews.map((review, index) => (
-                    <div key={index} className="review">
-                      <p><strong>{review.username}</strong>: {review.review_text}</p>
-                      <p>{'★'.repeat(Math.round(review.rating))}{'☆'.repeat(5 - Math.round(review.rating))}</p>
-                    </div>
+                    <article key={index} className="review-card">
+                      <div className="review-header">
+                        <h3 className="review-name">{review.username}</h3>
+                        <span className="review-rating">
+                          {'★'.repeat(Math.round(review.rating))}{'☆'.repeat(5 - Math.round(review.rating))}
+                        </span>
+                      </div>
+                      <p className="review-text">{review.review_text}</p>
+                    </article>
                   ))
                 )}
                 {purchaseIdForReview && !showReviewForm && (
-                  <button onClick={() => setShowReviewForm(true)} className="write-review-button">Write a Review</button>
+                  <button onClick={() => setShowReviewForm(true)} className="write-review-button primary">Write a Review</button>
                 )}
                 {showReviewForm && (
                   <div className="review-form">
-                    <h2>Write a Review</h2>
+                    <h2 className="form-title">Write a Review</h2>
                     <div className="rating">
                       {[...Array(5)].map((_, index) => (
-                        <span key={index} onClick={() => setRating(index + 1)}>{index < rating ? '★' : '☆'}</span>
+                        <FaStar
+                          key={index}
+                          className={index < rating ? 'star selected' : 'star'}
+                          onClick={() => setRating(index + 1)}
+                        />
                       ))}
                     </div>
-                    <textarea value={reviewText} onChange={(e) => setReviewText(e.target.value)} placeholder="Write your review here..." />
-                    <button onClick={handleReviewSubmit} className="submit-review-button">Submit Review</button>
+                    <textarea
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      placeholder="Write your review here..."
+                      className="review-textarea"
+                    />
+                    <button onClick={handleReviewSubmit} className="submit-review-button primary">Submit Review</button>
                   </div>
                 )}
               </div>
             </>
           )}
-        </div>
+        </section>
         <Footer />
-        <style jsx>{`
-          .page {
-            background: linear-gradient(135deg, #010715ff, #010a04ff);
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            overflow-x: hidden;
-            padding-top: 60px;
-            min-height: 100vh;
+      </div>
+      <style jsx>{`
+        :root {
+          --bg: #020617;
+          --card-bg: rgba(15, 23, 42, 0.96);
+          --card-border: rgba(148, 163, 184, 0.35);
+          --accent: #22d3ee;
+          --accent-strong: #e11d48;
+          --text-main: #e5e7eb;
+          --text-muted: #9ca3af;
+        }
+
+        * {
+          box-sizing: border-box;
+        }
+
+        body {
+          margin: 0;
+          background: var(--bg);
+          color: var(--text-main);
+          font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .page {
+          min-height: 100vh;
+          background:
+            radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 55%),
+            radial-gradient(circle at bottom right, rgba(244, 63, 94, 0.22), transparent 60%),
+            var(--bg);
+          color: #ffffff;
+          display: flex;
+          flex-direction: column;
+          font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+          overflow-x: hidden;
+        }
+
+        @keyframes fadeUp {
+          from {
+            opacity: 0;
+            transform: translateY(16px);
           }
-          .car-detail-container {
-            flex: 1;
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
+          to {
+            opacity: 1;
+            transform: translateY(0);
           }
+        }
+
+        .car-detail-section {
+          width: 100%;
+          padding: 8rem clamp(1.5rem, 6vw, 4rem) 3.4rem;
+        }
+
+        .car-detail-content {
+          max-width: 1120px;
+          margin: 0 auto 3.6rem;
+          display: flex;
+          gap: 2rem;
+          animation: fadeUp 0.6s ease-out;
+        }
+
+        .car-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          padding: 0.25rem 1rem;
+          border-radius: 999px;
+          font-size: 0.8rem;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          background: rgba(15, 23, 42, 0.85);
+          border: 1px solid rgba(148, 163, 184, 0.7);
+          color: var(--text-muted);
+          backdrop-filter: blur(18px);
+        }
+
+        .car-title {
+          font-size: clamp(2.5rem, 4.8vw, 3.4rem);
+          line-height: 1.08;
+          font-weight: 800;
+          letter-spacing: 0.02em;
+          color: #f9fafb;
+        }
+
+        .car-title .accent {
+          background: linear-gradient(120deg, var(--accent), var(--accent-strong));
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+
+        .car-subtitle {
+          font-size: 0.96rem;
+          color: var(--text-muted);
+          max-width: 520px;
+          margin-bottom: 1rem;
+        }
+
+        .car-image-wrapper {
+          position: relative;
+          overflow: hidden;
+          border-radius: 1.2rem;
+          box-shadow: 0 18px 48px rgba(15, 23, 42, 0.98);
+          max-width: 50%;
+        }
+
+        .car-image {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+          transform: scale(1.04);
+          transition: transform 0.4s ease;
+        }
+
+        .car-image-wrapper:hover .car-image {
+          transform: scale(1.11);
+        }
+
+        .car-glow {
+          position: absolute;
+          inset: auto 0 -35%;
+          height: 65%;
+          background: radial-gradient(circle at 50% 0, rgba(56, 189, 248, 0.22), transparent 65%);
+          opacity: 0.8;
+          transition: opacity 0.3s ease;
+        }
+
+        .car-details-section {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 1.3rem;
+        }
+
+        .car-price {
+          font-size: 1.8rem;
+          font-weight: 600;
+          color: var(--accent);
+        }
+
+        .car-rating {
+          font-size: 1.2rem;
+          color: #facc15;
+        }
+
+        .car-specs {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 1rem;
+        }
+
+        .spec-item {
+          background: rgba(15, 23, 42, 0.85);
+          padding: 0.75rem;
+          border-radius: 0.5rem;
+          border: 1px solid var(--card-border);
+        }
+
+        .spec-label {
+          font-size: 0.85rem;
+          color: var(--text-muted);
+        }
+
+        .spec-value {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #f9fafb;
+        }
+
+        .add-to-cart-button {
+          padding: 0.75rem 1.6rem;
+          border-radius: 999px;
+          border: none;
+          cursor: pointer;
+          font-size: 0.9rem;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border 0.2s ease;
+          white-space: nowrap;
+          width: fit-content;
+        }
+
+        .add-to-cart-button.primary {
+          background: linear-gradient(to right, var(--accent-strong), #f97316);
+          color: #f9fafb;
+          box-shadow: 0 20px 45px rgba(248, 113, 113, 0.65);
+        }
+
+        .add-to-cart-button.primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 26px 60px rgba(248, 113, 113, 0.75);
+        }
+
+        .add-to-cart-button:disabled {
+          background: rgba(148, 163, 184, 0.7);
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
+        }
+
+        .reviews-section {
+          max-width: 1120px;
+          margin: 0 auto;
+        }
+
+        .reviews-title {
+          font-size: 1.45rem;
+          font-weight: 700;
+          color: #f9fafb;
+          margin-bottom: 1rem;
+        }
+
+        .review-card {
+          background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 60%),
+            var(--card-bg);
+          border-radius: 1.2rem;
+          border: 1px solid var(--card-border);
+          box-shadow: 0 18px 48px rgba(15, 23, 42, 0.98);
+          padding: 1rem;
+          margin-bottom: 1.2rem;
+        }
+
+        .review-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 0.5rem;
+        }
+
+        .review-name {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #f9fafb;
+        }
+
+        .review-rating {
+          font-size: 0.9rem;
+          color: #facc15;
+        }
+
+        .review-text {
+          font-size: 0.92rem;
+          color: var(--text-muted);
+        }
+
+        .write-review-button {
+          padding: 0.75rem 1.6rem;
+          border-radius: 999px;
+          border: none;
+          cursor: pointer;
+          font-size: 0.9rem;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border 0.2s ease;
+          white-space: nowrap;
+          background: linear-gradient(to right, var(--accent-strong), #f97316);
+          color: #f9fafb;
+          box-shadow: 0 20px 45px rgba(248, 113, 113, 0.65);
+        }
+
+        .write-review-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 26px 60px rgba(248, 113, 113, 0.75);
+        }
+
+        .review-form {
+          background: var(--card-bg);
+          padding: 1.5rem;
+          border-radius: 1.2rem;
+          border: 1px solid var(--card-border);
+          box-shadow: 0 18px 48px rgba(15, 23, 42, 0.98);
+          margin-top: 1.5rem;
+        }
+
+        .form-title {
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: #f9fafb;
+          margin-bottom: 1rem;
+        }
+
+        .rating {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .star {
+          font-size: 1.5rem;
+          color: var(--text-muted);
+          cursor: pointer;
+          transition: color 0.2s ease;
+        }
+
+        .star.selected {
+          color: #facc15;
+        }
+
+        .review-textarea {
+          width: 100%;
+          min-height: 100px;
+          padding: 0.75rem 1rem;
+          font-size: 0.9rem;
+          border: none;
+          border-radius: 0.5rem;
+          background: rgba(15, 23, 42, 0.85);
+          color: #f9fafb;
+          outline: none;
+          border: 1px solid rgba(148, 163, 184, 0.7);
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+          margin-bottom: 1rem;
+        }
+
+        .review-textarea:focus {
+          border-color: var(--accent);
+          box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
+        }
+
+        .submit-review-button {
+          padding: 0.75rem 1.6rem;
+          border-radius: 999px;
+          border: none;
+          cursor: pointer;
+          font-size: 0.9rem;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border 0.2s ease;
+          white-space: nowrap;
+          background: linear-gradient(to right, var(--accent-strong), #f97316);
+          color: #f9fafb;
+          box-shadow: 0 20px 45px rgba(248, 113, 113, 0.65);
+        }
+
+        .submit-review-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 26px 60px rgba(248, 113, 113, 0.75);
+        }
+
+        .back-button {
+          padding: 0.75rem 1.6rem;
+          border-radius: 999px;
+          border: none;
+          cursor: pointer;
+          font-size: 0.9rem;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border 0.2s ease;
+          white-space: nowrap;
+          margin-top: 1rem;
+        }
+
+        .back-button.ghost {
+          background: rgba(15, 23, 42, 0.85);
+          border: 1px solid rgba(148, 163, 184, 0.9);
+          color: var(--text-main);
+        }
+
+        .back-button.ghost:hover {
+          background: rgba(15, 23, 42, 1);
+          transform: translateY(-1px);
+        }
+
+        .message {
+          text-align: center;
+          font-size: 0.95rem;
+          padding: 1.5rem 1rem;
+          border-radius: 0.9rem;
+          margin-bottom: 2rem;
+          max-width: 600px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+
+        .loading {
+          color: var(--text-muted);
+          background: rgba(15, 23, 42, 0.8);
+          border: 1px dashed rgba(148, 163, 184, 0.5);
+        }
+
+        .error-message {
+          color: #fecaca;
+          background: rgba(127, 29, 29, 0.65);
+          border: 1px solid rgba(248, 113, 113, 0.85);
+        }
+
+        .no-data {
+          color: var(--text-muted);
+          background: rgba(15, 23, 42, 0.8);
+          border: 1px dashed rgba(148, 163, 184, 0.5);
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+          .car-detail-section {
+            padding: 1.8rem 1.4rem 1.3rem;
+          }
+
           .car-detail-content {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 2rem;
-          }
-          .car-image-section {
-            flex: 1;
-            max-width: 50%;
-          }
-          .car-image {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
-            border-radius: 1rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-          }
-          .car-details-section {
-            flex: 1;
-            display: flex;
             flex-direction: column;
-            gap: 1rem;
           }
+
+          .car-image-wrapper {
+            max-width: 100%;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .car-detail-section {
+            padding: 1.6rem 1.1rem 1.1rem;
+          }
+
           .car-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #ec4899;
-            margin-bottom: 0.5rem;
+            font-size: 2.2rem;
           }
+
+          .car-subtitle {
+            font-size: 0.9rem;
+          }
+
           .car-price {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #22d3ee;
-            margin-bottom: 1rem;
+            font-size: 1.5rem;
           }
+
           .car-specs {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+            grid-template-columns: 1fr;
           }
+
           .spec-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(15, 23, 42, 0.95);
-            padding: 0.75rem;
-            border-radius: 0.5rem;
+            padding: 0.6rem;
+            font-size: 0.85rem;
+          }
+
+          .add-to-cart-button {
+            width: 100%;
+          }
+
+          .reviews-title {
+            font-size: 1.2rem;
+          }
+
+          .review-card {
+            padding: 0.9rem;
+          }
+
+          .review-name {
             font-size: 0.95rem;
           }
-          .spec-icon {
-            font-size: 1.2rem;
+
+          .review-text {
+            font-size: 0.85rem;
           }
-          .spec-label {
-            font-weight: 600;
-            color: #d1d5db;
-          }
-          .spec-value {
-            color: #facc15;
-          }
-          .car-description {
-            font-size: 1rem;
-            color: #d1d5db;
-            line-height: 1.6;
-          }
-          .car-rating {
-            font-size: 1.2rem;
-            color: #facc15;
-            margin-top: 0.5rem;
-          }
-          .add-to-cart-button {
-            padding: 0.75rem 1.5rem;
-            background: #22d3ee;
-            color: #1e293b;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: background 0.3s, transform 0.2s;
-          }
-          .reviews-section {
-            margin-top: 2rem;
-          }
-          .reviews-section h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #ec4899;
-            margin-bottom: 1rem;
-          }
-          .review {
-            background: rgba(15, 23, 42, 0.95);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-          }
-          .loading, .error-message {
-            text-align: center;
-            font-size: 1.2rem;
-            color: #d1d5db;
-            padding: 2rem;
-          }
-          .error-message {
-            color: #f43f5e;
-          }
-          .back-button {
-            margin-top: 1rem;
-            padding: 0.5rem 1rem;
-            background: #ec4899;
-            color: #ffffff;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background 0.3s;
-          }
-          .back-button:hover {
-            background: #db2777;
-          }
-          .write-review-button, .submit-review-button {
-            background-color: #22d3ee;
-            color: #1e293b;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-            margin-top: 1rem;
-          }
+
           .review-form {
-            margin-top: 2rem;
-            background: rgba(15, 23, 42, 0.95);
-            padding: 1.5rem;
-            border-radius: 0.5rem;
+            padding: 1.2rem;
           }
-          .review-form h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #ec4899;
-            margin-bottom: 1rem;
+
+          .form-title {
+            font-size: 1.1rem;
           }
-          .rating {
-            font-size: 2rem;
-            cursor: pointer;
-            margin-bottom: 1rem;
+
+          .rating .star {
+            font-size: 1.2rem;
           }
-          .rating span {
-            color: #facc15;
+
+          .review-textarea {
+            font-size: 0.85rem;
           }
-          .review-form textarea {
+
+          .submit-review-button {
             width: 100%;
-            min-height: 100px;
-            padding: 0.75rem;
-            background: #0f172a;
-            color: #e5e7eb;
-            border: 1px solid #334155;
-            border-radius: 0.5rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .car-title {
+            font-size: 1.9rem;
+          }
+
+          .car-subtitle {
+            font-size: 0.84rem;
+          }
+
+          .car-price {
+            font-size: 1.3rem;
+          }
+
+          .spec-item {
+            font-size: 0.8rem;
+          }
+
+          .add-to-cart-button {
+            padding: 0.6rem 1.3rem;
+            font-size: 0.85rem;
+          }
+
+          .reviews-title {
+            font-size: 1.1rem;
+          }
+
+          .review-card {
+            padding: 0.8rem;
+          }
+
+          .review-name {
+            font-size: 0.9rem;
+          }
+
+          .review-text {
+            font-size: 0.8rem;
+          }
+
+          .review-form {
+            padding: 1rem;
+          }
+
+          .form-title {
             font-size: 1rem;
-            margin-bottom: 1rem;
           }
-          @media (max-width: 768px) {
-            .car-detail-content {
-              flex-direction: column;
-            }
-            .car-image-section {
-              max-width: 100%;
-            }
-            .car-title {
-              font-size: 1.8rem;
-            }
-            .car-price {
-              font-size: 1.4rem;
-            }
-            .car-specs {
-              grid-template-columns: 1fr;
-            }
-            .spec-item {
-              font-size: 0.9rem;
-            }
-            .car-description, .car-rating {
-              font-size: 0.9rem;
-            }
-            .reviews-section h2 {
-              font-size: 1.5rem;
-            }
+
+          .rating .star {
+            font-size: 1.1rem;
           }
-        `}</style>
-      </div>
+
+          .review-textarea {
+            font-size: 0.8rem;
+          }
+
+          .submit-review-button {
+            padding: 0.6rem 1.3rem;
+            font-size: 0.85rem;
+          }
+        }
+      `}</style>
     </ErrorBoundary>
   );
 };

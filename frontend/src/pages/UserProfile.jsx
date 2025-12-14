@@ -2,6 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext.jsx';
 import axios from 'axios';
 import api from '../api.jsx';
+import Navbar from '../components/Navbar.jsx';
+import Footer from '../components/Footer.jsx';
 
 const UserProfile = () => {
     const { user } = useContext(AuthContext);
@@ -60,7 +62,7 @@ const UserProfile = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        aapi.put(`/users/${user.user_id}`, formData)
+        api.put(`/users/${user.user_id}`, formData)
             .then(response => {
                 setUserData(response.data);
                 setFormData(response.data);
@@ -73,268 +75,521 @@ const UserProfile = () => {
     };
 
     if (loading) {
-        return <div className="loading-container">Loading profile...</div>;
+        return <div className="message loading">Loading profile...</div>;
     }
 
     if (error) {
-        return <div className="error-container">{error}</div>;
+        return <div className="message error-message">{error}</div>;
     }
 
     return (
         <>
-            <div className="profile-page">
-                <h1 className="page-title">My Profile</h1>
-                <div className="profile-grid">
-                    <div className="profile-card">
-                        <h2 className="card-title">Account Information</h2>
-                        {editMode ? (
-                            <form onSubmit={handleSubmit} className="profile-form">
-                                <div className="form-group">
-                                    <label htmlFor="username">Username</label>
-                                    <input id="username" type="text" name="username" value={formData.username || ''} onChange={handleChange} />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="email">Email</label>
-                                    <input id="email" type="email" name="email" value={formData.email || ''} onChange={handleChange} />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="address">Address</label>
-                                    <input id="address" type="text" name="address" value={formData.address || ''} onChange={handleChange} />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="phone">Phone</label>
-                                    <input id="phone" type="text" name="phone" value={formData.phone || ''} onChange={handleChange} />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="dob">Date of Birth</label>
-                                    <input id="dob" type="date" name="dob" value={formData.dob || ''} onChange={handleChange} />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="card_num">Card Number</label>
-                                    <input id="card_num" type="text" name="card_num" value={formData.card_num || ''} onChange={handleChange} />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="bank_acc">Bank Account</label>
-                                    <input id="bank_acc" type="text" name="bank_acc" value={formData.bank_acc || ''} onChange={handleChange} />
-                                </div>
-                                <div className="form-buttons">
-                                    <button type="submit" className="btn-save">Save Changes</button>
-                                    <button type="button" className="btn-cancel" onClick={handleCancel}>Cancel</button>
-                                </div>
-                            </form>
-                        ) : (
-                            <div className="profile-info">
-                                <div className="info-item">
-                                    <strong>Username:</strong><span>{userData.username}</span>
-                                </div>
-                                <div className="info-item">
-                                    <strong>Email:</strong><span>{userData.email}</span>
-                                </div>
-                                <div className="info-item">
-                                    <strong>Address:</strong><span>{userData.address || 'N/A'}</span>
-                                </div>
-                                <div className="info-item">
-                                    <strong>Phone:</strong><span>{userData.phone || 'N/A'}</span>
-                                </div>
-                                <div className="info-item">
-                                    <strong>Date of Birth:</strong><span>{userData.dob || 'N/A'}</span>
-                                </div>
-                                <div className="info-item">
-                                    <strong>Card Number:</strong><span>{userData.card_num || 'N/A'}</span>
-                                </div>
-                                <div className="info-item">
-                                    <strong>Bank Account:</strong><span>{userData.bank_acc || 'N/A'}</span>
-                                </div>
-                                <button className="btn-edit" onClick={handleEdit}>Edit Profile</button>
+            <div className="page">
+                <Navbar />
+                <section className="profile-section">
+                    <div className="profile-content">
+                        <div className="profile-pill">Goriber Gari • Profile</div>
+                        <h1 className="profile-title">
+                            My <span className="accent">Profile</span>
+                        </h1>
+                        <p className="profile-subtitle">
+                            Manage your account details, view purchase history, and track orders.
+                        </p>
+                        <div className="profile-grid">
+                            <div className="profile-card">
+                                <h2 className="card-title">Account Information</h2>
+                                {editMode ? (
+                                    <form onSubmit={handleSubmit} className="profile-form">
+                                        <div className="form-group">
+                                            <label htmlFor="username">Username</label>
+                                            <input id="username" type="text" name="username" value={formData.username || ''} onChange={handleChange} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="email">Email</label>
+                                            <input id="email" type="email" name="email" value={formData.email || ''} onChange={handleChange} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="address">Address</label>
+                                            <input id="address" type="text" name="address" value={formData.address || ''} onChange={handleChange} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="phone">Phone</label>
+                                            <input id="phone" type="text" name="phone" value={formData.phone || ''} onChange={handleChange} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="dob">Date of Birth</label>
+                                            <input id="dob" type="date" name="dob" value={formData.dob || ''} onChange={handleChange} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="card_num">Card Number</label>
+                                            <input id="card_num" type="text" name="card_num" value={formData.card_num || ''} onChange={handleChange} />
+                                        </div>
+                                        <div className="form-group">
+                                            <label htmlFor="bank_acc">Bank Account</label>
+                                            <input id="bank_acc" type="text" name="bank_acc" value={formData.bank_acc || ''} onChange={handleChange} />
+                                        </div>
+                                        <div className="form-buttons">
+                                            <button type="submit" className="btn-save primary">Save Changes</button>
+                                            <button type="button" className="btn-cancel ghost" onClick={handleCancel}>Cancel</button>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    <div className="profile-info">
+                                        <div className="info-item">
+                                            <strong>Username:</strong><span>{userData.username}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <strong>Email:</strong><span>{userData.email}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <strong>Address:</strong><span>{userData.address || 'N/A'}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <strong>Phone:</strong><span>{userData.phone || 'N/A'}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <strong>Date of Birth:</strong><span>{userData.dob || 'N/A'}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <strong>Card Number:</strong><span>{userData.card_num || 'N/A'}</span>
+                                        </div>
+                                        <div className="info-item">
+                                            <strong>Bank Account:</strong><span>{userData.bank_acc || 'N/A'}</span>
+                                        </div>
+                                        <button className="btn-edit primary" onClick={handleEdit}>Edit Profile</button>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
 
-                    <div className="history-card">
-                        <h2 className="card-title">Purchase History</h2>
-                        <div className="history-list">
-                            {purchases.length > 0 ? (
-                                purchases.map(p => (
-                                    <div key={p.purchase_id} className="history-item">
-                                        <p><strong>ID:</strong> {p.purchase_id}</p>
-                                        <p><strong>Amount:</strong> ${p.amount}</p>
-                                        <p>
-                                            <strong>Status:</strong>
-                                            <span className={`status status-${p.status?.toLowerCase()}`}>
-                                                {p.status}
-                                            </span>
-                                        </p>
-                                    </div>
-                                ))
-                            ) : <p>You have no past purchases.</p>}
-                        </div>
+                            <div className="history-card">
+                                <h2 className="card-title">Purchase History</h2>
+                                <div className="history-list">
+                                    {purchases.length > 0 ? (
+                                        purchases.map(p => (
+                                            <div key={p.purchase_id} className="history-item">
+                                                <p><strong>ID:</strong> {p.purchase_id}</p>
+                                                <p><strong>Amount:</strong> ${p.amount}</p>
+                                                <p>
+                                                    <strong>Status:</strong>
+                                                    <span className={`status status-${p.status?.toLowerCase()}`}>
+                                                        {p.status}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        ))
+                                    ) : <p className="no-data">You have no past purchases.</p>}
+                                </div>
 
-                        <h2 className="card-title">Order History</h2>
-                        <div className="history-list">
-                            {orders.length > 0 ? (
-                                orders.map(o => (
-                                    <div key={o.order_id} className="history-item">
-                                        <p><strong>ID:</strong> {o.order_id}</p>
-                                        <p>
-                                            <strong>Status:</strong>
-                                            <span className={`status status-${o.status?.toLowerCase()}`}>
-                                                {o.status}
-                                            </span>
-                                        </p>
-                                        <p><strong>Tracking:</strong> {o.tracking_number || 'N/A'}</p>
-                                    </div>
-                                ))
-                            ) : <p>You have no past orders.</p>}
+                                <h2 className="card-title">Order History</h2>
+                                <div className="history-list">
+                                    {orders.length > 0 ? (
+                                        orders.map(o => (
+                                            <div key={o.order_id} className="history-item">
+                                                <p><strong>ID:</strong> {o.order_id}</p>
+                                                <p>
+                                                    <strong>Status:</strong>
+                                                    <span className={`status status-${o.status?.toLowerCase()}`}>
+                                                        {o.status}
+                                                    </span>
+                                                </p>
+                                                <p><strong>Tracking:</strong> {o.tracking_number || 'N/A'}</p>
+                                            </div>
+                                        ))
+                                    ) : <p className="no-data">You have no past orders.</p>}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
+                <Footer />
             </div>
 
             <style jsx>{`
-                .profile-page {
-                    padding: 3rem 2rem;
-                    background-color: #000000ff;
-                    color: #e5e7eb;
-                    min-height: 100vh;
+                :root {
+                  --bg: #020617;
+                  --card-bg: rgba(15, 23, 42, 0.96);
+                  --card-border: rgba(148, 163, 184, 0.35);
+                  --accent: #22d3ee;
+                  --accent-strong: #e11d48;
+                  --text-main: #e5e7eb;
+                  --text-muted: #9ca3af;
                 }
-                .page-title {
-                    font-size: 2.5rem;
-                    font-weight: 800;
-                    margin-bottom: 2rem;
-                    color: #fff;
-                    text-align: center;
+
+                * {
+                  box-sizing: border-box;
                 }
+
+                body {
+                  margin: 0;
+                  background: var(--bg);
+                  color: var(--text-main);
+                  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+                }
+
+                .page {
+                  min-height: 100vh;
+                  background:
+                    radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 55%),
+                    radial-gradient(circle at bottom right, rgba(244, 63, 94, 0.22), transparent 60%),
+                    var(--bg);
+                  color: #ffffff;
+                  display: flex;
+                  flex-direction: column;
+                  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+                  overflow-x: hidden;
+                }
+
+                @keyframes fadeUp {
+                  from {
+                    opacity: 0;
+                    transform: translateY(16px);
+                  }
+                  to {
+                    opacity: 1;
+                    transform: translateY(0);
+                  }
+                }
+
+                /* PROFILE SECTION */
+
+                .profile-section {
+                  width: 100%;
+                  padding: 2rem clamp(1.5rem, 6vw, 4rem) 1.5rem;
+                }
+
+                .profile-content {
+                  max-width: 1120px;
+                  margin: 0 auto;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 1.3rem;
+                  animation: fadeUp 0.6s ease-out;
+                }
+
+                .profile-pill {
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 0.4rem;
+                  padding: 0.25rem 1rem;
+                  border-radius: 999px;
+                  font-size: 0.8rem;
+                  letter-spacing: 0.14em;
+                  text-transform: uppercase;
+                  background: rgba(15, 23, 42, 0.85);
+                  border: 1px solid rgba(148, 163, 184, 0.7);
+                  color: var(--text-muted);
+                  backdrop-filter: blur(18px);
+                  width: fit-content;
+                }
+
+                .profile-title {
+                  font-size: clamp(2.5rem, 4.8vw, 3.4rem);
+                  line-height: 1.08;
+                  font-weight: 800;
+                  letter-spacing: 0.02em;
+                  color: #f9fafb;
+                }
+
+                .profile-title .accent {
+                  background: linear-gradient(120deg, var(--accent), var(--accent-strong));
+                  -webkit-background-clip: text;
+                  background-clip: text;
+                  color: transparent;
+                }
+
+                .profile-subtitle {
+                  font-size: 0.96rem;
+                  color: var(--text-muted);
+                  max-width: 520px;
+                }
+
                 .profile-grid {
-                    display: grid;
-                    grid-template-columns: 1fr 1.5fr;
-                    gap: 2rem;
-                    max-width: 1200px;
-                    margin: 0 auto;
+                  display: grid;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 1.5rem;
                 }
-                .profile-card, .history-card {
-                    background-color: #040110ff;
-                    border-radius: 12px;
-                    padding: 2rem;
-                    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+
+                .profile-card,
+                .history-card {
+                  background: var(--card-bg);
+                  border-radius: 1.2rem;
+                  border: 1px solid var(--card-border);
+                  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.98);
+                  padding: 1.5rem;
                 }
+
                 .card-title {
-                    font-size: 1.5rem;
-                    font-weight: 700;
-                    margin-bottom: 1.5rem;
-                    padding-bottom: 0.5rem;
-                    border-bottom: 1px solid #334155;
-                    color: #93c5fd;
+                  font-size: 1.35rem;
+                  font-weight: 700;
+                  color: #f9fafb;
+                  margin-bottom: 1rem;
                 }
-                
-                /* Profile Info & Form */
-                .profile-info .info-item {
-                    display: flex;
-                    justify-content: space-between;
-                    margin-bottom: 1rem;
-                    font-size: 1.1rem;
+
+                .profile-info {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 0.75rem;
                 }
-                .profile-info .info-item strong {
-                    color: #94a3b8;
+
+                .info-item {
+                  display: flex;
+                  justify-content: space-between;
+                  font-size: 0.92rem;
+                  color: var(--text-muted);
                 }
-                .profile-info .info-item span {
-                    color: #e5e7eb;
-                    font-weight: 500;
+
+                .info-item strong {
+                  color: #f9fafb;
                 }
-                .profile-form .form-group {
-                    margin-bottom: 1.5rem;
+
+                .profile-form {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 1.2rem;
                 }
-                .profile-form label {
-                    display: block;
-                    margin-bottom: 0.5rem;
-                    font-weight: 600;
-                    color: #94a3b8;
+
+                .form-group label {
+                  display: block;
+                  font-size: 1rem;
+                  font-weight: 500;
+                  color: #f9fafb;
+                  margin-bottom: 0.4rem;
                 }
-                .profile-form input {
-                    width: 100%;
-                    padding: 0.75rem 1rem;
-                    background: #0f172a;
-                    color: #e5e7eb;
-                    border: 1px solid #334155;
-                    border-radius: 8px;
-                    font-size: 1rem;
-                    transition: border-color 0.3s, box-shadow 0.3s;
+
+                .form-group input {
+                  width: 100%;
+                  padding: 0.6rem 1rem;
+                  font-size: 0.9rem;
+                  border: none;
+                  border-radius: 0.5rem;
+                  background: rgba(15, 23, 42, 0.85);
+                  color: #f9fafb;
+                  outline: none;
+                  border: 1px solid rgba(148, 163, 184, 0.7);
+                  transition: border-color 0.2s ease, box-shadow 0.2s ease;
                 }
-                .profile-form input:focus {
-                    outline: none;
-                    border-color: #22d3ee;
-                    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
+
+                .form-group input:focus {
+                  border-color: var(--accent);
+                  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.3);
                 }
+
                 .form-buttons {
-                    display: flex;
-                    gap: 1rem;
-                    margin-top: 1.5rem;
-                }
-                .btn-edit, .btn-save, .btn-cancel {
-                    padding: 0.6rem 1.5rem;
-                    border: none;
-                    border-radius: 8px;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transition: all 0.3s;
-                }
-                .btn-edit, .btn-save {
-                    background-color: #22d3ee;
-                    color: #1e293b;
-                }
-                .btn-edit:hover, .btn-save:hover {
-                    background-color: #06b6d4;
-                    transform: translateY(-2px);
-                }
-                .btn-cancel {
-                    background-color: #334155;
-                    color: #e5e7eb;
-                }
-                .btn-cancel:hover {
-                    background-color: #475569;
+                  display: flex;
+                  gap: 0.85rem;
                 }
 
-                /* History Section */
-                .history-card .card-title {
-                    margin-top: 2rem;
+                .btn-save,
+                .btn-cancel,
+                .btn-edit {
+                  padding: 0.75rem 1.6rem;
+                  border-radius: 999px;
+                  border: none;
+                  cursor: pointer;
+                  font-size: 0.9rem;
+                  font-weight: 600;
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border 0.2s ease;
+                  white-space: nowrap;
                 }
-                .history-card .card-title:first-of-type {
-                    margin-top: 0;
+
+                .btn-save.primary,
+                .btn-edit.primary {
+                  background: linear-gradient(to right, var(--accent-strong), #f97316);
+                  color: #f9fafb;
+                  box-shadow: 0 20px 45px rgba(248, 113, 113, 0.65);
                 }
+
+                .btn-save.primary:hover,
+                .btn-edit.primary:hover {
+                  transform: translateY(-2px);
+                  box-shadow: 0 26px 60px rgba(248, 113, 113, 0.75);
+                }
+
+                .btn-cancel.ghost {
+                  background: rgba(15, 23, 42, 0.85);
+                  border: 1px solid rgba(148, 163, 184, 0.9);
+                  color: var(--text-main);
+                }
+
+                .btn-cancel.ghost:hover {
+                  background: rgba(15, 23, 42, 1);
+                  transform: translateY(-1px);
+                }
+
                 .history-list {
-                    max-height: 300px;
-                    overflow-y: auto;
-                    padding-right: 1rem;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 1.2rem;
                 }
-                .history-item {
-                    background-color: #0f172a;
-                    padding: 1rem;
-                    border-radius: 8px;
-                    margin-bottom: 1rem;
-                    border-left: 4px solid #22d3ee;
-                }
-                .history-item p {
-                    margin: 0.3rem 0;
-                }
-                .status {
-                    font-weight: 700;
-                    padding: 0.2rem 0.5rem;
-                    border-radius: 6px;
-                    font-size: 0.9rem;
-                }
-                .status-completed, .status-delivered { background-color: #10b981; color: #f0fdf4; }
-                .status-processing, .status-shipped { background-color: #f59e0b; color: #fffbeb; }
-                .status-pending { background-color: #a855f7; color: #f5f3ff; }
-                .status-cancelled { background-color: #ef4444; color: #fef2f2; }
 
-                /* Responsive */
-                @media (max-width: 992px) {
-                    .profile-grid {
-                        grid-template-columns: 1fr;
-                    }
+                .history-item {
+                  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 60%),
+                    rgba(15, 23, 42, 0.85);
+                  border-radius: 1rem;
+                  border: 1px solid var(--card-border);
+                  padding: 1rem;
+                  font-size: 0.92rem;
+                  color: var(--text-muted);
                 }
+
+                .history-item p {
+                  margin: 0.3rem 0;
+                }
+
+                .history-item strong {
+                  color: #f9fafb;
+                }
+
+                .status {
+                  padding: 0.2rem 0.75rem;
+                  border-radius: 999px;
+                  font-size: 0.8rem;
+                  font-weight: 600;
+                  margin-left: 0.5rem;
+                }
+
+                .status-completed,
+                .status-delivered {
+                  background: rgba(16, 185, 129, 0.2);
+                  color: #10b981;
+                  border: 1px solid rgba(16, 185, 129, 0.5);
+                }
+
+                .status-processing,
+                .status-shipped {
+                  background: rgba(245, 158, 11, 0.2);
+                  color: #f59e0b;
+                  border: 1px solid rgba(245, 158, 11, 0.5);
+                }
+
+                .status-pending {
+                  background: rgba(168, 85, 247, 0.2);
+                  color: #a855f7;
+                  border: 1px solid rgba(168, 85, 247, 0.5);
+                }
+
+                .status-cancelled {
+                  background: rgba(239, 68, 68, 0.2);
+                  color: #ef4444;
+                  border: 1px solid rgba(239, 68, 68, 0.5);
+                }
+
+                .no-data {
+                  font-size: 0.92rem;
+                  color: var(--text-muted);
+                  text-align: center;
+                  padding: 1rem;
+                  background: rgba(15, 23, 42, 0.85);
+                  border-radius: 1rem;
+                  border: 1px dashed rgba(148, 163, 184, 0.5);
+                }
+
+                .message {
+                  text-align: center;
+                  font-size: 0.95rem;
+                  padding: 1.5rem 1rem;
+                  border-radius: 0.9rem;
+                  margin: 2rem auto;
+                  max-width: 600px;
+                }
+
+                .loading {
+                  color: var(--text-muted);
+                  background: rgba(15, 23, 42, 0.8);
+                  border: 1px dashed rgba(148, 163, 184, 0.5);
+                }
+
+                .error-message {
+                  color: #fecaca;
+                  background: rgba(127, 29, 29, 0.65);
+                  border: 1px solid rgba(248, 113, 113, 0.85);
+                }
+
+                /* RESPONSIVE */
+
+                @media (max-width: 900px) {
+                  .profile-section {
+                    padding: 1.8rem 1.4rem 1.3rem;
+                  }
+
+                  .profile-grid {
+                    grid-template-columns: 1fr;
+                  }
+                }
+
                 @media (max-width: 768px) {
-                    .profile-page { padding: 2rem 1rem; }
-                    .page-title { font-size: 2rem; }
+                  .profile-section {
+                    padding: 1.6rem 1.1rem 1.1rem;
+                  }
+
+                  .profile-title {
+                    font-size: 2.2rem;
+                  }
+
+                  .profile-subtitle {
+                    font-size: 0.9rem;
+                  }
+
+                  .card-title {
+                    font-size: 1.2rem;
+                  }
+
+                  .profile-card,
+                  .history-card {
+                    padding: 1.2rem;
+                  }
+
+                  .form-group input {
+                    padding: 0.5rem 1rem;
+                    font-size: 0.85rem;
+                  }
+
+                  .btn-save,
+                  .btn-cancel,
+                  .btn-edit {
+                    padding: 0.6rem 1.3rem;
+                    font-size: 0.85rem;
+                  }
+
+                  .history-item {
+                    padding: 0.9rem;
+                    font-size: 0.85rem;
+                  }
+                }
+
+                @media (max-width: 480px) {
+                  .profile-title {
+                    font-size: 1.9rem;
+                  }
+
+                  .profile-subtitle {
+                    font-size: 0.84rem;
+                  }
+
+                  .profile-card,
+                  .history-card {
+                    padding: 1rem;
+                  }
+
+                  .form-group input {
+                    padding: 0.4rem 1rem;
+                    font-size: 0.8rem;
+                  }
+
+                  .btn-save,
+                  .btn-cancel,
+                  .btn-edit {
+                    padding: 0.5rem 1.3rem;
+                    font-size: 0.8rem;
+                  }
+
+                  .history-item {
+                    padding: 0.8rem;
+                    font-size: 0.8rem;
+                  }
                 }
             `}</style>
         </>
