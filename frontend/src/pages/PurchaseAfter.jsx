@@ -1,14 +1,42 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 import autoTable from 'jspdf-autotable';
+import {
+  FaArrowLeft,
+  FaArrowRight,
+  FaCarSide,
+  FaCheck,
+  FaCreditCard,
+  FaDownload,
+  FaMapMarkerAlt,
+  FaReceipt,
+  FaTruck,
+} from 'react-icons/fa';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
+import CheckoutSteps from '../components/CheckoutSteps.jsx';
 import { AuthContext } from '../context/AuthContext.jsx';
 import carLogo from '../../../attachments/car.png';
 import api from '../api.jsx';
+import './Checkout.css';
+
+const money = (value) => {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return '$0.00';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format(amount);
+};
+
+const DetailRow = ({ label, children }) => (
+  <div className="confirmation-row">
+    <span>{label}</span>
+    <strong>{children || 'Not available'}</strong>
+  </div>
+);
 
 const PurchaseAfter = () => {
   const { purchaseId } = useParams();
@@ -27,25 +55,18 @@ const PurchaseAfter = () => {
         setPurchaseDetails(purchaseResponse.data);
 
         const orderResponse = await api.get(`/orders/purchase/${purchaseId}`);
-        if (orderResponse.data.length > 0) {
-          const order = orderResponse.data[0];
-          setOrderDetails(order);
+        if (!orderResponse.data.length) throw new Error('No order was found for this purchase.');
+        const order = orderResponse.data[0];
+        setOrderDetails(order);
 
-          const orderItemsResponse = await api.get(`/order_items/by_order/${order.order_id}`);
-          if (orderItemsResponse.data.length > 0) {
-            const carId = orderItemsResponse.data[0].car_id;
+        const itemsResponse = await api.get(`/order_items/by_order/${order.order_id}`);
+        if (!itemsResponse.data.length) throw new Error('No vehicle was found in this order.');
 
-            const carResponse = await api.get(`/cars/${carId}/details`);
-            setCarDetails(carResponse.data);
-          } else {
-            setError('No items found for this order.');
-          }
-        } else {
-          setError('No order found for this purchase.');
-        }
-      } catch (err) {
-        console.error('Fetch error:', err);
-        setError('Failed to fetch purchase details.');
+        const carResponse = await api.get(`/cars/${itemsResponse.data[0].car_id}/details`);
+        setCarDetails(carResponse.data);
+      } catch (fetchError) {
+        console.error('Fetch error:', fetchError);
+        setError(fetchError.message || 'We could not load the order details.');
       } finally {
         setLoading(false);
       }
@@ -56,7 +77,7 @@ const PurchaseAfter = () => {
 
   const generatePDF = () => {
     if (!purchaseDetails || !carDetails || !orderDetails || !user) {
-      setError("Cannot generate PDF: Not all purchase details are available yet.");
+      setError('The invoice is not ready yet. Please refresh and try again.');
       return;
     }
 
@@ -65,7 +86,6 @@ const PurchaseAfter = () => {
       const pageHeight = doc.internal.pageSize.height;
       let yPos = 20;
 
-      // Header
       doc.addImage(carLogo, 'PNG', 14, yPos, 40, 20);
       doc.setFontSize(26);
       doc.setFont('helvetica', 'bold');
@@ -77,21 +97,15 @@ const PurchaseAfter = () => {
       doc.setDrawColor(200);
       doc.line(14, yPos, doc.internal.pageSize.width - 14, yPos);
       yPos += 15;
-
-      // Title
       doc.setFontSize(22);
       doc.setFont('helvetica', 'bold');
       doc.text('Purchase Invoice', 14, yPos);
       yPos += 10;
-
-      // Metadata
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
       doc.text(`Invoice #: ${purchaseDetails.invoice_number || 'N/A'}`, 14, yPos);
       doc.text(`Date: ${new Date().toLocaleDateString()}`, doc.internal.pageSize.width - 14, yPos, { align: 'right' });
       yPos += 15;
-
-      // Bill To
       doc.setFont('helvetica', 'bold');
       doc.text('Bill To:', 14, yPos);
       doc.setFont('helvetica', 'normal');
@@ -100,7 +114,6 @@ const PurchaseAfter = () => {
       doc.text(user.phone_number || '', 14, yPos + 18);
       yPos += 30;
 
-      // Car Details Table
       autoTable(doc, {
         startY: yPos,
         head: [['Specification', 'Details']],
@@ -112,25 +125,23 @@ const PurchaseAfter = () => {
           ['Transmission', carDetails.transmission || 'N/A'],
         ],
         theme: 'grid',
-        headStyles: { fillColor: [41, 128, 185] },
-        didDrawPage: (data) => { yPos = data.cursor.y; }
+        headStyles: { fillColor: [16, 27, 44] },
+        didDrawPage: (data) => { yPos = data.cursor.y; },
       });
 
-      // Purchase Summary Table
       autoTable(doc, {
         startY: yPos + 10,
         head: [['Purchase Summary', 'Amount']],
         body: [
-          ['Total Price', `$${(purchaseDetails.amount || 0).toFixed(2)}`],
+          ['Total Price', money(purchaseDetails.amount)],
           ['Payment Method', purchaseDetails.payment_method || 'N/A'],
           ['Status', purchaseDetails.status || 'N/A'],
         ],
         theme: 'grid',
-        headStyles: { fillColor: [22, 160, 133] },
-        didDrawPage: (data) => { yPos = data.cursor.y; }
+        headStyles: { fillColor: [255, 107, 53] },
+        didDrawPage: (data) => { yPos = data.cursor.y; },
       });
 
-      // Shipping Details Table
       autoTable(doc, {
         startY: yPos + 10,
         head: [['Shipping Details', '']],
@@ -139,257 +150,106 @@ const PurchaseAfter = () => {
           ['Tracking Number', orderDetails.tracking_number || 'N/A'],
         ],
         theme: 'grid',
-        headStyles: { fillColor: [211, 84, 0] },
-        didDrawPage: (data) => { yPos = data.cursor.y; }
+        headStyles: { fillColor: [16, 27, 44] },
       });
 
-      // Footer
       const footerY = pageHeight - 30;
       doc.line(14, footerY, doc.internal.pageSize.width - 14, footerY);
       doc.setFontSize(10);
       doc.text('Thank you for your business!', doc.internal.pageSize.width / 2, footerY + 10, { align: 'center' });
       doc.text('www.goriber-gari.com', doc.internal.pageSize.width / 2, footerY + 15, { align: 'center' });
-      doc.text(`Page 1 of 1`, doc.internal.pageSize.width - 14, footerY + 10, { align: 'right' });
-
-      doc.save(`invoice_${purchaseDetails.invoice_number}.pdf`);
-    } catch (e) {
-      console.error("Error during PDF generation:", e);
-      setError("An unexpected error occurred while generating the PDF.");
+      doc.save(`invoice_${purchaseDetails.invoice_number || purchaseId}.pdf`);
+    } catch (pdfError) {
+      console.error('Error during PDF generation:', pdfError);
+      setError('The invoice could not be generated. Please try again.');
     }
   };
 
-  if (loading) {
-    return (
-      <div className="page-loading">
-        <Navbar />
-        <div className="loader"></div>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="page">
-        <Navbar />
-        <div className="purchase-after-container">
-          <div className="error-message">{error}</div>
-          <button onClick={() => navigate('/')} className="back-button">
-            Back to Home
-          </button>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
-    <div className="page">
+    <div className="checkout-page">
       <Navbar />
-      <div className="purchase-after-container">
-        <div className="confirmation-header">
-          <h1>Thank You For Your Purchase!</h1>
-          <p>Your order has been placed successfully. Here are the details:</p>
-        </div>
-
-        <div className="details-grid">
-          {carDetails && (
-            <div className="details-card">
-              <h2>🚗 Car Details</h2>
-              <div className="detail-item"><span>Model:</span><span>{carDetails.model_name}</span></div>
-              <div className="detail-item"><span>Manufacturer:</span><span>{carDetails.manufacturer}</span></div>
-              <div className="detail-item"><span>Year:</span><span>{carDetails.year}</span></div>
-              <div className="detail-item"><span>Price:</span><span>${carDetails.price.toFixed(2)}</span></div>
+      <main className="checkout-main">
+        <div className="checkout-container">
+          {loading ? (
+            <div className="checkout-loading">
+              <span />
+              <span />
+              <span />
             </div>
-          )}
+          ) : error ? (
+            <section className="checkout-error-state">
+              <span>Order unavailable</span>
+              <h1>{error}</h1>
+              <button onClick={() => navigate('/')}><FaArrowLeft /> Return to showroom</button>
+            </section>
+          ) : (
+            <>
+              <CheckoutSteps active={2} />
 
-          {purchaseDetails && (
-            <div className="details-card">
-              <h2>💳 Purchase Summary</h2>
-              <div className="detail-item"><span>Purchase ID:</span><span>{purchaseDetails.purchase_id}</span></div>
-              <div className="detail-item"><span>Amount:</span><span>${purchaseDetails.amount.toFixed(2)}</span></div>
-              <div className="detail-item"><span>Payment Method:</span><span>{purchaseDetails.payment_method}</span></div>
-              <div className="detail-item"><span>Status:</span><span className={`status status-${purchaseDetails.status?.toLowerCase()}`}>{purchaseDetails.status}</span></div>
-              <div className="detail-item"><span>Invoice #:</span><span>{purchaseDetails.invoice_number}</span></div>
-            </div>
-          )}
+              <section className="confirmation-hero">
+                <div className="confirmation-check"><FaCheck /></div>
+                <span className="confirmation-eyebrow">Order received</span>
+                <h1>Your car is one step closer.</h1>
+                <p>
+                  Order <strong>#{orderDetails.order_id}</strong> has been created successfully.
+                  Review the information below, then continue to payment.
+                </p>
+              </section>
 
-          {orderDetails && (
-            <div className="details-card">
-              <h2>🚚 Order & Shipping</h2>
-              <div className="detail-item"><span>Order ID:</span><span>{orderDetails.order_id}</span></div>
-              <div className="detail-item"><span>Status:</span><span className={`status status-${orderDetails.status?.toLowerCase()}`}>{orderDetails.status}</span></div>
-              <div className="detail-item"><span>Shipping Address:</span><span>{orderDetails.shipping_address}</span></div>
-              <div className="detail-item"><span>Tracking #:</span><span>{orderDetails.tracking_number || 'N/A'}</span></div>
-            </div>
+              <div className="confirmation-grid">
+                <article className="confirmation-card">
+                  <header><span><FaCarSide /></span><div><small>Vehicle</small><h2>Car details</h2></div></header>
+                  <DetailRow label="Model">{carDetails.model_name}</DetailRow>
+                  <DetailRow label="Manufacturer">{carDetails.manufacturer}</DetailRow>
+                  <DetailRow label="Year">{carDetails.year}</DetailRow>
+                  <DetailRow label="Price">{money(carDetails.price)}</DetailRow>
+                </article>
+
+                <article className="confirmation-card">
+                  <header><span><FaReceipt /></span><div><small>Summary</small><h2>Purchase details</h2></div></header>
+                  <DetailRow label="Purchase ID">#{purchaseDetails.purchase_id}</DetailRow>
+                  <DetailRow label="Amount">{money(purchaseDetails.amount)}</DetailRow>
+                  <DetailRow label="Payment">{purchaseDetails.payment_method}</DetailRow>
+                  <DetailRow label="Invoice">{purchaseDetails.invoice_number}</DetailRow>
+                  <DetailRow label="Status">
+                    <em className={`confirmation-status is-${purchaseDetails.status?.toLowerCase()}`}>
+                      {purchaseDetails.status}
+                    </em>
+                  </DetailRow>
+                </article>
+
+                <article className="confirmation-card">
+                  <header><span><FaTruck /></span><div><small>Delivery</small><h2>Shipping details</h2></div></header>
+                  <DetailRow label="Order ID">#{orderDetails.order_id}</DetailRow>
+                  <DetailRow label="Status">
+                    <em className={`confirmation-status is-${orderDetails.status?.toLowerCase()}`}>
+                      {orderDetails.status}
+                    </em>
+                  </DetailRow>
+                  <DetailRow label="Address">{orderDetails.shipping_address}</DetailRow>
+                  <DetailRow label="Tracking">{orderDetails.tracking_number || 'Assigned after payment'}</DetailRow>
+                </article>
+              </div>
+
+              <section className="confirmation-actions">
+                <div>
+                  <FaMapMarkerAlt />
+                  <span><strong>Delivery destination</strong>{orderDetails.shipping_address}</span>
+                </div>
+                <div className="confirmation-actions__buttons">
+                  <button className="confirmation-download" onClick={generatePDF}>
+                    <FaDownload /> Download invoice
+                  </button>
+                  <button className="checkout-primary-button" onClick={() => navigate(`/payment/${purchaseId}`)}>
+                    <FaCreditCard /> Continue to payment <FaArrowRight />
+                  </button>
+                </div>
+              </section>
+            </>
           )}
         </div>
-
-        <div className="action-buttons">
-          <button onClick={() => navigate(`/payment/${purchaseId}`)} className="action-button primary">
-            Proceed to Payment
-          </button>
-          <button onClick={generatePDF} className="action-button secondary">
-            Download Invoice
-          </button>
-          <button onClick={() => navigate('/')} className="action-button tertiary">
-            Back to Home
-          </button>
-        </div>
-      </div>
+      </main>
       <Footer />
-      <style jsx>{`
-        .page {
-          background: linear-gradient(135deg, #010715ff, #010a04ff);
-          color: #ffffff;
-          display: flex;
-          flex-direction: column;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-          min-height: 100vh;
-          padding-top: 60px;
-        }
-        .page-loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #010715ff, #010a04ff);
-        }
-        .loader {
-            border: 8px solid #444; /* Dark grey */
-            border-top: 8px solid #667eea; /* Blue */
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 2s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .purchase-after-container {
-          flex: 1;
-          padding: 2rem 1rem;
-          max-width: 1200px;
-          margin: 0 auto;
-          width: 100%;
-        }
-        .confirmation-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        .confirmation-header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #ec4899;
-            margin-bottom: 0.5rem;
-        }
-        .confirmation-header p {
-            font-size: 1.2rem;
-            color: #d1d5db;
-        }
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        .details-card {
-            background: rgba(15, 23, 42, 0.9);
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            border: 1px solid #334155;
-        }
-        .details-card h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #22d3ee;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .detail-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            font-size: 1rem;
-            border-bottom: 1px solid #334155;
-        }
-        .detail-item:last-child {
-            border-bottom: none;
-        }
-        .detail-item span:first-child {
-            font-weight: 500;
-            color: #94a3b8;
-        }
-        .detail-item span:last-child {
-            font-weight: 600;
-            color: #e5e7eb;
-        }
-        .status {
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #fff;
-        }
-        .status-pending {
-            background-color: #f39c12;
-        }
-        .status-completed {
-            background-color: #2ecc71;
-        }
-        .status-shipped {
-            background-color: #3498db;
-        }
-        .action-buttons {
-          display: flex;
-          justify-content: center;
-          gap: 1rem;
-          margin-top: 2rem;
-        }
-        .action-button {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-        .action-button.primary {
-            background: #22d3ee;
-            color: #1e293b;
-        }
-        .action-button.primary:hover {
-            background: #06b6d4;
-            transform: translateY(-2px);
-        }
-        .action-button.secondary {
-            background: #2ecc71;
-            color: #ffffff;
-        }
-        .action-button.secondary:hover {
-            background: #27ae60;
-            transform: translateY(-2px);
-        }
-        .action-button.tertiary {
-            background: #ec4899;
-            color: #ffffff;
-        }
-        .action-button.tertiary:hover {
-            background: #db2777;
-            transform: translateY(-2px);
-        }
-      `}</style>
     </div>
   );
 };

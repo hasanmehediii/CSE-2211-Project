@@ -1,70 +1,104 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  FaArrowRight,
+  FaChevronLeft,
+  FaChevronRight,
+  FaRegStar,
+  FaShieldAlt,
+  FaStar,
+} from 'react-icons/fa';
+import { HiOutlineBadgeCheck, HiOutlineLightningBolt } from 'react-icons/hi';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
-import carImage from '../assets/3.jpg';
+import carImage from '../assets/car8.jpg';
+import heroCar4 from '../assets/car4.jpg';
+import heroCar5 from '../assets/car5.jpg';
+import heroCar6 from '../assets/car6.jpg';
+import heroCar7 from '../assets/car7.jpg';
 import api from '../api.jsx';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import './Home.css';
+
+const heroImages = [heroCar4, heroCar5, heroCar6, heroCar7, carImage];
+
+const sectionConfig = [
+  {
+    category: 'Top rated',
+    eyebrow: 'Community favourites',
+    subtitle: 'The cars our drivers keep coming back to.',
+    endpoint: '/cars/top-rated',
+  },
+  {
+    category: 'Fresh arrivals',
+    eyebrow: 'Just landed',
+    subtitle: 'New options, ready for their first journey with you.',
+    endpoint: '/cars/new-arrivals',
+  },
+  {
+    category: 'Smart value',
+    eyebrow: 'More road for your money',
+    subtitle: 'Dependable choices selected with your budget in mind.',
+    endpoint: '/cars/budget-friendly',
+  },
+];
+
+const formatPrice = (price) => {
+  const amount = Number(price);
+  if (!Number.isFinite(amount)) return 'Price on request';
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
 
 const Home = () => {
   const navigate = useNavigate();
   const [carData, setCarData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
+  const [heroIndex, setHeroIndex] = useState(0);
   const scrollRefs = useRef([]);
+
+  useEffect(() => {
+    heroImages.forEach((source) => {
+      const image = new Image();
+      image.src = source;
+    });
+
+    const timer = window.setInterval(() => {
+      setHeroIndex((current) => (current + 1) % heroImages.length);
+    }, 4500);
+
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const fetchCars = async () => {
       try {
-        const [topRated, newArrivals, budgetFriendly] = await Promise.all([
-          api.get('/cars/top-rated'),
-          api.get('/cars/new-arrivals'),
-          api.get('/cars/budget-friendly'),
-        ]);
+        const responses = await Promise.all(
+          sectionConfig.map((section) => api.get(section.endpoint))
+        );
 
-        const formattedData = [
-          {
-            category: 'Top Class',
-            subtitle: 'Hand-picked premium rides with top ratings.',
-            cars: topRated.data.map((car) => ({
+        setCarData(
+          sectionConfig.map((section, index) => ({
+            ...section,
+            cars: responses[index].data.map((car) => ({
               ...car,
-              name: car.model_name || car.modelnum || 'Unknown Model',
-              price: car.price ? `$${car.price.toFixed(2)}` : 'Price not listed',
+              name: car.model_name || car.modelnum || 'Model details coming soon',
+              priceLabel: formatPrice(car.price),
               image: car.image_link || carImage,
-              rating: car.rating ? Math.round(car.rating) : 0,
-              description: car.description || 'No description available.',
+              rating: Math.min(5, Math.max(0, Math.round(Number(car.rating) || 0))),
+              description:
+                car.description ||
+                'A thoughtfully selected car ready for your next drive.',
             })),
-          },
-          {
-            category: 'New Arrivals',
-            subtitle: 'Recently added, be the first to own them.',
-            cars: newArrivals.data.map((car) => ({
-              ...car,
-              name: car.model_name || car.modelnum || 'Unknown Model',
-              price: car.price ? `$${car.price.toFixed(2)}` : 'Price not listed',
-              image: car.image_link || carImage,
-              rating: 0,
-              description: car.description || 'No description available.',
-            })),
-          },
-          {
-            category: 'Budget Friendly',
-            subtitle: 'Smart choices that save your wallet.',
-            cars: budgetFriendly.data.map((car) => ({
-              ...car,
-              name: car.model_name || car.modelnum || 'Unknown Model',
-              price: car.price ? `$${car.price.toFixed(2)}` : 'Price not listed',
-              image: car.image_link || carImage,
-              rating: 0,
-              description: car.description || 'No description available.',
-            })),
-          },
-        ];
-
-        setCarData(formattedData);
+          }))
+        );
       } catch (err) {
         console.error('Failed to fetch car data:', err);
-        setError('Failed to load cars. Please try again later.');
+        setError('We could not load the showroom right now. Please try again shortly.');
       } finally {
         setLoading(false);
       }
@@ -73,804 +107,232 @@ const Home = () => {
     fetchCars();
   }, []);
 
-  const handleCardClick = (car) => {
-    if (car && car.car_id) {
-      navigate(`/car-detail/${car.car_id}`);
-    } else {
-      console.error('Car ID is not available:', car);
-      setError('Cannot navigate to car details: Missing car ID.');
-    }
+  const openCar = (car) => {
+    if (car?.car_id) navigate(`/car-detail/${car.car_id}`);
   };
 
-  const handleImageError = (e) => {
-    e.target.src = carImage;
+  const scrollToShowroom = () => {
+    document.getElementById('showroom')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   };
 
-  const scrollLeft = (index) => {
-    const scrollContainer = scrollRefs.current[index];
-    if (scrollContainer) {
-      scrollContainer.scrollBy({ left: -320, behavior: 'smooth' });
-    }
-  };
-
-  const scrollRight = (index) => {
-    const scrollContainer = scrollRefs.current[index];
-    if (scrollContainer) {
-      scrollContainer.scrollBy({ left: 320, behavior: 'smooth' });
-    }
-  };
-
-  const scrollToCars = () => {
-    const el = document.getElementById('car-categories');
-    if (el) {
-      const offset = 80; // navbar height offset
-      const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
+  const scrollRow = (index, direction) => {
+    scrollRefs.current[index]?.scrollBy({
+      left: direction * 360,
+      behavior: 'smooth',
+    });
   };
 
   return (
-    <>
+    <div className="home-page">
       <Navbar />
 
-      <div className="page">
-        {/* HERO SECTION */}
-        <section className="hero">
-          <div className="hero-bg" />
-          <div className="hero-overlay" />
-          <div className="hero-content">
-            <div className="hero-pill">Goriber Gari • Smart Car Marketplace</div>
-            <h1 className="hero-title">
-              Find the <span className="accent">right car</span> for your budget.
-            </h1>
-            <p className="hero-subtitle">
-              From premium rides to daily budget cars, Goriber Gari helps you discover cars
-              that match your style and your wallet.
-            </p>
-            <div className="hero-actions">
-              <button className="hero-button primary" onClick={scrollToCars}>
-                Explore Cars
-              </button>
+      <main>
+        <section className="home-hero">
+          <div className="home-hero__slides" aria-hidden="true">
+            {heroImages.map((source, index) => (
+              <img
+                className={`home-hero__image ${index === heroIndex ? 'is-active' : ''}`}
+                src={source}
+                alt=""
+                key={source}
+              />
+            ))}
+          </div>
+          <div className="home-hero__shade" />
+          <div className="home-hero__glow" />
+
+          <div className="home-container home-hero__content">
+            <div className="home-hero__copy">
+              <span className="home-eyebrow">
+                <span className="home-eyebrow__dot" />
+                A simpler way to find your car
+              </span>
+              <h1>
+                Your next drive
+                <span> starts here.</span>
+              </h1>
+              <p>
+                Discover hand-picked cars for every ambition and every budget.
+                Clear choices, honest details, and no unnecessary detours.
+              </p>
+              <div className="home-hero__actions">
+                <button className="home-button home-button--primary" onClick={scrollToShowroom}>
+                  Explore the showroom <FaArrowRight />
+                </button>
+                <button className="home-button home-button--secondary" onClick={() => navigate('/faq')}>
+                  How it works
+                </button>
+              </div>
+            </div>
+
+            <div className="home-hero__trust">
+              <div>
+                <HiOutlineBadgeCheck />
+                <span><strong>Quality first</strong>Carefully curated listings</span>
+              </div>
+              <div>
+                <FaShieldAlt />
+                <span><strong>Shop confidently</strong>Details before decisions</span>
+              </div>
+              <div>
+                <HiOutlineLightningBolt />
+                <span><strong>Quick discovery</strong>Find your fit in minutes</span>
+              </div>
+            </div>
+          </div>
+
+          <button className="home-hero__scroll" onClick={scrollToShowroom} aria-label="Scroll to cars">
+            <span />
+            Discover
+          </button>
+
+          <div className="home-hero__slide-nav" aria-label="Choose hero image">
+            {heroImages.map((source, index) => (
               <button
-                className="hero-button ghost"
-                onClick={() => navigate('/cars')}
-              >
-                View All Listings
-              </button>
-            </div>
+                type="button"
+                key={source}
+                className={index === heroIndex ? 'is-active' : ''}
+                onClick={() => setHeroIndex(index)}
+                aria-label={`Show hero image ${index + 1}`}
+                aria-current={index === heroIndex ? 'true' : undefined}
+              />
+            ))}
+          </div>
+        </section>
 
-            <div className="hero-stats">
-              <div className="stat-card">
-                <span className="stat-number">150+</span>
-                <span className="stat-label">Cars Listed</span>
-              </div>
-              <div className="stat-card">
-                <span className="stat-number">4.8★</span>
-                <span className="stat-label">Average Rating</span>
-              </div>
-              <div className="stat-card">
-                <span className="stat-number">24/7</span>
-                <span className="stat-label">Support</span>
+        <section className="home-intro">
+          <div className="home-container home-intro__grid">
+            <div>
+              <span className="home-section-label">Built around your journey</span>
+              <h2>Less searching.<br />More driving.</h2>
+            </div>
+            <div className="home-intro__copy">
+              <p>
+                Buying a car should feel exciting, not overwhelming. We organise the
+                showroom into useful collections so you can compare what matters and
+                move forward with confidence.
+              </p>
+              <div className="home-intro__metrics">
+                <span><strong>03</strong>Focused collections</span>
+                <span><strong>01</strong>Simple experience</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* DISCOVER SECTION */}
-        <section className="discover">
-          <div className="discover-inner">
-            <h2 className="discover-title">Discover Your Next Drive</h2>
-            <p className="discover-text">
-              Scroll through curated sections: Top Class, New Arrivals, and Budget Friendly.
-              Every car is carefully described so you can compare and decide with confidence.
-            </p>
-          </div>
-        </section>
+        <section className="home-showroom" id="showroom">
+          <div className="home-container">
+            <div className="home-showroom__heading">
+              <div>
+                <span className="home-section-label">Explore the collection</span>
+                <h2>Cars picked for real life.</h2>
+              </div>
+              <p>Start with a collection, then open any car for its full story.</p>
+            </div>
 
-        {/* CAR CATEGORIES */}
-        <main id="car-categories" className="categories">
-          {error && <div className="message error-message">{error}</div>}
-          {loading ? (
-            <div className="message loading">Loading cars...</div>
-          ) : carData.length === 0 ? (
-            <div className="message no-data">No cars available right now.</div>
-          ) : (
-            carData.map((section, idx) => (
-              <section key={idx} className="category-section">
-                <div className="category-header">
+            {error && (
+              <div className="home-state home-state--error" role="alert">
+                <strong>Something went off course.</strong>
+                <span>{error}</span>
+              </div>
+            )}
+
+            {loading && (
+              <div className="home-skeleton-grid" aria-label="Loading cars">
+                {[1, 2, 3].map((item) => <div className="home-skeleton" key={item} />)}
+              </div>
+            )}
+
+            {!loading && !error && carData.map((section, sectionIndex) => (
+              <section className="car-collection" key={section.category}>
+                <div className="car-collection__header">
                   <div>
-                    <h2 className="category-title">{section.category}</h2>
-                    {section.subtitle && (
-                      <p className="category-subtitle">{section.subtitle}</p>
-                    )}
+                    <span>{section.eyebrow}</span>
+                    <h3>{section.category}</h3>
+                    <p>{section.subtitle}</p>
                   </div>
-                  <span className="category-chip">Curated for you</span>
+                  <div className="car-collection__controls">
+                    <button onClick={() => scrollRow(sectionIndex, -1)} aria-label={`Previous ${section.category} cars`}>
+                      <FaChevronLeft />
+                    </button>
+                    <button onClick={() => scrollRow(sectionIndex, 1)} aria-label={`Next ${section.category} cars`}>
+                      <FaChevronRight />
+                    </button>
+                  </div>
                 </div>
 
-                <div className="car-row-container">
-                  <button
-                    className="scroll-button left"
-                    onClick={() => scrollLeft(idx)}
-                    aria-label="Scroll left"
-                  >
-                    <FaChevronLeft />
-                  </button>
-
+                {section.cars.length ? (
                   <div
-                    className="car-row"
-                    ref={(el) => (scrollRefs.current[idx] = el)}
+                    className="car-collection__row"
+                    ref={(element) => { scrollRefs.current[sectionIndex] = element; }}
                   >
-                    {section.cars.map((car, index) => (
+                    {section.cars.map((car, carIndex) => (
                       <article
-                        key={`${section.category}-${car.car_id}-${index}`}
-                        className="car-card"
-                        onClick={() => handleCardClick(car)}
+                        className="showroom-card"
+                        key={`${car.car_id || car.name}-${carIndex}`}
+                        onClick={() => openCar(car)}
+                        tabIndex={0}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') openCar(car);
+                        }}
                       >
-                        <div className="car-image-wrapper">
+                        <div className="showroom-card__media">
                           <img
                             src={car.image}
                             alt={car.name}
-                            className="car-image"
-                            onError={handleImageError}
+                            onError={(event) => { event.currentTarget.src = carImage; }}
                           />
-                          <div className="car-tag">{section.category}</div>
-                          <div className="car-glow" />
+                          <span>{section.category}</span>
                         </div>
-                        <div className="car-details">
-                          <div className="car-header">
-                            <h3 className="car-name">{car.name}</h3>
-                            <p className="car-price">{car.price}</p>
+                        <div className="showroom-card__body">
+                          <div className="showroom-card__title">
+                            <h4>{car.name}</h4>
+                            <strong>{car.priceLabel}</strong>
                           </div>
-                          <p className="car-description">{car.description}</p>
-                          <div className="car-meta">
-                            {car.rating > 0 ? (
-                              <span className="car-rating">
-                                {'★'.repeat(car.rating)}
-                                {'☆'.repeat(5 - car.rating)}
-                              </span>
-                            ) : (
-                              <span className="car-rating muted">New Listing</span>
-                            )}
-                            <button
-                              type="button"
-                              className="car-view-button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleCardClick(car);
-                              }}
-                            >
-                              View details
-                            </button>
+                          <p>{car.description}</p>
+                          <div className="showroom-card__footer">
+                            <span className={car.rating ? 'showroom-card__rating' : 'showroom-card__rating is-new'}>
+                              {car.rating ? (
+                                <>
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    star <= car.rating ? <FaStar key={star} /> : <FaRegStar key={star} />
+                                  ))}
+                                  <small>{car.rating}.0</small>
+                                </>
+                              ) : 'New arrival'}
+                            </span>
+                            <span className="showroom-card__link">View car <FaArrowRight /></span>
                           </div>
                         </div>
                       </article>
                     ))}
                   </div>
-
-                  <button
-                    className="scroll-button right"
-                    onClick={() => scrollRight(idx)}
-                    aria-label="Scroll right"
-                  >
-                    <FaChevronRight />
-                  </button>
-                </div>
+                ) : (
+                  <div className="home-state">No cars in this collection yet.</div>
+                )}
               </section>
-            ))
-          )}
-        </main>
-
-        <Footer />
-      </div>
-
-      <style jsx>{`
-        :root {
-          --bg: #020617;
-          --card-bg: rgba(15, 23, 42, 0.96);
-          --card-border: rgba(148, 163, 184, 0.35);
-          --accent: #22d3ee;
-          --accent-strong: #e11d48;
-          --text-main: #e5e7eb;
-          --text-muted: #9ca3af;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-
-        body {
-          margin: 0;
-          background: var(--bg);
-        }
-
-        .page {
-          min-height: 100vh;
-          background:
-            radial-gradient(circle at top left, rgba(56, 189, 248, 0.15), transparent 55%),
-            radial-gradient(circle at bottom right, rgba(244, 63, 94, 0.22), transparent 60%),
-            var(--bg);
-          color: #ffffff;
-          display: flex;
-          flex-direction: column;
-          font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-          overflow-x: hidden;
-        }
-
-        @keyframes fadeUp {
-          from {
-            opacity: 0;
-            transform: translateY(16px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        /* HERO */
-
-        .hero {
-          position: relative;
-          min-height: 100vh;
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: flex-start;
-          padding: 0 clamp(1.2rem, 7vw, 4.5rem) 2.5rem;
-          overflow: hidden;
-        }
-
-        .hero-bg {
-          position: absolute;
-          inset: 0;
-          background-image: url(${carImage});
-          background-size: cover;
-          background-position: center;
-          transform: scale(1.06);
-          filter: brightness(0.9);
-        }
-
-        .hero-overlay {
-          position: absolute;
-          inset: 0;
-          background:
-            linear-gradient(to right, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.4)),
-            radial-gradient(circle at 80% 15%, rgba(56, 189, 248, 0.4), transparent 60%);
-          mix-blend-mode: multiply;
-        }
-
-        .hero-content {
-          position: relative;
-          z-index: 1;
-          max-width: 640px;
-          padding-top: 4.2rem; /* offset navbar */
-          display: flex;
-          flex-direction: column;
-          gap: 1.3rem;
-          animation: fadeUp 0.7s ease-out;
-        }
-
-        .hero-pill {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.4rem;
-          padding: 0.25rem 1rem;
-          border-radius: 999px;
-          font-size: 0.8rem;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          background: rgba(15, 23, 42, 0.85);
-          border: 1px solid rgba(148, 163, 184, 0.7);
-          color: var(--text-muted);
-          backdrop-filter: blur(18px);
-        }
-
-        .hero-title {
-          font-size: clamp(2.5rem, 4.8vw, 3.4rem);
-          line-height: 1.08;
-          font-weight: 800;
-          letter-spacing: 0.02em;
-          color: #f9fafb;
-        }
-
-        .hero-title .accent {
-          background: linear-gradient(120deg, var(--accent), var(--accent-strong));
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-        }
-
-        .hero-subtitle {
-          font-size: 0.96rem;
-          color: var(--text-muted);
-          max-width: 520px;
-        }
-
-        .hero-actions {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.85rem;
-        }
-
-        .hero-button {
-          padding: 0.75rem 1.6rem;
-          border-radius: 999px;
-          border: none;
-          cursor: pointer;
-          font-size: 0.9rem;
-          font-weight: 600;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border 0.2s ease;
-          white-space: nowrap;
-        }
-
-        .hero-button.primary {
-          background: linear-gradient(to right, var(--accent-strong), #f97316);
-          color: #f9fafb;
-          box-shadow: 0 20px 45px rgba(248, 113, 113, 0.65);
-        }
-
-        .hero-button.primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 26px 60px rgba(248, 113, 113, 0.75);
-        }
-
-        .hero-button.ghost {
-          background: rgba(15, 23, 42, 0.85);
-          border: 1px solid rgba(148, 163, 184, 0.9);
-          color: var(--text-main);
-        }
-
-        .hero-button.ghost:hover {
-          background: rgba(15, 23, 42, 1);
-          transform: translateY(-1px);
-        }
-
-        .hero-stats {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.8rem;
-          margin-top: 0.6rem;
-        }
-
-        .stat-card {
-          min-width: 120px;
-          padding: 0.75rem 0.95rem;
-          border-radius: 1rem;
-          background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), transparent 60%);
-          border: 1px solid rgba(148, 163, 184, 0.7);
-          backdrop-filter: blur(18px);
-          display: flex;
-          flex-direction: column;
-          gap: 0.1rem;
-          box-shadow: 0 20px 50px rgba(15, 23, 42, 0.99);
-        }
-
-        .stat-number {
-          font-weight: 700;
-          font-size: 1.08rem;
-          color: #f9fafb;
-        }
-
-        .stat-label {
-          font-size: 0.8rem;
-          color: var(--text-muted);
-        }
-
-        /* DISCOVER */
-
-        .discover {
-          width: 100%;
-          padding: 2rem clamp(1.5rem, 6vw, 4rem) 1.5rem;
-        }
-
-        .discover-inner {
-          max-width: 1120px;
-          margin: 0 auto;
-          padding: 1.4rem 1.6rem;
-          border-radius: 1.3rem;
-          background: linear-gradient(120deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.92));
-          border: 1px solid rgba(148, 163, 184, 0.45);
-          box-shadow: 0 22px 60px rgba(15, 23, 42, 0.9);
-          display: flex;
-          flex-direction: column;
-          gap: 0.45rem;
-          animation: fadeUp 0.6s ease-out;
-        }
-
-        .discover-title {
-          font-size: 1.45rem;
-          font-weight: 700;
-          color: #f9fafb;
-        }
-
-        .discover-text {
-          font-size: 0.92rem;
-          color: var(--text-muted);
-          max-width: 650px;
-        }
-
-        /* MESSAGES */
-
-        .message {
-          text-align: center;
-          font-size: 0.95rem;
-          padding: 1.5rem 1rem;
-          border-radius: 0.9rem;
-          margin-bottom: 2rem;
-          max-width: 600px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-
-        .loading {
-          color: var(--text-muted);
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px dashed rgba(148, 163, 184, 0.5);
-        }
-
-        .error-message {
-          color: #fecaca;
-          background: rgba(127, 29, 29, 0.65);
-          border: 1px solid rgba(248, 113, 113, 0.85);
-        }
-
-        .no-data {
-          color: var(--text-muted);
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px dashed rgba(148, 163, 184, 0.5);
-        }
-
-        /* CATEGORIES */
-
-        .categories {
-          width: 100%;
-          padding: 1.6rem clamp(1.5rem, 6vw, 4rem) 3.4rem;
-        }
-
-        .category-section {
-          max-width: 1120px;
-          margin: 0 auto 3.6rem;
-          position: relative;
-          animation: fadeUp 0.6s ease-out;
-        }
-
-        .category-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-end;
-          gap: 1rem;
-          margin-bottom: 1.1rem;
-        }
-
-        .category-title {
-          font-size: 1.35rem;
-          font-weight: 700;
-          color: #f9fafb;
-        }
-
-        .category-subtitle {
-          font-size: 0.86rem;
-          color: var(--text-muted);
-          margin-top: 0.2rem;
-        }
-
-        .category-chip {
-          font-size: 0.8rem;
-          padding: 0.3rem 0.8rem;
-          border-radius: 999px;
-          border: 1px solid rgba(148, 163, 184, 0.7);
-          background: rgba(15, 23, 42, 0.9);
-          color: var(--text-muted);
-          white-space: nowrap;
-        }
-
-        .car-row-container {
-          position: relative;
-          display: flex;
-          align-items: center;
-          width: 100%;
-        }
-
-        .car-row {
-          display: flex;
-          overflow-x: auto;
-          gap: 1.2rem;
-          padding: 0.25rem 0.3rem 0.7rem;
-          scrollbar-width: thin;
-          scrollbar-color: rgba(148, 163, 184, 0.7) transparent;
-        }
-
-        .car-row::-webkit-scrollbar {
-          height: 6px;
-        }
-
-        .car-row::-webkit-scrollbar-track {
-          background: transparent;
-        }
-
-        .car-row::-webkit-scrollbar-thumb {
-          background: rgba(148, 163, 184, 0.7);
-          border-radius: 999px;
-        }
-
-        .car-card {
-          min-width: 280px;
-          max-width: 310px;
-          background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 60%),
-            var(--card-bg);
-          border-radius: 1.2rem;
-          border: 1px solid var(--card-border);
-          box-shadow: 0 18px 48px rgba(15, 23, 42, 0.98);
-          cursor: pointer;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          transform: translateZ(0);
-          transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-        }
-
-        .car-card:hover {
-          transform: translateY(-10px) scale(1.02);
-          border-color: rgba(56, 189, 248, 0.75);
-          box-shadow: 0 26px 65px rgba(15, 23, 42, 1);
-        }
-
-        .car-image-wrapper {
-          position: relative;
-          overflow: hidden;
-        }
-
-        .car-image {
-          width: 100%;
-          height: 190px;
-          object-fit: cover;
-          transform: scale(1.04);
-          transition: transform 0.4s ease;
-        }
-
-        .car-card:hover .car-image {
-          transform: scale(1.11);
-        }
-
-        .car-tag {
-          position: absolute;
-          bottom: 0.7rem;
-          left: 0.7rem;
-          background: rgba(15, 23, 42, 0.9);
-          border-radius: 999px;
-          padding: 0.2rem 0.75rem;
-          font-size: 0.7rem;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: var(--text-muted);
-          border: 1px solid rgba(148, 163, 184, 0.7);
-        }
-
-        .car-glow {
-          position: absolute;
-          inset: auto 0 -35%;
-          height: 65%;
-          background: radial-gradient(circle at 50% 0, rgba(56, 189, 248, 0.22), transparent 65%);
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-
-        .car-card:hover .car-glow {
-          opacity: 1;
-        }
-
-        .car-details {
-          padding: 0.75rem 0.9rem 0.9rem;
-          display: flex;
-          flex-direction: column;
-          gap: 0.45rem;
-        }
-
-        .car-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: baseline;
-          gap: 0.6rem;
-        }
-
-        .car-name {
-          font-size: 1rem;
-          font-weight: 600;
-          color: #f9fafb;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .car-price {
-          font-size: 0.96rem;
-          font-weight: 600;
-          color: var(--accent);
-        }
-
-        .car-description {
-          font-size: 0.84rem;
-          color: var(--text-muted);
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-        }
-
-        .car-meta {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-top: 0.25rem;
-          gap: 0.75rem;
-        }
-
-        .car-rating {
-          font-size: 0.8rem;
-          color: #facc15;
-          white-space: nowrap;
-        }
-
-        .car-rating.muted {
-          color: var(--text-muted);
-        }
-
-        .car-view-button {
-          padding: 0.38rem 1rem;
-          border-radius: 999px;
-          border: none;
-          font-size: 0.8rem;
-          background: rgba(15, 23, 42, 0.9);
-          color: var(--accent);
-          border: 1px solid rgba(56, 189, 248, 0.7);
-          cursor: pointer;
-          transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-          white-space: nowrap;
-        }
-
-        .car-view-button:hover {
-          background: rgba(15, 23, 42, 1);
-          transform: translateY(-1px);
-          box-shadow: 0 9px 24px rgba(15, 23, 42, 0.95);
-        }
-
-        .scroll-button {
-          background: rgba(15, 23, 42, 0.95);
-          color: #f9fafb;
-          border: 1px solid rgba(148, 163, 184, 0.7);
-          border-radius: 999px;
-          width: 36px;
-          height: 36px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          position: absolute;
-          z-index: 10;
-          transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-          backdrop-filter: blur(14px);
-        }
-
-        .scroll-button:hover {
-          background: rgba(15, 23, 42, 1);
-          transform: translateY(-1px);
-          box-shadow: 0 10px 25px rgba(15, 23, 42, 0.9);
-        }
-
-        .scroll-button.left {
-          left: 0;
-          transform: translateX(-50%);
-        }
-
-        .scroll-button.right {
-          right: 0;
-          transform: translateX(50%);
-        }
-
-        /* RESPONSIVE */
-
-        @media (max-width: 900px) {
-          .hero {
-            align-items: flex-end;
-            padding: 0 1.4rem 2rem;
-          }
-
-          .hero-content {
-            padding-top: 3.6rem;
-          }
-
-          .discover {
-            padding: 1.8rem 1.4rem 1.3rem;
-          }
-
-          .categories {
-            padding: 1.6rem 1.4rem 3rem;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .hero {
-            padding: 0 1.1rem 1.8rem;
-          }
-
-          .hero-title {
-            max-width: 100%;
-          }
-
-          .hero-subtitle {
-            font-size: 0.9rem;
-          }
-
-          .hero-stats {
-            gap: 0.7rem;
-          }
-
-          .stat-card {
-            padding: 0.7rem 0.85rem;
-          }
-
-          .discover-inner {
-            padding: 1.1rem 1.25rem;
-          }
-
-          .category-header {
-            flex-direction: column;
-            align-items: flex-start;
-          }
-
-          .scroll-button {
-            display: none; /* swipe on mobile */
-          }
-
-          .car-card {
-            min-width: 240px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .hero-content {
-            padding-top: 3.1rem;
-          }
-
-          .hero-title {
-            font-size: 1.9rem;
-          }
-
-          .hero-subtitle {
-            font-size: 0.84rem;
-          }
-
-          .hero-actions {
-            gap: 0.6rem;
-          }
-
-          .hero-button {
-            font-size: 0.82rem;
-            padding: 0.6rem 1.3rem;
-          }
-
-          .discover {
-            padding: 1.6rem 1.1rem 1.1rem;
-          }
-
-          .categories {
-            padding: 1.4rem 1.1rem 2.5rem;
-          }
-
-          .car-card {
-            min-width: 220px;
-          }
-
-          .car-image {
-            height: 175px;
-          }
-        }
-      `}</style>
-    </>
+            ))}
+          </div>
+        </section>
+
+        <section className="home-cta">
+          <div className="home-container home-cta__card">
+            <div>
+              <span className="home-section-label">Need a little direction?</span>
+              <h2>Let’s make your first choice a confident one.</h2>
+            </div>
+            <button className="home-button home-button--light" onClick={() => navigate('/faq')}>
+              Read common questions <FaArrowRight />
+            </button>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
   );
 };
 

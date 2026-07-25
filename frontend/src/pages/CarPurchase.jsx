@@ -1,9 +1,30 @@
-import React, { useState, useContext } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  FaArrowLeft,
+  FaArrowRight,
+  FaCarSide,
+  FaCreditCard,
+  FaMapMarkerAlt,
+  FaShieldAlt,
+} from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { CartContext } from '../context/CartContext.jsx';
 import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
+import CheckoutSteps from '../components/CheckoutSteps.jsx';
+import carFallback from '../assets/car2.jpg';
+import './Checkout.css';
+
+const money = (value) => {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return 'Price on request';
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
 
 const CarPurchase = () => {
   const { carId } = useParams();
@@ -11,205 +32,179 @@ const CarPurchase = () => {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const { submitOrder } = useContext(CartContext);
-  const carDetails = state?.carDetails || { name: 'Unknown Model', price: 'Price not listed', quantity: 0 };
+  const carDetails = state?.carDetails || {
+    name: 'Unknown model',
+    price: null,
+    quantity: 0,
+    image: carFallback,
+  };
   const [orderDetails, setOrderDetails] = useState({
     shippingAddress: user?.address || '',
     quantity: 1,
     paymentMethod: 'Credit Card',
   });
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleOrderSubmit = async (e) => {
-    e.preventDefault();
+  const handleOrderSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
     if (!user) {
       navigate('/login');
       return;
     }
-    if (orderDetails.quantity > carDetails.quantity) {
-      setError('Requested quantity exceeds available stock.');
+    if (orderDetails.quantity > Number(carDetails.quantity)) {
+      setError('The selected quantity is greater than the available stock.');
       return;
     }
+
+    setSubmitting(true);
     try {
       const result = await submitOrder({
         ...orderDetails,
-        carId: parseInt(carId),
+        carId: Number(carId),
         carDetails,
       });
       if (result.success) {
         navigate(`/purchase-after/${result.purchaseId}`);
       } else {
-        setError(result.message || 'Failed to place order.');
+        setError(result.message || 'We could not place your order.');
       }
-    } catch (error) {
-      console.error('Error submitting order:', error);
+    } catch (submitError) {
+      console.error('Error submitting order:', submitError);
       setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
+  const total = Number(carDetails.price) * orderDetails.quantity;
+
   return (
-    <div className="page">
+    <div className="checkout-page">
       <Navbar />
-      <div className="purchase-container">
-        <h1>Purchase {carDetails.name}</h1>
-        <p>Price: {typeof carDetails.price === 'number' ? `$${carDetails.price.toFixed(2)}` : carDetails.price}</p>
-        <p>Available Stock: {carDetails.quantity}</p>
-        {error && <div className="error-message">{error}</div>}
-        <form onSubmit={handleOrderSubmit}>
-          <label>
-            Shipping Address:
-            <textarea
-              value={orderDetails.shippingAddress}
-              onChange={(e) => setOrderDetails({ ...orderDetails, shippingAddress: e.target.value })}
-              required
-            />
-          </label>
-          <label>
-            Quantity:
-            <input
-              type="number"
-              min="1"
-              max={carDetails.quantity}
-              value={orderDetails.quantity}
-              onChange={(e) => setOrderDetails({ ...orderDetails, quantity: Number(e.target.value) })}
-              required
-            />
-          </label>
-          <label>
-            Payment Method:
-            <select
-              value={orderDetails.paymentMethod}
-              onChange={(e) => setOrderDetails({ ...orderDetails, paymentMethod: e.target.value })}
-            >
-              <option value="Credit Card">Credit Card</option>
-              <option value="Bank Transfer">Bank Transfer</option>
-              <option value="Cash">Cash</option>
-            </select>
-          </label>
-          <div className="form-buttons">
-            <button type="submit" className="submit-button">
-              Place Order
-            </button>
-            <button type="button" onClick={() => navigate('/')} className="back-button">
-              Back to Home
-            </button>
+      <main className="checkout-main">
+        <div className="checkout-container">
+          <button className="checkout-back-link" onClick={() => navigate(-1)}>
+            <FaArrowLeft /> Back to car
+          </button>
+          <CheckoutSteps active={1} />
+
+          <header className="checkout-heading">
+            <span>Secure checkout</span>
+            <h1>Complete your order.</h1>
+            <p>Confirm the delivery details below. You can review everything before payment.</p>
+          </header>
+
+          <div className="checkout-layout">
+            <form className="checkout-form-card" onSubmit={handleOrderSubmit}>
+              <div className="checkout-card-heading">
+                <span><FaMapMarkerAlt /></span>
+                <div>
+                  <small>Delivery</small>
+                  <h2>Where should we send it?</h2>
+                </div>
+              </div>
+
+              {error && <div className="checkout-alert is-error" role="alert">{error}</div>}
+
+              <label className="checkout-field">
+                <span>Shipping address</span>
+                <textarea
+                  value={orderDetails.shippingAddress}
+                  onChange={(event) => setOrderDetails({
+                    ...orderDetails,
+                    shippingAddress: event.target.value,
+                  })}
+                  placeholder="House, road, city and postal code"
+                  required
+                />
+                <small>Use an address where someone can receive the vehicle documents.</small>
+              </label>
+
+              <div className="checkout-field-row">
+                <label className="checkout-field">
+                  <span>Quantity</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max={carDetails.quantity}
+                    value={orderDetails.quantity}
+                    onChange={(event) => setOrderDetails({
+                      ...orderDetails,
+                      quantity: Number(event.target.value),
+                    })}
+                    required
+                  />
+                </label>
+                <label className="checkout-field">
+                  <span>Payment preference</span>
+                  <select
+                    value={orderDetails.paymentMethod}
+                    onChange={(event) => setOrderDetails({
+                      ...orderDetails,
+                      paymentMethod: event.target.value,
+                    })}
+                  >
+                    <option value="Credit Card">Credit card</option>
+                    <option value="Bank Transfer">Bank transfer</option>
+                    <option value="Cash">Cash</option>
+                  </select>
+                </label>
+              </div>
+
+              <div className="checkout-secure-note">
+                <FaShieldAlt />
+                <span>
+                  <strong>Your information is protected</strong>
+                  Payment details are collected on the final step.
+                </span>
+              </div>
+
+              <button className="checkout-primary-button" type="submit" disabled={submitting}>
+                {submitting ? 'Placing order…' : 'Review and place order'}
+                {!submitting && <FaArrowRight />}
+              </button>
+            </form>
+
+            <aside className="checkout-summary">
+              <div className="checkout-summary__image">
+                <img
+                  src={carDetails.image || carFallback}
+                  alt={carDetails.name}
+                  onError={(event) => { event.currentTarget.src = carFallback; }}
+                />
+                <span><FaCarSide /> Your selection</span>
+              </div>
+              <div className="checkout-summary__content">
+                <span>Order summary</span>
+                <h2>{carDetails.name}</h2>
+                <div className="checkout-summary__line">
+                  <span>Vehicle price</span>
+                  <strong>{money(carDetails.price)}</strong>
+                </div>
+                <div className="checkout-summary__line">
+                  <span>Quantity</span>
+                  <strong>{orderDetails.quantity}</strong>
+                </div>
+                <div className="checkout-summary__line">
+                  <span>Available stock</span>
+                  <strong>{carDetails.quantity}</strong>
+                </div>
+                <div className="checkout-summary__total">
+                  <span>Estimated total<small>Before applicable fees</small></span>
+                  <strong>{money(total)}</strong>
+                </div>
+                <div className="checkout-summary__payment">
+                  <FaCreditCard />
+                  <span>{orderDetails.paymentMethod}<small>Payment on the final step</small></span>
+                </div>
+              </div>
+            </aside>
           </div>
-        </form>
-      </div>
+        </div>
+      </main>
       <Footer />
-      <style jsx>{`
-        .page {
-          background: linear-gradient(135deg, #010715ff, #010a04ff);
-          color: #ffffff;
-          display: flex;
-          flex-direction: column;
-          font-family: 'Inter', sans-serif;
-          margin: 0;
-          padding-top: 60px;
-          min-height: 100vh;
-          overflow-x: hidden;
-          box-sizing: border-box;
-        }
-        .purchase-container {
-          flex: 1;
-          padding: 2rem;
-          max-width: 600px;
-          margin: 0 auto;
-          width: 100%;
-        }
-        h1 {
-          font-size: 2.5rem;
-          font-weight: 700;
-          color: #ec4899;
-          margin-bottom: 1rem;
-        }
-        p {
-          font-size: 1.2rem;
-          color: #d1d5db;
-          margin-bottom: 1rem;
-        }
-        .error-message {
-          text-align: center;
-          font-size: 1.2rem;
-          color: #f43f5e;
-          margin-bottom: 1rem;
-        }
-        form {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-        label {
-          display: flex;
-          flex-direction: column;
-          font-size: 1rem;
-          color: #d1d5db;
-        }
-        textarea,
-        input,
-        select {
-          margin-top: 0.5rem;
-          padding: 0.5rem;
-          background: #0f172a;
-          color: #e5e7eb;
-          border: 1px solid #334155;
-          border-radius: 0.5rem;
-          font-size: 1rem;
-        }
-        textarea {
-          resize: vertical;
-          min-height: 80px;
-          max-height: 150px;
-        }
-        .form-buttons {
-          display: flex;
-          gap: 1rem;
-          margin-top: 1rem;
-          flex-wrap: wrap;
-        }
-        .submit-button,
-        .back-button {
-          padding: 0.5rem 1rem;
-          border: none;
-          border-radius: 0.5rem;
-          cursor: pointer;
-          font-size: 1rem;
-          transition: background 0.3s;
-        }
-        .submit-button {
-          background: #22d3ee;
-          color: #1e293b;
-        }
-        .submit-button:hover {
-          background: #06b6d4;
-        }
-        .back-button {
-          background: #ec4899;
-          color: #ffffff;
-        }
-        .back-button:hover {
-          background: #db2777;
-        }
-        @media (max-width: 768px) {
-          .purchase-container {
-            padding: 1.5rem;
-            width: 95%;
-          }
-          h1 {
-            font-size: 1.8rem;
-          }
-          p,
-          label,
-          textarea,
-          input,
-          select {
-            font-size: 0.9rem;
-          }
-          .form-buttons {
-            flex-direction: column;
-            gap: 0.5rem;
-          }
-        }
-      `}</style>
     </div>
   );
 };

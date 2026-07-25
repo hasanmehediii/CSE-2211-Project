@@ -1,87 +1,61 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaFacebookF, FaInstagram, FaTwitter } from 'react-icons/fa';
+import { HiOutlineMail } from 'react-icons/hi';
 import './Footer.css';
 
-const Footer = () => {
-  return (
-    <footer className="site-footer">
-      <div className="footer-inner">
-        <div className="footer-brand">
-          <div className="footer-logo">
-            <span className="footer-logo-icon">GG</span>
-            <div className="footer-logo-text">
-              <span className="footer-title">Goriber Gari</span>
-              <span className="footer-subtitle">Drive smart. Spend less.</span>
-            </div>
-          </div>
-          <p className="footer-desc">
-            A curated experience for car lovers on a Bangladeshi budget. Compare, explore, and
-            discover rides that match your lifestyle.
+const Footer = () => (
+  <footer className="site-footer">
+    <div className="site-footer__inner">
+      <div className="site-footer__top">
+        <div className="site-footer__brand">
+          <Link to="/" className="site-footer__logo">
+            <span>G</span>
+            <strong>Goriber Gari</strong>
+          </Link>
+          <p>
+            Helping everyday drivers discover the right car with less noise and
+            more confidence.
           </p>
         </div>
 
-        <div className="footer-grid">
-          <div className="footer-section">
-            <h4>Company</h4>
-            <ul>
-              <li><Link to="/about">About us</Link></li>
-              <li><Link to="/contact">Contact</Link></li>
-              <li><Link to="/careers">Careers</Link></li>
-            </ul>
+        <div className="site-footer__nav">
+          <div>
+            <h3>Explore</h3>
+            <Link to="/">Showroom</Link>
+            <Link to="/faq">Common questions</Link>
           </div>
+          <div>
+            <h3>Account</h3>
+            <Link to="/login">Sign in</Link>
+            <Link to="/signup">Create account</Link>
+            <Link to="/profile">My profile</Link>
+          </div>
+        </div>
 
-          <div className="footer-section">
-            <h4>Customer</h4>
-            <ul>
-              <li><Link to="/faq">FAQs</Link></li>
-              <li><Link to="/shipping">Shipping &amp; returns</Link></li>
-              <li><Link to="/orders">Track order</Link></li>
-            </ul>
-          </div>
-
-          <div className="footer-section">
-            <h4>Shop</h4>
-            <ul>
-              <li><Link to="/cars">All cars</Link></li>
-              <li><Link to="/new-arrivals">New arrivals</Link></li>
-              <li><Link to="/best-sellers">Best sellers</Link></li>
-            </ul>
-          </div>
-
-          <div className="footer-section footer-connect">
-            <h4>Stay in touch</h4>
-            <div className="footer-social">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                <img src="/social icons/facebook.png" alt="Facebook" />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                <img src="/social icons/twitter.png" alt="Twitter" />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                <img src="/social icons/instagram.png" alt="Instagram" />
-              </a>
-              <a href="mailto:contact@cardealer.com">
-                <img src="/social icons/gmail.png" alt="Gmail" />
-              </a>
-            </div>
-            <form
-              className="footer-newsletter"
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-            >
-              <input type="email" placeholder="Email for offers" />
-              <button type="submit">Subscribe</button>
-            </form>
-          </div>
+        <div className="site-footer__newsletter">
+          <span>Stay in the loop</span>
+          <h3>Good cars. Useful updates.</h3>
+          <form onSubmit={(event) => event.preventDefault()}>
+            <label className="sr-only" htmlFor="footer-email">Email address</label>
+            <input id="footer-email" type="email" placeholder="Your email address" />
+            <button type="submit" aria-label="Subscribe">→</button>
+          </form>
+          <small>No spam. Just the occasional showroom update.</small>
         </div>
       </div>
 
-      <div className="footer-bottom">
-        <p>© 2025 Goriber Gari. All rights reserved.</p>
+      <div className="site-footer__bottom">
+        <p>© {new Date().getFullYear()} Goriber Gari. Made for the road ahead.</p>
+        <div className="site-footer__socials">
+          <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook"><FaFacebookF /></a>
+          <a href="https://twitter.com" target="_blank" rel="noreferrer" aria-label="Twitter"><FaTwitter /></a>
+          <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram"><FaInstagram /></a>
+          <a href="mailto:contact@cardealer.com" aria-label="Email"><HiOutlineMail /></a>
+        </div>
       </div>
-    </footer>
-  );
-};
+    </div>
+  </footer>
+);
 
 export default Footer;

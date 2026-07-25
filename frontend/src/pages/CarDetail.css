@@ -1,0 +1,709 @@
+.car-detail-page {
+  --detail-bg: #050a12;
+  --detail-surface: #0b1422;
+  --detail-raised: #101b2c;
+  --detail-line: rgba(148, 163, 184, .16);
+  --detail-text: #f4f7fb;
+  --detail-muted: #92a0b4;
+  --detail-orange: #ff6b35;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--detail-bg);
+  color: var(--detail-text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.car-detail-main {
+  min-height: 80vh;
+  padding-top: 94px;
+  background:
+    radial-gradient(circle at 85% 2%, rgba(49, 92, 244, .12), transparent 22%),
+    var(--detail-bg);
+}
+
+.detail-container {
+  width: calc(100% - 48px);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.detail-breadcrumb {
+  padding: 24px 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #66758a;
+  font-size: 11px;
+}
+
+.detail-breadcrumb button {
+  padding: 0;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #a8b3c2;
+  font: inherit;
+  cursor: pointer;
+}
+
+.detail-breadcrumb button:hover {
+  color: white;
+}
+
+.detail-hero {
+  padding-bottom: 100px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(380px, .92fr);
+  gap: clamp(45px, 6vw, 82px);
+  align-items: center;
+}
+
+.detail-media {
+  position: relative;
+  height: 610px;
+  border: 1px solid var(--detail-line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0d1726;
+  box-shadow: 0 35px 90px rgba(0, 0, 0, .3);
+}
+
+.detail-media img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform .7s cubic-bezier(.2, .7, .2, 1);
+}
+
+.detail-media:hover img {
+  transform: scale(1.025);
+}
+
+.detail-media__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 10, 18, .05) 55%, rgba(5, 10, 18, .75));
+  pointer-events: none;
+}
+
+.detail-availability,
+.detail-year {
+  position: absolute;
+  z-index: 2;
+  top: 20px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, .15);
+  border-radius: 6px;
+  background: rgba(5, 10, 18, .78);
+  color: #b3bdca;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+}
+
+.detail-availability {
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-availability i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #758398;
+}
+
+.detail-availability.is-available i {
+  background: #3ddc97;
+  box-shadow: 0 0 0 5px rgba(61, 220, 151, .12);
+}
+
+.detail-year {
+  right: 20px;
+  color: white;
+}
+
+.detail-summary {
+  min-width: 0;
+}
+
+.detail-summary__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.detail-summary__eyebrow > span,
+.detail-section-heading > span,
+.detail-review-form > div:first-child > span {
+  color: var(--detail-orange);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.detail-summary__eyebrow > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-summary__eyebrow small {
+  color: #a9b4c3;
+  font-size: 11px;
+}
+
+.detail-stars {
+  display: inline-flex;
+  gap: 3px;
+  color: #f5a524;
+  font-size: 12px;
+}
+
+.detail-summary h1 {
+  margin: 18px 0 20px;
+  font-size: clamp(46px, 5vw, 72px);
+  line-height: .98;
+  letter-spacing: -.055em;
+}
+
+.detail-description {
+  margin: 0;
+  color: var(--detail-muted);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.detail-price {
+  margin: 34px 0;
+  padding: 27px 0;
+  border-top: 1px solid var(--detail-line);
+  border-bottom: 1px solid var(--detail-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+}
+
+.detail-price span {
+  color: #7c8a9d;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.detail-price strong {
+  color: white;
+  font-size: 34px;
+  letter-spacing: -.04em;
+}
+
+.detail-purchase {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.detail-buy-button {
+  min-height: 56px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--detail-orange);
+  box-shadow: 0 15px 35px rgba(255, 107, 53, .18);
+  color: white;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease;
+}
+
+.detail-buy-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: #ef5b26;
+}
+
+.detail-buy-button:disabled {
+  background: #2d394b;
+  box-shadow: none;
+  color: #7c899a;
+  cursor: not-allowed;
+}
+
+.detail-stock {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #3ddc97;
+}
+
+.detail-stock > span {
+  color: #718095;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.detail-stock strong {
+  display: block;
+  color: #b6c1cf;
+  font-size: 10px;
+}
+
+.detail-action-message {
+  margin: 18px 0 0;
+  color: #ffab8b;
+  font-size: 12px;
+}
+
+.detail-specs {
+  padding: 95px 0 110px;
+  border-top: 1px solid var(--detail-line);
+}
+
+.detail-section-heading h2 {
+  margin: 13px 0 0;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+
+.detail-spec-grid {
+  margin-top: 50px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border: 1px solid var(--detail-line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--detail-surface);
+}
+
+.detail-spec {
+  min-width: 0;
+  min-height: 160px;
+  padding: 28px 24px;
+  border-right: 1px solid var(--detail-line);
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-spec:last-child {
+  border-right: 0;
+}
+
+.detail-spec svg {
+  margin-bottom: auto;
+  color: var(--detail-orange);
+  font-size: 20px;
+}
+
+.detail-spec span {
+  margin-bottom: 7px;
+  color: #718095;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.detail-spec strong {
+  overflow: hidden;
+  color: #edf1f6;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-reviews {
+  padding: 110px 0 120px;
+  border-top: 1px solid var(--detail-line);
+  background:
+    radial-gradient(circle at 12% 15%, rgba(49, 92, 244, .1), transparent 25%),
+    #080f1b;
+}
+
+.detail-reviews__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 30px;
+}
+
+.detail-write-button {
+  min-height: 45px;
+  padding: 0 17px;
+  border: 1px solid var(--detail-line);
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: transparent;
+  color: #dbe1e9;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.detail-write-button:hover {
+  border-color: var(--detail-orange);
+  color: white;
+}
+
+.detail-review-grid {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.detail-review-card {
+  min-height: 290px;
+  padding: 30px;
+  border: 1px solid var(--detail-line);
+  border-radius: 9px;
+  display: flex;
+  flex-direction: column;
+  background: var(--detail-raised);
+}
+
+.detail-quote {
+  margin-bottom: 24px;
+  color: rgba(255, 107, 53, .35);
+  font-size: 25px;
+}
+
+.detail-review-card > p {
+  margin: 18px 0 28px;
+  color: #b2bdca;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.detail-review-card footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--detail-line);
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.detail-review-card footer > span {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 107, 53, .12);
+  color: var(--detail-orange);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.detail-review-card footer div {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-review-card footer strong {
+  font-size: 11px;
+}
+
+.detail-review-card footer small {
+  margin-top: 3px;
+  color: #718095;
+  font-size: 9px;
+}
+
+.detail-no-reviews {
+  margin-top: 48px;
+  min-height: 135px;
+  padding: 28px;
+  border: 1px dashed rgba(148, 163, 184, .24);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  color: #4f5e72;
+}
+
+.detail-no-reviews > svg {
+  font-size: 28px;
+}
+
+.detail-no-reviews div {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-no-reviews strong {
+  color: #c1cad5;
+  font-size: 13px;
+}
+
+.detail-no-reviews span {
+  margin-top: 5px;
+  color: #718095;
+  font-size: 11px;
+}
+
+.detail-review-form {
+  margin-top: 44px;
+  padding: 34px;
+  border: 1px solid var(--detail-line);
+  border-radius: 9px;
+  background: var(--detail-raised);
+}
+
+.detail-review-form h3 {
+  margin: 8px 0 0;
+  font-size: 25px;
+}
+
+.detail-rating-input {
+  margin: 25px 0 18px;
+  display: flex;
+  gap: 8px;
+}
+
+.detail-rating-input button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #354257;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.detail-rating-input button.is-selected {
+  color: #f5a524;
+}
+
+.detail-review-form textarea {
+  width: 100%;
+  min-height: 125px;
+  padding: 16px;
+  border: 1px solid var(--detail-line);
+  border-radius: 7px;
+  resize: vertical;
+  outline: 0;
+  background: #0a1321;
+  color: white;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.detail-review-form textarea:focus {
+  border-color: var(--detail-orange);
+}
+
+.detail-review-form__actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.detail-review-form__actions button {
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid var(--detail-line);
+  border-radius: 6px;
+  background: transparent;
+  color: #aeb9c6;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.detail-review-form__actions button:last-child {
+  border-color: var(--detail-orange);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--detail-orange);
+  color: white;
+}
+
+.detail-loading {
+  width: calc(100% - 48px);
+  max-width: 1180px;
+  min-height: 650px;
+  margin: 24px auto 100px;
+  display: grid;
+  grid-template-columns: 1.08fr .92fr;
+  gap: 70px;
+}
+
+.detail-loading > div:first-child,
+.detail-loading span {
+  border-radius: 10px;
+  background: linear-gradient(100deg, #0c1625 20%, #132137 50%, #0c1625 80%);
+  background-size: 220% 100%;
+  animation: detail-shimmer 1.4s infinite;
+}
+
+.detail-loading > div:last-child {
+  padding-top: 80px;
+}
+
+.detail-loading span {
+  height: 55px;
+  margin-bottom: 22px;
+  display: block;
+}
+
+.detail-loading span:nth-child(2) {
+  height: 130px;
+}
+
+.detail-error,
+.car-detail-fallback {
+  width: calc(100% - 48px);
+  max-width: 760px;
+  min-height: 70vh;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  color: white;
+  text-align: center;
+}
+
+.detail-error > span,
+.car-detail-fallback > span {
+  color: var(--detail-orange);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.detail-error h1,
+.car-detail-fallback h1 {
+  margin: 18px 0 28px;
+  font-size: clamp(34px, 5vw, 58px);
+  letter-spacing: -.05em;
+}
+
+.detail-error button,
+.car-detail-fallback a {
+  min-height: 48px;
+  padding: 0 20px;
+  border: 1px solid var(--detail-line);
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: transparent;
+  color: white;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.car-detail-fallback {
+  max-width: none;
+  min-height: 100vh;
+  background: #050a12;
+}
+
+@keyframes detail-shimmer {
+  to { background-position-x: -220%; }
+}
+
+@media (max-width: 980px) {
+  .detail-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-media {
+    height: min(70vw, 610px);
+    min-height: 430px;
+  }
+
+  .detail-summary {
+    max-width: 700px;
+  }
+
+  .detail-spec-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .detail-spec:nth-child(3) {
+    border-right: 0;
+  }
+
+  .detail-spec:nth-child(n + 4) {
+    border-top: 1px solid var(--detail-line);
+  }
+
+  .detail-review-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .car-detail-main { padding-top: 73px; }
+  .detail-container { width: calc(100% - 32px); }
+  .detail-breadcrumb { padding-top: 18px; }
+  .detail-hero { padding-bottom: 72px; gap: 38px; }
+  .detail-media { height: 75vw; min-height: 300px; }
+  .detail-availability, .detail-year { top: 12px; }
+  .detail-availability { left: 12px; }
+  .detail-year { right: 12px; }
+  .detail-summary h1 { font-size: 45px; }
+  .detail-description { font-size: 14px; }
+  .detail-price { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .detail-price strong { font-size: 30px; }
+  .detail-purchase { align-items: stretch; flex-direction: column; }
+  .detail-buy-button { width: 100%; }
+  .detail-specs { padding: 72px 0; }
+  .detail-spec-grid { grid-template-columns: 1fr 1fr; }
+  .detail-spec { min-height: 135px; }
+  .detail-spec:nth-child(2n) { border-right: 0; }
+  .detail-spec:nth-child(3) { border-right: 1px solid var(--detail-line); }
+  .detail-spec:nth-child(n + 3) { border-top: 1px solid var(--detail-line); }
+  .detail-reviews { padding: 75px 0; }
+  .detail-reviews__header { align-items: flex-start; flex-direction: column; }
+  .detail-review-grid { grid-template-columns: 1fr; }
+  .detail-review-card { min-height: 260px; }
+  .detail-review-form { padding: 24px 18px; }
+  .detail-review-form__actions { flex-direction: column; }
+  .detail-review-form__actions button { justify-content: center; width: 100%; }
+  .detail-loading { width: calc(100% - 32px); grid-template-columns: 1fr; }
+  .detail-loading > div:last-child { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .detail-loading > div:first-child,
+  .detail-loading span {
+    animation: none;
+  }
+
+  .car-detail-page * {
+    transition-duration: .01ms !important;
+  }
+}
