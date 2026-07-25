@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext } from 'react';
-import axios from 'axios';
 import { AuthContext } from './AuthContext.jsx';
 import api from '../api.jsx';
 
@@ -62,7 +61,7 @@ export const CartProvider = ({ children }) => {
         invoice_number: `INV-${Date.now()}`,
       });
 
-      const orderResponse = await axios.post('http://localhost:8000/orders/', {
+      const orderResponse = await api.post('/orders/', {
         purchase_id: purchaseResponse.data.purchase_id,
         shipping_address: orderDetails.shippingAddress,
         status: 'processing',
@@ -70,14 +69,14 @@ export const CartProvider = ({ children }) => {
       });
 
       for (const item of cartItems) {
-        await axios.post('http://localhost:8000/order_items/', {
+        await api.post('/order_items/', {
           order_id: orderResponse.data.order_id,
           car_id: item.car_id,
           quantity: item.quantity,
           price_at_order: item.price,
         });
 
-        await axios.patch(`http://localhost:8000/car_inventory/${item.car_id}`, {
+        await api.patch(`/car_inventory/${item.car_id}`, {
           quantity: item.maxQuantity - item.quantity,
         });
       }

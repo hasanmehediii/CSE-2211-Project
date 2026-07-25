@@ -125,36 +125,67 @@ Make sure you have the following installed on your machine:
     cd CSE-2211-Project
     ```
 
-2.  **Setup the Backend:**
-    ```bash
-    cd backend
+2. **Configure the database:**
 
-    # Create and activate a virtual environment
-    python -m venv venv
-    venv\Scripts\activate  # On Windows
-    # source venv/bin/activate  # On macOS/Linux
+    ```sh
+    # Windows
+    copy backend\.env.example backend\.env
 
-    # Install dependencies
-    pip install -r requirements.txt
-
-    # Set up your .env file with database credentials
-    # Run the database.sql script in your PostgreSQL server to create the tables
-
-    # Start the backend server
-    uvicorn app.main:app --reload
+    # Ubuntu/macOS
+    cp backend/.env.example backend/.env
     ```
 
-3.  **Setup the Frontend:**
-    ```bash
-    cd ../frontend
+    Replace `DATABASE_URL` in `backend/.env` with your PostgreSQL connection
+    string. The API expects a valid `channel_binding` value such as `prefer` or
+    `require`.
 
-    # Install dependencies
-    npm install
+3. **Start the complete application:**
 
-    # Start the frontend development server
-    npm run dev
+    Windows:
+
+    ```powershell
+    .\start-local.cmd
     ```
-The application should now be running, with the frontend accessible at `http://localhost:5173` and the backend at `http://localhost:8000`.
+
+    Ubuntu or macOS:
+
+    ```bash
+    bash ./start-local.sh
+    ```
+
+    The first run creates `backend/.venv` and installs missing dependencies.
+    Pass `-Install` on Windows or `--install` on Ubuntu/macOS to refresh backend
+    dependencies later.
+
+The frontend runs at `http://localhost:5173`, the backend at
+`http://localhost:8000`, and interactive API documentation at
+`http://localhost:8000/docs`.
+
+### Docker
+
+With Docker Desktop or Docker Engine running:
+
+```sh
+docker compose up --build
+```
+
+The Compose stack exposes the frontend at `http://localhost:5173` and proxies
+its `/api` requests to the backend container.
+
+### GitHub Packages
+
+The `Publish container images` workflow builds the frontend and backend for
+`linux/amd64` and `linux/arm64`. Pushes to `main`, version tags such as `v1.0.0`,
+or manual workflow runs publish these images:
+
+```text
+ghcr.io/<repository-owner>/goriber-gari-frontend
+ghcr.io/<repository-owner>/goriber-gari-backend
+```
+
+They appear in the GitHub Packages section for the repository owner. The
+workflow uses the automatically provided `GITHUB_TOKEN`; no registry password
+needs to be stored manually.
 
 ---
 
@@ -215,12 +246,12 @@ The database is designed to handle all aspects of the e-commerce platform, from 
 The backend provides a RESTful API to interact with the application data.
 
 **Main Routers:**
-*   `/users`: User-related operations.
-*   `/cars`: Accessing car data.
-*   `/categories`: Managing car categories.
-*   `/orders`: Handling customer orders.
-*   `/purchase`: Managing purchases.
-*   `/reviews`: Creating and viewing product reviews.
+*   `/api/users`: User-related operations.
+*   `/api/cars`: Accessing car data.
+*   `/api/categories`: Managing car categories.
+*   `/api/orders`: Handling customer orders.
+*   `/api/purchases`: Managing purchases.
+*   `/api/reviews`: Creating and viewing product reviews.
 *   And more for employees, inventory, and shipping.
 
 ---
