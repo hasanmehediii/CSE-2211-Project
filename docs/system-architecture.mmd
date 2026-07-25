@@ -1,0 +1,49 @@
+flowchart TB
+    User["Customer / Administrator"]
+
+    subgraph Client["Frontend · React 19 + Vite"]
+        Browser["Browser UI"]
+        Router["React Router"]
+        State["AuthContext + CartContext"]
+        APIClient["Axios API client"]
+        PDF["Client-side PDF invoices"]
+
+        Browser --> Router
+        Router --> State
+        State --> APIClient
+        Router --> PDF
+    end
+
+    subgraph Server["Backend · FastAPI"]
+        App["FastAPI application"]
+        Health["Health + OpenAPI endpoints"]
+        Routers["Domain routers<br/>cars · users · orders · reviews · admin"]
+        ORM["SQLAlchemy models and sessions"]
+
+        App --> Health
+        App --> Routers
+        Routers --> ORM
+    end
+
+    Database[("PostgreSQL<br/>users · vehicles · inventory<br/>purchases · shipping · reviews")]
+
+    User -->|"HTTPS / browser"| Browser
+    APIClient -->|"JSON over /api"| App
+    ORM -->|"SQL transactions"| Database
+
+    subgraph Delivery["Development and delivery"]
+        Scripts["Cross-platform local launchers"]
+        GitHub["GitHub repository"]
+        Actions["GitHub Actions"]
+        Registry["GitHub Container Registry"]
+        FrontendImage["Frontend image<br/>Nginx + static SPA"]
+        BackendImage["Backend image<br/>Uvicorn + FastAPI"]
+
+        Scripts -.-> Client
+        Scripts -.-> Server
+        GitHub --> Actions
+        Actions --> FrontendImage
+        Actions --> BackendImage
+        FrontendImage --> Registry
+        BackendImage --> Registry
+    end

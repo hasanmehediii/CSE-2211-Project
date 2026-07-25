@@ -1,285 +1,350 @@
-# Goriber Gari - DBMS-1 Project
+# Goriber Gari
 
 <p align="center">
-  <img src="attachments/carshop.png" alt="Website Logo" width="150" height="150" style="border-radius: 50%; border: 2px solid #ccc;" />
-  <br>
-  <strong>An online platform for buying and managing high-quality vehicles.</strong>
+  <img src="attachments/carshop.png" alt="Goriber Gari logo" width="130" />
+</p>
+
+<p align="center">
+  <strong>A full-stack vehicle marketplace for discovering, comparing, purchasing, and managing cars.</strong>
+</p>
+
+<p align="center">
+  React 19 · Vite · FastAPI · SQLAlchemy · PostgreSQL · Docker
 </p>
 
 ---
 
-## 📖 About The Project
+## Overview
 
-**Goriber Gari** is a full-stack e-commerce platform designed for a seamless car purchasing experience. It allows users to browse a wide catalog of vehicles, view detailed information, and make purchases directly through the website. The project features a modern frontend built with React, a robust backend API powered by FastAPI, and a PostgreSQL database to manage all data efficiently.
+Goriber Gari is a database-driven car marketplace. Customers can browse curated
+collections, inspect vehicle specifications and reviews, complete a guided
+checkout, make payments, download invoices, and review previous purchases.
+Administrators have separate tools for managing cars, users, employees,
+inventory, orders, and database reports.
 
-The primary goal is to provide a user friendly interface where customers can find their dream car at competitive prices, while also providing administrators with the tools to manage inventory, orders, and user data.
+The public interface uses a responsive dark automotive design. The backend is a
+FastAPI application with SQLAlchemy models and PostgreSQL persistence.
 
----
-## Attachments
+## Main features
 
-  - [Report](attachments/CSE2211_DBMS_Project.pdf)
-  - [Video](https://youtu.be/nJaVLU3WCqw?si=9pdGbxrtDZ9v3xI2)
-  - [Video with Voice](https://youtu.be/7hatLweTOT8)
-  - [Presentation Slide](attachments/DBMS.pptx)
+### Customer experience
 
----
+- Animated vehicle landing page with curated car collections
+- Searchable categories and detailed vehicle specifications
+- Authentication and user profiles
+- Availability, inventory, pricing, and customer reviews
+- Three-stage purchase, confirmation, and payment flow
+- Downloadable PDF purchase invoices
+- Responsive desktop, tablet, and mobile interfaces
 
-## 🏛️ System Architecture
+### Administration
 
-The project follows a classic client-server architecture:
+- Manage cars, users, employees, and orders
+- Insert vehicles and update pricing or availability
+- View inventory, purchase, shipping, and employee reports
+- Run category, pricing, review, and vehicle-type queries
 
-*   **Frontend (Client):** A single-page application (SPA) built with React.js that provides a dynamic and responsive user interface.
-*   **Backend (Server):** A RESTful API built with FastAPI that handles business logic, data processing, and communication with the database.
-*   **Database:** A PostgreSQL database that stores all application data, including users, cars, orders, and more.
----
-<p align="center">
-  <img src="attachments/arc.png" alt="System Architecture"/>
-</p>
+### Developer experience
 
----
+- One-command Windows, Ubuntu, and macOS local startup
+- Shared `/api` contract between the frontend and backend
+- Backend health endpoint and interactive OpenAPI documentation
+- Separate production containers for the frontend and backend
+- GitHub Actions publishing to GitHub Container Registry
 
-## 📁 Folder Structure
+## System architecture
 
+The following Mermaid diagram is rendered directly by GitHub. Its standalone
+source is available at [docs/system-architecture.mmd](docs/system-architecture.mmd).
+
+```mermaid
+flowchart TB
+    User["Customer / Administrator"]
+
+    subgraph Client["Frontend · React 19 + Vite"]
+        Browser["Browser UI"]
+        Router["React Router"]
+        State["AuthContext + CartContext"]
+        APIClient["Axios API client"]
+        PDF["Client-side PDF invoices"]
+
+        Browser --> Router
+        Router --> State
+        State --> APIClient
+        Router --> PDF
+    end
+
+    subgraph Server["Backend · FastAPI"]
+        App["FastAPI application"]
+        Health["Health + OpenAPI endpoints"]
+        Routers["Domain routers<br/>cars · users · orders · reviews · admin"]
+        ORM["SQLAlchemy models and sessions"]
+
+        App --> Health
+        App --> Routers
+        Routers --> ORM
+    end
+
+    Database[("PostgreSQL<br/>users · vehicles · inventory<br/>purchases · shipping · reviews")]
+
+    User -->|"HTTPS / browser"| Browser
+    APIClient -->|"JSON over /api"| App
+    ORM -->|"SQL transactions"| Database
+
+    subgraph Delivery["Development and delivery"]
+        Scripts["Cross-platform local launchers"]
+        GitHub["GitHub repository"]
+        Actions["GitHub Actions"]
+        Registry["GitHub Container Registry"]
+        FrontendImage["Frontend image<br/>Nginx + static SPA"]
+        BackendImage["Backend image<br/>Uvicorn + FastAPI"]
+
+        Scripts -.-> Client
+        Scripts -.-> Server
+        GitHub --> Actions
+        Actions --> FrontendImage
+        Actions --> BackendImage
+        FrontendImage --> Registry
+        BackendImage --> Registry
+    end
 ```
-/home/mehedi/CSE-2211-Project/
+
+## Request flow
+
+1. React Router loads the requested customer or administration screen.
+2. Components use the shared Axios client to call `/api`.
+3. FastAPI validates the request and dispatches it to the appropriate router.
+4. SQLAlchemy reads or updates PostgreSQL through a managed database session.
+5. FastAPI returns JSON, and React updates the interface.
+6. Invoice PDFs are generated inside the browser after purchase information is
+   returned.
+
+## Repository structure
+
+```text
+.
+├── .github/workflows/          # Container publishing automation
+├── attachments/                # Project reports, diagrams, and logo assets
 ├── backend/
 │   ├── app/
-│   │   ├── models/
-│   │   ├── __pycache__/
+│   │   ├── models/             # API schemas, routes, and database models
 │   │   ├── admin.py
 │   │   ├── database.py
 │   │   ├── main.py
 │   │   └── queries.py
-│   ├── venv/
-│   ├── .env
+│   ├── .env.example
 │   ├── database.sql
-│   ├── requirements.txt
-│   └── run.sh
+│   ├── Dockerfile
+│   └── requirements.txt
 ├── frontend/
-│   ├── public/
-│   │   ├── images/
-│   │   └── social icons/
+│   ├── public/                 # Favicons, social icons, and public images
 │   ├── src/
-│   │   ├── assets/
 │   │   ├── components/
 │   │   ├── context/
-│   │   └── pages/
-│   ├── .gitignore
-│   ├── eslint.config.js
-│   ├── index.html
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── README.md
-│   └── vite.config.js
-├── .env
-├── .gitignore
-├── car-dealer.png
-├── car.png
-├── CSE2211_DBMS_Project.pdf
-├── Queries.txt
-├── query_implementation_report.md
-├── README.md
-└── vercel.json
+│   │   ├── pages/
+│   │   ├── api.jsx
+│   │   └── routes.jsx
+│   ├── Dockerfile
+│   ├── nginx.conf
+│   └── package.json
+├── docs/
+│   └── system-architecture.mmd
+├── docker-compose.yml
+├── start-local.cmd
+├── start-local.ps1
+└── start-local.sh
 ```
 
----
+## Prerequisites
 
-## 🛠️ Built With
+For normal local development:
 
-This project leverages modern technologies for both the frontend and backend development.
+- Node.js 20 or newer
+- Python 3.11 or newer
+- A reachable PostgreSQL database
 
-**Frontend:**
-*   [React.js](https://reactjs.org/) - A JavaScript library for building user interfaces.
-*   [Vite](https://vitejs.dev/) - A fast frontend build tool.
-*   [React Router](https://reactrouter.com/) - For declarative routing in the React application.
-*   [Axios](https://axios-http.com/) - For making HTTP requests to the backend API.
-*   [CSS3](https://en.wikipedia.org/wiki/CSS) - For styling the application.
+For container-based development:
 
-**Backend:**
-*   [FastAPI](https://fastapi.tiangolo.com/) - A modern, high-performance web framework for building APIs with Python.
-*   [SQLAlchemy](https://www.sqlalchemy.org/) - The Python SQL toolkit and Object Relational Mapper.
-*   [Pydantic](https://pydantic-docs.helpmanual.io/) - Data validation and settings management using Python type annotations.
-*   [Uvicorn](https://www.uvicorn.org/) - An ASGI server for running the FastAPI application.
+- Docker Engine or Docker Desktop with Compose
 
-**Database:**
-*   [PostgreSQL](https://www.postgresql.org/) - A powerful, open-source object-relational database system.
+## Local setup
 
----
+### 1. Clone the repository
 
-## 🚀 Getting Started
+```bash
+git clone https://github.com/hasanmehediii/CSE-2211-Project.git
+cd CSE-2211-Project
+```
 
-To get a local copy up and running, follow these simple steps.
+### 2. Configure PostgreSQL
 
-### Prerequisites
+Create the private backend environment file:
 
-Make sure you have the following installed on your machine:
-*   [Node.js](https://nodejs.org/en/) (which includes npm)
-*   [Python](https://www.python.org/downloads/)
-*   [PostgreSQL](https://www.postgresql.org/download/)
+```powershell
+# Windows
+Copy-Item backend\.env.example backend\.env
+```
 
-### Installation
+```bash
+# Ubuntu or macOS
+cp backend/.env.example backend/.env
+```
 
-1.  **Clone the repository:**
-    ```sh
-    git clone "https://github.com/hasanmehediii/CSE-2211-Project.git"
-    cd CSE-2211-Project
-    ```
+Update `DATABASE_URL` in `backend/.env`:
 
-2. **Configure the database:**
+```dotenv
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/DATABASE?sslmode=prefer&channel_binding=prefer
+```
 
-    ```sh
-    # Windows
-    copy backend\.env.example backend\.env
+`channel_binding` must be a valid PostgreSQL value such as `prefer`, `require`,
+or `disable`. Never commit `backend/.env`; it is intentionally ignored by Git.
 
-    # Ubuntu/macOS
-    cp backend/.env.example backend/.env
-    ```
+If you are creating a new database, use
+[backend/database.sql](backend/database.sql) as the schema reference.
 
-    Replace `DATABASE_URL` in `backend/.env` with your PostgreSQL connection
-    string. The API expects a valid `channel_binding` value such as `prefer` or
-    `require`.
+### 3. Start both applications
 
-3. **Start the complete application:**
+Windows:
 
-    Windows:
+```powershell
+.\start-local.cmd
+```
 
-    ```powershell
-    .\start-local.cmd
-    ```
+Ubuntu or macOS:
 
-    Ubuntu or macOS:
+```bash
+bash ./start-local.sh
+```
 
-    ```bash
-    bash ./start-local.sh
-    ```
+The first run creates `backend/.venv` and installs missing dependencies.
 
-    The first run creates `backend/.venv` and installs missing dependencies.
-    Pass `-Install` on Windows or `--install` on Ubuntu/macOS to refresh backend
-    dependencies later.
+| Service | Local URL |
+|---|---|
+| Frontend | `http://localhost:5173` |
+| Backend | `http://localhost:8000` |
+| API documentation | `http://localhost:8000/docs` |
+| Health check | `http://localhost:8000/health` |
 
-The frontend runs at `http://localhost:5173`, the backend at
-`http://localhost:8000`, and interactive API documentation at
-`http://localhost:8000/docs`.
+To refresh backend dependencies, use `.\start-local.ps1 -Install` on Windows or
+`bash ./start-local.sh --install` on Ubuntu/macOS.
 
-### Docker
+## Manual development
 
-With Docker Desktop or Docker Engine running:
+Run the backend:
 
-```sh
+```bash
+cd backend
+python -m venv .venv
+
+# Windows
+.\.venv\Scripts\activate
+
+# Ubuntu/macOS
+source .venv/bin/activate
+
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+Run the frontend in another terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev -- --host 127.0.0.1 --port 5173
+```
+
+## Docker
+
+Ensure `backend/.env` exists, start Docker, and run:
+
+```bash
 docker compose up --build
 ```
 
-The Compose stack exposes the frontend at `http://localhost:5173` and proxies
-its `/api` requests to the backend container.
+The frontend container serves the production SPA through Nginx and proxies
+`/api` requests to the backend container.
 
-### GitHub Packages
+## GitHub Packages
 
-The `Publish container images` workflow builds the frontend and backend for
-`linux/amd64` and `linux/arm64`. Pushes to `main`, version tags such as `v1.0.0`,
-or manual workflow runs publish these images:
+[.github/workflows/publish-containers.yml](.github/workflows/publish-containers.yml)
+publishes separate multi-architecture images when:
+
+- `main` receives a push
+- A version tag such as `v2.0.0` is pushed
+- The workflow is started manually
+
+Published package names:
 
 ```text
 ghcr.io/<repository-owner>/goriber-gari-frontend
 ghcr.io/<repository-owner>/goriber-gari-backend
 ```
 
-They appear in the GitHub Packages section for the repository owner. The
-workflow uses the automatically provided `GITHUB_TOKEN`; no registry password
-needs to be stored manually.
+The workflow uses the repository-provided `GITHUB_TOKEN` and requires
+`packages: write` permission.
 
----
+## API overview
 
-## ✨ Features
+All application routes use the `/api` prefix.
 
-*   **User Authentication:** Secure user registration and login functionality.
-*   **Product Catalog:** Browse a comprehensive list of available cars with detailed descriptions, specifications, and images.
-*   **Detailed Car View:** Get more information on a specific car, including mileage, engine type, and price.
-*   **Shopping Cart:** Add and manage cars in a shopping cart before purchase.
-*   **Checkout Process:** A streamlined process for purchasing vehicles, including payment and shipping information.
-*   **User Profiles:** View and manage personal information and order history.
-*   **Inventory Management:** Administrative capabilities to add, update, and remove car listings.
-
----
-
-## 📸 Screenshots
-
-Here are some screenshots of the application's user interface.
-
-| Page | Screenshot |
+| Area | Base route |
 |---|---|
-| Welcome Page | ![Welcome](./UI/welcome.png) |
-| Login Page | ![Login](./UI/login.png) |
-| Welcome Page 2 | ![Welcome 2](./UI/welcome2.png) |
-| Admin Home | ![Admin Home](./UI/adminhome.png) |
-| Admin Home 2 | ![Admin Home 2](./UI/adminhome2.png) |
-| Car Details | ![Car Detail](./UI/cardetail.png) |
-| Order | ![Order](./UI/payment.png) |
-| Payment | ![Payment](./UI/payment2.png) |
-| Category | ![Category](./UI/category.png) |
-| FAQ | ![FAQ](./UI/faq.png) |
-| Manage Car | ![Manage Car](./UI/managecar.png) |
-| Manage User | ![Manage User](./UI/manageuser.png) |
-| Profile | ![Profile](./UI/profile.png) |
-| Profile 2 | ![Profile 2](./UI/profile2.png) |
-| Review | ![Review](./UI/review.png) |
+| Cars | `/api/cars` |
+| Categories | `/api/categories` |
+| Users | `/api/users` |
+| Purchases | `/api/purchases` |
+| Orders | `/api/orders` |
+| Order items | `/api/order_items` |
+| Reviews | `/api/reviews` |
+| Inventory | `/api/car_inventory` |
+| Employees | `/api/employees` |
+| Reports | `/api/queries` |
 
----
+The complete, current endpoint list is available from FastAPI at `/docs`.
 
-## 🗃️ Database Schema
+## Useful commands
 
-The database is designed to handle all aspects of the e-commerce platform, from users and products to orders and reviews.
+```bash
+# Frontend production build
+cd frontend && npm run build
 
-**Key Tables:**
-*   `users`: Stores user account information.
-*   `categories`: Organizes cars into different categories.
-*   `cars`: Contains all the details for each vehicle.
-*   `employees`: Manages employee data for administrative purposes.
-*   `car_inventory` & `car_inventory_log`: Tracks stock levels and inventory history.
-*   `purchase`, `orders`, & `order_item`: Manages the entire lifecycle of a customer's order.
-*   `shipping`: Handles shipping details and tracking.
-*   `reviews`: Allows users to post reviews for purchased cars.
+# Frontend linting
+cd frontend && npm run lint
 
----
+# Validate Docker Compose
+docker compose config
 
-## 🌐 API Endpoints
+# Check backend health
+curl http://localhost:8000/health
+```
 
-The backend provides a RESTful API to interact with the application data.
+## Troubleshooting
 
-**Main Routers:**
-*   `/api/users`: User-related operations.
-*   `/api/cars`: Accessing car data.
-*   `/api/categories`: Managing car categories.
-*   `/api/orders`: Handling customer orders.
-*   `/api/purchases`: Managing purchases.
-*   `/api/reviews`: Creating and viewing product reviews.
-*   And more for employees, inventory, and shipping.
+### The frontend cannot reach the backend
 
----
+- Confirm `http://localhost:8000/health` returns `{"status":"ok"}`.
+- Confirm requests use `/api`, for example `/api/categories/`.
+- Start both applications with the provided root launcher.
+- Verify that ports `5173` and `8000` are available.
 
-## 🤝 Contributing
+### PostgreSQL rejects `channel_binding`
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Check `backend/.env`. Values such as `requireto` are invalid. Use `prefer`,
+`require`, or `disable`.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+### Docker commands cannot connect
 
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
+Start Docker Desktop or the Docker daemon before running Compose commands.
 
----
+## Project material
 
-## 📄 License
+- [Project report](attachments/CSE2211_DBMS_Project.pdf)
+- [Presentation](attachments/DBMS.pptx)
+- [Database documentation](attachments/DBMS.pdf)
+- [Project video](https://youtu.be/nJaVLU3WCqw?si=9pdGbxrtDZ9v3xI2)
+- [Project video with narration](https://youtu.be/7hatLweTOT8)
 
-Distributed under the MIT License. See `LICENSE` for more information.
+## Contributor
 
----
-
-## 📞 Contact
-
-Project Link: [https://github.com/hasanmehediii/CSE-2211-Project](https://github.com/hasanmehediii/CSE-2211-Project)
-
-## Contributors
-1. Mehedi Hasan
-    - Email : [mehedi-2022415897@cs.du.ac.bd](mailto:mehedi-2022415897@cs.du.ac.bd)  
+Mehedi Hasan — [mehedi-2022415897@cs.du.ac.bd](mailto:mehedi-2022415897@cs.du.ac.bd)

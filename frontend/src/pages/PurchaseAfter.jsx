@@ -17,7 +17,7 @@ import Navbar from '../components/Navbar.jsx';
 import Footer from '../components/Footer.jsx';
 import CheckoutSteps from '../components/CheckoutSteps.jsx';
 import { AuthContext } from '../context/AuthContext.jsx';
-import carLogo from '../../../attachments/car.png';
+import carLogo from '../assets/invoice-car.png';
 import api from '../api.jsx';
 import './Checkout.css';
 
