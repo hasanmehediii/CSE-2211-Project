@@ -49,7 +49,7 @@ const Navbar = () => {
     <header className="site-nav-shell">
       <nav className="site-nav" aria-label="Main navigation">
         <Link to="/" className="site-nav__brand" aria-label="Goriber Gari home">
-          <span className="site-nav__mark">G</span>
+          <img className="site-nav__mark" src="/carshop.png" alt="" aria-hidden="true" />
           <span>
             <strong>Goriber Gari</strong>
             <small>Find your road</small>

@@ -249,10 +249,13 @@ const Home = () => {
             {!loading && !error && carData.map((section, sectionIndex) => (
               <section className="car-collection" key={section.category}>
                 <div className="car-collection__header">
-                  <div>
-                    <span>{section.eyebrow}</span>
-                    <h3>{section.category}</h3>
-                    <p>{section.subtitle}</p>
+                  <div className="car-collection__identity">
+                    <span className="car-collection__number">0{sectionIndex + 1}</span>
+                    <div>
+                      <span className="car-collection__eyebrow">{section.eyebrow}</span>
+                      <h3>{section.category}</h3>
+                      <p>{section.subtitle}</p>
+                    </div>
                   </div>
                   <div className="car-collection__controls">
                     <button onClick={() => scrollRow(sectionIndex, -1)} aria-label={`Previous ${section.category} cars`}>
@@ -285,13 +288,23 @@ const Home = () => {
                             alt={car.name}
                             onError={(event) => { event.currentTarget.src = carImage; }}
                           />
-                          <span>{section.category}</span>
+                          <span className="showroom-card__badge">{section.category}</span>
+                          <span className="showroom-card__open" aria-hidden="true"><FaArrowRight /></span>
                         </div>
                         <div className="showroom-card__body">
                           <div className="showroom-card__title">
-                            <h4>{car.name}</h4>
+                            <div>
+                              {car.manufacturer && <small>{car.manufacturer}</small>}
+                              <h4>{car.name}</h4>
+                            </div>
                             <strong>{car.priceLabel}</strong>
                           </div>
+                          {(car.year || car.color) && (
+                            <div className="showroom-card__meta">
+                              {car.year && <span>{car.year}</span>}
+                              {car.color && <span>{car.color}</span>}
+                            </div>
+                          )}
                           <p>{car.description}</p>
                           <div className="showroom-card__footer">
                             <span className={car.rating ? 'showroom-card__rating' : 'showroom-card__rating is-new'}>

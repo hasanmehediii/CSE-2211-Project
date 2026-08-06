@@ -38,11 +38,8 @@
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  display: grid;
-  place-items: center;
-  background: #ff6b35;
-  font-size: 15px;
-  font-weight: 850;
+  display: block;
+  object-fit: contain;
 }
 
 .site-nav__brand > span:last-child {
