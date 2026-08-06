@@ -1,7 +1,7 @@
 # Goriber Gari
 
 <p align="center">
-  <img src="attachments/carshop.png" alt="Goriber Gari logo" width="130" />
+  <img src="frontend/public/carshop.png" alt="Goriber Gari logo" width="130" />
 </p>
 
 <p align="center">
@@ -24,6 +24,8 @@ inventory, orders, and database reports.
 
 The public interface uses a responsive dark automotive design. The backend is a
 FastAPI application with SQLAlchemy models and PostgreSQL persistence.
+
+![banner](attachments/goribergari.png)
 
 ## Main features
 
